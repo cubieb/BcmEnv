@@ -1,0 +1,22 @@
+--- busybox/loginutils/passwd.c	2004-09-14 19:39:09.000000000 -0700
++++ busybox/loginutils/passwd.new.c	2013-12-17 00:57:24.232413000 -0800
+@@ -51,7 +51,9 @@
+ 	} else
+ #endif
+ 	{
+-		snprintf(filename, sizeof filename, "%s", bb_path_passwd_file);
++		//snprintf(filename, sizeof filename, "%s", bb_path_passwd_file);
++		system("cp /etc/passwd /tmp/passwd");
++		snprintf(filename, sizeof filename, "%s", "/tmp/passwd");
+ 	}
+ 
+ 	if (((fp = fopen(filename, "r+")) == 0) || (fstat(fileno(fp), &sb))) {
+@@ -126,6 +128,8 @@
+ 	} else {
+ 		fcntl(fileno(fp), F_SETLK, &lock);
+ 		fclose(fp);
++		system("cp /tmp/passwd /etc/passwd");
++		system("rm -f /tmp/passwd*");
+ 		return 0;
+ 	}
+ }
