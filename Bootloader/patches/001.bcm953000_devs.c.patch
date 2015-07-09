@@ -1,0 +1,34 @@
+--- cfe-ntsw-5.1.4/cfe/arch/mips/board/bcm95300x/src/bcm953000_devs.c	2011-10-24 23:46:48.000000000 -0700
++++ cfe-ntsw-5.1.4/cfe/arch/mips/board/bcm95300x/src/bcm953000_devs.new.c	2013-12-13 22:01:21.423227000 -0800
+@@ -170,6 +170,7 @@
+     {"et0mdcport","0",NULL,"et0mdcport"},
+     {"ETH1_HWADDR","$$NVRAM","02-10-18-53-00-11","et1macaddr"},
+     {"et1mdcport","1",NULL, "et1mdcport"},
++    {"STARTUP","$$NVRAM","boot -elf flash0.os:vmlinux","startup"}, /*lv-add for auto startup*/
+     {"boardtype","bcm953000",NULL},
+ #if defined(_BCM953284MDU_)
+     {"SYS_RESET_PIN","7",NULL},
+@@ -438,15 +439,19 @@
+ 
+     
+     /* Because CFE can only boot from the beginning of a partition */
+-    fprobe.flash_nparts = 4;
++    fprobe.flash_nparts = 6;
+     fprobe.flash_parts[0].fp_size = bootsz;
+     fprobe.flash_parts[0].fp_name = "boot";
+-    fprobe.flash_parts[1].fp_size = NVRAM_SPACE;
++    fprobe.flash_parts[1].fp_size = NVRAM_SPACE*2;
+     fprobe.flash_parts[1].fp_name = "nvram";
+-    fprobe.flash_parts[2].fp_size = NVRAM_SPACE;
++    fprobe.flash_parts[2].fp_size = NVRAM_SPACE*2;
+     fprobe.flash_parts[2].fp_name = "env";
+-    fprobe.flash_parts[3].fp_size = 0;
++    fprobe.flash_parts[3].fp_size = 10*MB;
+     fprobe.flash_parts[3].fp_name = "os";
++    fprobe.flash_parts[4].fp_size = 16*MB;
++    fprobe.flash_parts[4].fp_name = "rootfs";
++    fprobe.flash_parts[5].fp_size = 0;
++    fprobe.flash_parts[5].fp_name = "app";
+     cfe_add_device(drv, 0, 0, &fprobe);
+ 
+     /* We need flash1 since it's used by some common parts */
