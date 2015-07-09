@@ -1,0 +1,277 @@
+// This is the CLI syntax file of a CMC controller
+
+// set controller logging level
+debug controller <LIST:trace,msg,wrn,err:loglevel>
+
+// reboot selected cmc
+clear cmc
+
+#ifdef NETWORKINGDEV_TCP
+// register a cmc manually, ipv4[xxx.xxx.xxx.xxx], port[xxxx]
+register cmc <IPV4ADDR:ipv4> <UINT:port>
+
+// un-register a cmc manually, ipv4[xxx.xxx.xxx.xxx], port[xxxx]
+no register cmc <IPV4ADDR:ipv4> <UINT:port>
+
+// connect a cmc, ipv4[xxx.xxx.xxx.xxx], port[xxxx]
+select cmc <IPV4ADDR:ipv4> <UINT:port>
+#endif
+
+#ifdef NETWORKINGDEV_HIM
+// register a cmc manually, mac[xx:xx:xx:xx:xx:xx]
+register cmc <MACADDR:mac> { <IPV4ADDR:oltip> } { <UINT:oltport> }
+
+// un-register a cmc manually, mac[xx:xx:xx:xx:xx:xx]
+no register cmc <MACADDR:mac>
+
+// select a registered cmc
+select cmc <MACADDR:mac>
+
+// select a OLT, after selected, all HIM messages will be send to <ipv4:port>
+//select olt <IPV4ADDR:ipv4> { <UINT:port> }
+#endif
+
+#ifdef NETWORKINGDEV_L2OAM
+// register a cmc manually, mac[xx:xx:xx:xx:xx:xx]
+register cmc <MACADDR:mac>
+
+// un-register a cmc manually, mac[xx:xx:xx:xx:xx:xx]
+no register cmc <MACADDR:mac>
+
+// select a registered cmc
+select cmc <MACADDR:mac>
+#endif
+
+// show selected cmc\'s dowstream settings
+show cable downstream { <UINT:channel> }
+
+// show selected cmc\'s upstream settings
+show cable upstream { <UINT:channel> }
+
+// show selected cmc\'s upstream power level
+show cable upstream <UINT:channel> power-level
+
+// show selected cmc\'s upstream signal quality
+show cable upstream <UINT:channel> signal-quality
+
+// show selected cmc\'s downstram bonding group settings.
+show cable downstream bonding-group
+
+// show selected cmc\'s upstream bonding group settings.
+show cable upstream bonding-group
+
+// show selected cmc\'s upstream FFT configuration.
+show cable upstream fft config
+
+// show selected cmc\'s upstream FFT data.
+show cable upstream fft data
+
+#ifdef SUPPORT_DHCP_RELAY
+// show all cm\'s hosts(cpe)
+show cable hosts
+#endif
+
+// show registed cmc
+show cmc
+
+// show cmc VIDs in broadcom domain
+show cmc broadcast vid
+
+// show selected cmc all interface\' settings.
+show cmc interface summary
+
+// show specified interfaces utilization or statistics for selected cmc
+show cmc interface <UINT:id> <LIST:utilization,statistics:subtype>
+
+// show all interfaces utilization or statistics for selected cmc
+show cmc interface <LIST:utilization,statistics:subtype>
+
+// show selected cmc\'s custom config
+show cmc custom-config { <LIST:tpid,min-map-time,max-map-time,init-rng-period,periodic-rng-period,rng-backoff-start,rng-backoff-end,data-backoff-start,data-backoff-end,maplead_time_adj:subtype> }
+
+// show selected cmc\'s version
+show cmc version
+
+// show cmc map counter, use \",\" to sepreate different channel IDs.
+show cmc map counter { <STRING:chLst> } { <LIST:clean,noclean:clean> }
+
+// show cmc mac management message counter, use \",\" to sepreate different channel IDs.
+show cmc mmm counter { <STRING:chLst> } { <LIST:clean,noclean:clean> }
+
+// show the max number of cable modem supported on this cmc
+show cmc max-cm
+
+// show the max multicasts supported on this cmc
+show cmc max-multicasts
+
+// reboot a cm
+clear cable modem <MACADDR:mac>
+
+// reboot all cms under selected cmc
+clear cable modem all
+
+// clear cable modem history
+clear cable modem history
+
+// show all cms under selected cmc
+show cable modem
+
+// show cable modem history
+show cable modem history
+
+// show cm\'s classifier
+show cable modem <MACADDR:mac> classifier
+
+// show the downstream channels that cm registed
+show cable modem <MACADDR:mac> downstream
+
+// show the upstream channels that cm registed
+show cable modem <MACADDR:mac> upstream
+
+// show cm\'s MMM message counters.
+show cable modem <MACADDR:mac> mmm counter { <LIST:clean,noclean:clean> }
+
+// show all cm\'s MMM message counters.
+show cable modem mmm counter all { <LIST:clean,noclean:clean> }
+
+// show cm\'s service flow
+show cable modem <MACADDR:mac> service-flow
+
+// show cm\'s status
+show cable modem <MACADDR:mac> status
+
+// show all cm\'s status
+show cable modem status all
+
+#ifdef SUPPORT_DHCP_RELAY
+// show cm\'s hosts(cpe)
+show cable modem <MACADDR:mac> hosts
+#endif
+
+// move cm\'s downstream channel, use \",\" to sepreate different channels
+cable modem <MACADDR:mac> dcc <STRING:chlst>
+
+// move cm\'s upstream channel, use \",\" to sepreate different channels
+cable modem <MACADDR:mac> ucc <STRING:chlst>
+
+// show qos service flow config, use \",\" to sepreate different service flow ids.
+show cable qos service-flow config <STRING:sfidlst>
+
+// show qos service flow statistics, use \",\" to sepreate different service flow ids.
+show cable qos service-flow statistics <STRING:sfidlst>
+
+// show qos classifier config, use \",\" to sepreate different service flow ids.
+show cable qos classifier config <STRING:sfidlst>
+
+// show dynamic load balance configuration
+show cable load-balancing dynamic config
+
+// show all load balance group under selected cmc
+show cable load-balancing group
+
+// show one load balance group\'s downstram channel setting.
+show cable load-balancing group <UINT:id> downstream
+
+// show one load balance group\'s upstream channel setting.
+show cable load-balancing group <UINT:id> upstream
+
+// show one load balance group\'s cable modem settings.
+show cable load-balancing group <UINT:id> modem
+
+// show active cable mode in one laod balance group.
+show cable load-balancing group <UINT:id> active-modem
+
+// show one load-balancing group\'s all settings.
+show cable load-balancing group <UINT:id> full
+
+//show load balance group\'s exclued cable modem(s)
+show cable load-balancing group excluded modem
+
+//show load balance group\'s active exclued cable modem(s)
+show cable load-balancing group excluded active-modem
+
+// show cmc alarm list
+show system alarm-list
+
+//show system log data
+show system log-data
+
+// show system crash data
+show system crash-data
+
+// show asynchronous log events configuration
+show system async-log-config
+
+//clear crash data
+clear system crash data
+
+// show cmc system clock
+show system clock
+
+// clear oam buf
+clear oam buf
+
+// Enter CMC remote CLI mode
+remote cli
+
+// show oam buf
+show oam buf
+
+// show controller\'s version
+show version
+
+#ifdef NETWORKINGDEV_HIM
+//show olt information
+show olt info
+
+//show olt domain information
+show olt domain 
+
+//show olt domain rules
+show olt domain <UINT:id>  rules
+
+//show all destination
+show olt domain <UINT:id> destination
+
+//show destination rules
+show olt domain <UINT:id> destination <UINT:destId> rules
+
+//show destination learning control
+show olt domain <UINT:id> destination <UINT:destId> learning-control
+
+//show olt state
+show olt state
+
+//show onu information
+show onu <MACADDR:mac> info
+
+//show olt all path
+show path all
+
+//show olt path <id>
+show path <UINT:id>
+
+//show olt discovered links
+show discovered links
+
+//show oam extension set support
+show olt <MACADDR:mac> oam extension set support
+
+//show oam extension set precedence
+show olt <MACADDR:mac> oam extension set precedence
+#endif
+
+// configuration mode related commands.
+configure terminal
+#include "cmc.config.cli"
+
+// quit the cmc CLI
+quit
+
+// exit the cmc CLI
+exit
+
+// show command help, for example: help show
+help { <STRING:filter> }
+// show command menu(help)
+m { <STRING:filter> }

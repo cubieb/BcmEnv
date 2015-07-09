@@ -1,0 +1,365 @@
+// This .cli file is included in cmc.cli
+// When users enter "configure terminal", it enters the cmc configureation mode.
+#submode "config"
+
+// CM-CTL-REQ to mute cm upstream channel(s)
+cable cm-ctrl mute <MACADDR:mac> <UINT:channel_id> <UINT:interval>
+
+// CM-CTL-REQ to re-init a cm
+cable cm-ctrl reinit <MACADDR:mac>
+
+// CM-CTL-REQ to disable or enable CMCI forwarding.
+cable cm-ctrl disable-forwarding <MACADDR:mac> <LIST:true,false:forwarding>
+
+// shut down a downstream channel, channel \"0\" means apply to all channels
+cable downstream <UINT:channel> shutdown
+
+// cable downstream auto test in \"num\" times, with \"interval\" millisec
+cable downstream auto-test { <UINT:num> } { <UINT:interval> }
+
+// change downstream channel mode, channel \"0\" means apply to all channels 
+cable downstream <UINT:channel> mode <LIST:docsis,ipqam:mode>
+
+// change downstream channel annex mode and symbol rate(annex a only), channel \"0\" means apply to all channels
+cable downstream <UINT:channel> annex <LIST:a,b:annex_mode> { <LIST:6952000,6875000,6900000:symbolrate> }
+
+// change downstream change frequence, freq:Hz
+cable downstream <UINT:channel> freq <UINT:freq>
+
+// auto assign downstream channel freq.
+cable downstream freq auto-assign <UINT:start> <UINT:step> <LIST:increase,decrease:mode>
+
+// change downstream interlever value, channel \"0\" means apply to all channels
+//cable downstream <UINT:channel> interleaver <LIST:128_1,128_2,64_2,128_3,32_4,128_4,16_8,128_5,8_16,128_6,4_32,128_7,2_64,128_8,1_128:interleaver>
+cable downstream <UINT:channel> interleaver
+
+//change downstream channel modulation type, channel \"0\" means apply to all channels
+cable downstream <UINT:channel> modulation <LIST:64QAM,256QAM,1024QAM:modulation>
+
+//change downstream channel power , tenth of dB, channel \"0\" means apply to all channels
+cable downstream <UINT:channel> power <INT:power>
+
+// enable downstream channel, channel \"0\" means apply to all channels
+no cable downstream <UINT:channel> shutdown
+
+// disable upstream channel, channel \"0\" means apply to all channels
+cable upstream <UINT:channel> shutdown
+
+// disable upstream docsis 3.0 mode, channel \"0\" means apply to all channels
+cable upstream <UINT:channel> docsis30 shutdown
+
+// change upstream frequence, freq:Hz, channel \"0\" means apply to all channels
+cable upstream <UINT:channel> freq <UINT:freq>
+
+// auto assign upstream channel freq.
+cable upstream freq auto-assign <UINT:start> <UINT:step> <LIST:increase,decrease:mode>
+
+// change upstream channel width, width:[1600000|3200000|6400000]
+cable upstream <UINT:channel> channel-width <LIST:1600000,3200000,6400000:width>
+
+// change upstream channel type, type:[atdma|scdma], channel \"0\" means apply to all channels
+cable upstream <UINT:channel> channel-type <LIST:atdma,scdma:type>
+
+// change upstream channel profile, channel \"0\" means apply to all channels
+cable upstream <UINT:channel> profile <LIST:QPSK,16QAM,32QAM,64QAM,256QAM:profile> { <LIST:scdma,atdma:type> } { <LIST:high_noise,medium_noise,low_noise,low_latency:group> }
+
+// change upstream channel power level, tenth of dB:[-130~230dB], channel \"0\" means apply to all channels
+cable upstream <UINT:channel> power-level <INT:power>
+
+//disable upstream fft averaging
+cable upstream fft averaging shutdown
+
+//enable upstream fft averaging
+no cable upstream fft averaging shutdown
+
+// enable upstream channel, channel \"0\" means apply to all channels
+no cable upstream <UINT:channel> shutdown
+
+// disable upstream docsis 3.0 mode, channel \"0\" means apply to all channels
+no cable upstream <UINT:channel> docsis30 shutdown
+
+// set dynamic load balance method
+cable load-balance dynamic method <LIST:disable,dynamic,static:value>
+
+//set dymamic load balance period, time in seconds between load balancing checks.
+cable load-balance dynamic period <UINT:value>
+
+//set dymamic load balance weighted average period.
+cable load-balance dynamic weighted-average-period <UINT:value>
+
+//set dymamic load balance overload threshold percent
+cable load-balance dynamic overload-threshold-percent <UINT:value>
+
+//set dymamic load balance difference threshold percent
+cable load-balance dynamic difference-threshold-percent <UINT:value>
+
+//set dymamic load balance maximum number of moves per period
+cable load-balance dynamic max-moves <UINT:value>
+
+//set dymamic load balance minimum hold time per modem
+cable load-balance dynamic min-hold-time <UINT:value>
+
+//set dymamic load balance ranging override mode
+cable load-balance dynamic ranging-override-mode <LIST:enable,disable:value>
+
+//set dymamic load balance DCC init-tech for ATDMA mode
+cable load-balance dynamic atdma-dcc-init-tech <UINT:value>
+
+//set dymamic load balance DCC init-tech for SCDMA mode
+cable load-balance dynamic scdma-dcc-init-tech <UINT:value>
+
+//set dymamic load balance DBC init-tech for ATDMA mode
+cable load-balance dynamic atdma-dbc-init-tech <UINT:value>
+
+//set dymamic load balance DBC init-tech for SCDMA mode
+cable load-balance dynamic scdma-dbc-init-tech <UINT:value>
+
+// create a load balance group with full settings.
+cable load-balance group full <UINT:id>
+
+// create a load balance group
+cable load-balance group <UINT:id> <LIST:static,dynamic:type>
+//cable load-balance group <UINT:id> <LIST:static:type>
+
+// add downstream channel(s) to a load balance group, use \",\" to sepreate different channels
+cable load-balance group <UINT:id> add downstream <STRING:chlst>
+
+// add upstream channel(s) to a load balance group, use \",\" to sepreate different channels
+cable load-balance group <UINT:id> add upstream <STRING:chlst>
+
+// add cm(s) to a load balance group, \"start_mac\" and \"end_mac\" supports xx:xx:xx:xx:xx:xx|xxxx.xxxx.xxxx|oui \nLeave \"end_mac\" empty if it is the same as \"start_mac\".  
+cable load-balance group <UINT:id> add modem <STRING:start_mac> { <STRING:end_mac> }
+
+// exclude cm(s) to a load balance group, \"start_mac\" and \"end_mac\" supports xx:xx:xx:xx:xx:xx|xxxx.xxxx.xxxx|oui \nLeave \"end_mac\" empty if it is the same as \"start_mac\".  
+cable load-balance group exclude modem <STRING:start_mac> { <STRING:end_mac> }
+
+// remove a load balance group
+no cable load-balance group <UINT:id>
+
+// remove downstream channel(s) from a load balance group, use \",\" to sepreate different channels
+no cable load-balance group <UINT:id> add downstream <STRING:chlst>
+
+// remove upstream channel(s) from a load balance group, use \",\" to sepreate different channels
+no cable load-balance group <UINT:id> add upstream <STRING:chlst>
+
+// remove cm(s) from a load balance group, \"start_mac\" and \"end_mac\" supports xx:xx:xx:xx:xx:xx|xxxx.xxxx.xxxx|oui \nLeave \"end_mac\" empty if it is the same as \"start_mac\".  
+no cable load-balance group <UINT:id> add modem <STRING:start_mac> { <STRING:end_mac> }
+
+// remove cm(s) from load balance group exclue list, \"start_mac\" and \"end_mac\" supports xx:xx:xx:xx:xx:xx|xxxx.xxxx.xxxx|oui \nLeave \"end_mac\" empty if it is the same as \"start_mac\".  
+no cable load-balance group exclude modem <STRING:start_mac> { <STRING:end_mac> }
+
+// create a service flow for a cm <MACADDR:mac>, qos tlv file <FILE:filename>
+cable qos service-flow create <MACADDR:mac> <UINT:cos> <FILE:filename>
+
+// change a cm\'s<MACADDR:mac> service flow, set \"usfid\" or \"usfid\" to \"0\" if want to operate on one direction., qos tlv file <FILE:filename>
+cable qos service-flow change <MACADDR:mac> <UINT:usfid> <UINT:dsfid> <FILE:filename>
+
+// change a cm\'s<MACADDR:mac> service flow\'s<UINT:sfid> max sustained rate
+cable qos service-flow change max-sustained-rate <MACADDR:mac> <UINT:sfid> <UINT:rate_bps>
+
+// change a cm\'s<MACADDR:mac> service flow\'s<UINT:sfid> Quality of Service Parameter Set Type
+cable qos service-flow change qos-set <MACADDR:mac> <UINT:sfid> <UINT:qos_set>
+
+// destory a cm\'s<MACADDR:mac> service flow, set \"usfid\" or \"usfid\" to \"0\" if want to operate on one direction.
+cable qos service-flow clear <MACADDR:mac> <UINT:usfid> <UINT:dsfid>
+
+// add  a service class name, qos tlv file <FILE:filename>
+cable qos service-flow class-name <STRING:name> add <FILE:filename>
+
+// remvoe  a service class name
+no cable qos service-flow class-name <STRING:name>
+
+// reserve service flow, qos tlv file <FILE:filename>
+cable qos service-flow reserve <FILE:filename>
+
+// create a service flow for a cm <MACADDR:mac>, qos tlv file <FILE:filename>
+cable qos test { <UINT:loop_time> } { <UINT:max_cm> }
+
+// enable CMC asynchronous log.
+cmc async-log <LIST:all,zone_1,zone_2:zone> <LIST:level_1,level_2:level>
+
+// disable CMC asynchronous log.
+no cmc async-log
+
+// enable specified VIDs as broadcast domains, use \",\" \"-\" and \"|\" to separate different vids
+cmc broadcast vid <STRING:vidlist>
+
+// disable specified VIDs on broadcast domain, use \",\" \"-\" and \"|\" to separate different vids
+no cmc broadcast vid <STRING:vidlist>
+ 
+// set sytem clcok, HH:MM:SS YY/MM/DD WK
+//cmc clock <STRING:time> { <STRING:year> } { <LIST:Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday:week> }
+
+// set cmc system clock as the same as controller host.
+cmc clock default
+
+// Config CMC settings.
+cmc custom-config tpid <HEX:tpid>
+
+// Specifies the fixed map start and end time
+cmc custom-config map-time automatic
+
+// Config map time range
+cmc custom-config map-time <UINT:min> <UINT:max>
+
+// Config Initial ranging period
+cmc custom-config init-rng-period <UINT:milis>
+
+// Config Periodic ranging period
+cmc custom-config periodic-rng-period <UINT:milis>
+
+// Specifies the fixed range backoff start and end values
+cmc custom-config range-backoff automatic
+
+// Config Ranging backoff start and end 0~15
+cmc custom-config range-backoff <UINT:start> <UINT:end>
+
+// Specifies the fixed data backoff start and end values
+cmc custom-config data-backoff automatic
+
+// Config data backoff start and end, 0~15
+cmc custom-config data-backoff <UINT:start> <UINT:end>
+
+// Config Map Lead Time Adjustment
+cmc custom-config maplead_time_adj <INT:micros>
+
+// Set the max number of cm that cmc supported.
+cmc max-cm <UINT:num>
+
+// Upgrade cmc firmware
+cmc upgrade firmware <FILE:filename>
+
+//set dhcp relay ip address
+dhcp-relay <IPV4ADDR:serverIp> 
+
+//set syslog server ip address
+syslog <IPV4ADDR:ip> { <INT:port> }
+no syslog <IPV4ADDR:ip>
+
+//set reboot level
+reboot_level <INT:level>
+
+//add one downstream qos rule
+add ds_qos mac_address <MACADDR:mac> bandwidth_M <INT:bandwidth>
+
+//delete one downstream qos rule
+delete ds_qos mac_address <MACADDR:mac>
+
+//set max cpu using
+set max cpu using <FLOAT:max_cpu_using> 
+
+//set max cm online number
+set max cm online number <INT:max_cpu_online>
+
+//set max ram using
+set max ram using <INT:max_ram_using> 
+
+//set max us snr
+set max us channel <UINT:us_channel> snr_db <INT:us_snr> 
+
+//test cmd show all downstream qos rules
+show downstream qos rules
+
+#ifdef NETWORKINGDEV_HIM
+//set olt state
+olt <LIST:enable,disable:state>
+
+//Add olt domain
+olt domain <UINT:id> 
+
+//remove olt domain
+no olt domain <UINT:id>
+
+//add olt domain rules
+olt domain <UINT:id> rule <LIST:downstream,upstream:direction> <LIST:DMac,SMac,SVlan0,SVlan1,CVlan0,CVlan1,Ethertyp,SIP,DIP,SrcPort,DstPort,TcpProtocal:field> <LIST:equal,no-equal,less,greater,exit,no-exit,always:op> <STRING:clause> <UINT:leftMask> <UINT:rightMask> priority <UINT:pri>  add-vlan <LIST:outer,inner:sel> <HEX:tpid> <HEX:vid>
+
+//add olt domain rules
+olt domain <UINT:id> rule <LIST:downstream,upstream:direction> <LIST:DMac,SMac,SVlan0,SVlan1,CVlan0,CVlan1,Ethertyp,SIP,DIP,SrcPort,DstPort,TcpProtocal:field> <LIST:equal,no-equal,less,greater,exit,no-exit,always:op> <STRING:clause> <UINT:leftMask> <UINT:rightMask> priority <UINT:pri>  <LIST:clear-add-vlan,delete-vlan,clear-delete-vlan,clear-cos:action> <LIST:outer,inner:sel>
+
+//add olt domain rules
+olt domain <UINT:id> rule <LIST:downstream,upstream:direction> <LIST:DMac,SMac,SVlan0,SVlan1,CVlan0,CVlan1,Ethertyp,SIP,DIP,SrcPort,DstPort,TcpProtocal:field> <LIST:equal,no-equal,less,greater,exit,no-exit,always:op> <STRING:clause> <UINT:leftMask> <UINT:rightMask> priority <UINT:pri> set-cos <LIST:outer,inner:sel> <UINT:cos>
+
+//add olt domain rules
+olt domain <UINT:id> rule <LIST:downstream,upstream:direction> <LIST:DMac,SMac,SVlan0,SVlan1,CVlan0,CVlan1,Ethertyp,SIP,DIP,SrcPort,DstPort,TcpProtocal:field> <LIST:equal,no-equal,less,greater,exit,no-exit,always:op> <STRING:clause> <UINT:leftMask> <UINT:rightMask> priority <UINT:pri> set-discard-flag <UINT:port>
+
+//add olt domain rules
+olt domain <UINT:id> rule <LIST:downstream,upstream:direction> <LIST:DMac,SMac,SVlan0,SVlan1,CVlan0,CVlan1,Ethertyp,SIP,DIP,SrcPort,DstPort,TcpProtocal:field> <LIST:equal,no-equal,less,greater,exit,no-exit,always:op> <STRING:clause> <UINT:leftMask> <UINT:rightMask> priority <UINT:pri> capture-to-host
+
+//add olt domain destination
+olt domain <UINT:id> destination <UINT:destId>  link <MACADDR:mac> path <UINT:pathId>
+
+//remove olt domain destination
+no olt domain <UINT:id> destination <UINT:destId>
+
+//set olt domain destination learning entry
+olt domain <UINT:id> destination <UINT:destId> learning-control min-entry <UINT:min> max-entry <UINT:max> 
+
+//set olt domain destination learning l2-learning state
+olt domain <UINT:id> destination <UINT:destId> learning-control l2-learning <LIST:enable,disable:state>
+
+//set olt domain destination learning mac-overwrite state
+olt domain <UINT:id> destination <UINT:destId> learning-control mac-overwrite <LIST:enable,disable:state>
+
+//set olt domain destination learning static entry state
+olt domain <UINT:id> destination <UINT:destId> learning-control retain-static <LIST:enable,disable:state>
+
+//enable or disable olt domain destination l2-learning mac remove
+olt domain <UINT:id> destination <UINT:destId> learning-control mac-remove <LIST:enable,disable:state>
+
+//enable or disable olt domain destination pppoe-learning
+olt domain <UINT:id> destination <UINT:destId> learning-control pppoe-learning <LIST:enable,disable:state>
+
+//enable or disable olt domain destination dhcpv4-learning
+olt domain <UINT:id> destination <UINT:destId> learning-control dhcpv4-learning <LIST:enable,disable:state>
+
+//enable or disable olt domain destination dhcpv6-learning
+olt domain <UINT:id> destination <UINT:destId> learning-control dhcpv6-learning <LIST:enable,disable:state>
+
+
+//enable or disable olt all discovered  links
+olt link  <LIST:enable,disable:state>
+
+//enable or disable a single link
+olt link <MACADDR:id> <LIST:enable,disable:state>
+
+//set olt oam extention support
+olt <MACADDR:mac> oam extention support <LIST:Broadcom,CTC,KT,Dasan,DPOE:mode>
+
+//disable olt oam extention support
+no olt <MACADDR:mac> oam extention support <LIST:Broadcom,CTC,KT,Dasan,DPOE:mode>
+
+//set olt path
+path <UINT:id>  port <UINT:epaPort> queue <UINT:epaSize>  port <UINT:epbPort> queue  <UINT:epbSize>
+
+//add olt domain destination rules
+olt domain <UINT:id> destination <UINT:destId> rule <LIST:downstream,upstream:direction> <LIST:DMac,SMac,SVlan0,SVlan1,CVlan0,CVlan1,Ethertyp,SIP,DIP,SrcPort,DstPort,TcpProtocal:field> <LIST:equal,no-equal,less,greater,exit,no-exit,always:op> <STRING:clause> <UINT:leftMask> <UINT:rightMask> priority <UINT:pri>  add-vlan <LIST:outer,inner:sel> <HEX:tpid> <HEX:vid>
+
+//add olt domain destination rules
+olt domain <UINT:id> destination <UINT:destId> rule <LIST:downstream,upstream:direction> <LIST:DMac,SMac,SVlan0,SVlan1,CVlan0,CVlan1,Ethertyp,SIP,DIP,SrcPort,DstPort,TcpProtocal:field> <LIST:equal,no-equal,less,greater,exit,no-exit,always:op> <STRING:clause> <UINT:leftMask> <UINT:rightMask> priority <UINT:pri>  <LIST:clear-add-vlan,delete-vlan,clear-delete-vlan,clear-cos:action> <LIST:outer,inner:sel>
+
+//add olt domain destination rules
+olt domain <UINT:id> destination <UINT:destId> rule <LIST:downstream,upstream:direction> <LIST:DMac,SMac,SVlan0,SVlan1,CVlan0,CVlan1,Ethertyp,SIP,DIP,SrcPort,DstPort,TcpProtocal:field> <LIST:equal,no-equal,less,greater,exit,no-exit,always:op> <STRING:clause> <UINT:leftMask> <UINT:rightMask> priority <UINT:pri> set-cos <LIST:outer,inner:sel> <UINT:cos>
+
+//add olt domain destination rules
+olt domain <UINT:id> destination <UINT:destId> rule <LIST:downstream,upstream:direction> <LIST:DMac,SMac,SVlan0,SVlan1,CVlan0,CVlan1,Ethertyp,SIP,DIP,SrcPort,DstPort,TcpProtocal:field> <LIST:equal,no-equal,less,greater,exit,no-exit,always:op> <STRING:clause> <UINT:leftMask> <UINT:rightMask> priority <UINT:pri>  discard-flag <LIST:set,clear:flag> <UINT:port>
+
+//add olt domain destination rules
+olt domain <UINT:id> destination <UINT:destId> rule <LIST:downstream,upstream:direction> <LIST:DMac,SMac,SVlan0,SVlan1,CVlan0,CVlan1,Ethertyp,SIP,DIP,SrcPort,DstPort,TcpProtocal:field> <LIST:equal,no-equal,less,greater,exit,no-exit,always:op> <STRING:clause> <UINT:leftMask> <UINT:rightMask> priority <UINT:pri> set-queue <UINT:path> <UINT:queueIndex>
+
+//add olt domain destination rules
+olt domain <UINT:id> destination <UINT:destId> rule <LIST:downstream,upstream:direction> <LIST:DMac,SMac,SVlan0,SVlan1,CVlan0,CVlan1,Ethertyp,SIP,DIP,SrcPort,DstPort,TcpProtocal:field> <LIST:equal,no-equal,less,greater,exit,no-exit,always:op> <STRING:clause> <UINT:leftMask> <UINT:rightMask> priority <UINT:pri> set-ucast-link <UINT:ucastId> <UINT:linkOffset>
+
+//remove destination rules
+no olt domain <UINT:id> destination <UINT:destId>  rules
+
+//set olt default configuration
+olt configure default
+#endif
+
+// Exit config submode
+exit
+
+// List all available commands with a substring 'filter' in it.
+help { <STRING:filter> }
+
+#endsubmode

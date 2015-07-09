@@ -1,0 +1,43 @@
+save configure
+recovery factory configure
+show ds_qos bandwidth
+show syslog server
+show reboot_level
+
+show cpu using
+show max cpu using
+show cm online number
+show max cm online number
+show ram using
+show max ram using
+show max us snr 
+show wan port statistics
+
+//utest load-balance dynamic create
+//utest load-balance dynamic clear
+//utest load-balance dynamic show
+
+utest load-balance create
+utest load-balance clear
+utest load-balance show
+
+utest channel-data create
+utest channel-data clear
+utest channel-data show
+
+debug function <STRING:funcName>
+no debug function <STRING:funcName>
+
+//tftp download and update rootfs, configurations...
+download rootfs <STRING:serverIp> <STRING:fileName>
+download cmc-config <STRING:serverIp> <STRING:fileName>
+download switch-config <STRING:serverIp> <STRING:fileName>
+upload cmc-config <STRING:serverIp> <STRING:fileName>
+upload switch-config <STRING:serverIp> <STRING:fileName>
+
+//ftp download and update rootfs, configurations...
+update <LIST:switch-config,controller-config,rootfs:type> <STRING:serverIp> <STRING:fileName> <STRING:userName> <STRING:password>
+
+reboot
+
+#include "cmc.cli"

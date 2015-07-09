@@ -1,0 +1,37 @@
+------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+--  GOSPELL-MIB MIB 
+--  File         : GOSPELL-DSL-MIB.mib
+--  Description  : GOSPELL DSL OID Definition MIB 
+--  Version      : 1.0 
+--  Date         : Tue Jul 22 00:00:00 CEST 2004     
+--
+------------------------------------------------------------------------------
+
+GOSPELL-DSL-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+    MODULE-IDENTITY, enterprises              FROM SNMPv2-SMI;
+
+    gospell MODULE-IDENTITY
+        LAST-UPDATED    "0110290000Z"  -- Octember 29, 2001
+        ORGANIZATION    "GOSPELL DIGITAL TECHNOLOGY CO., LTD."
+        CONTACT-INFO    "GOSPELL DIGITAL TECHNOLOGY CO., LTD.
+                         E-mail: Wangqs@gospell.com
+                         http://www.gospell.com/"
+
+        DESCRIPTION     "GOSPELL MIB OID defines and documentation."
+
+        REVISION        "0409220000Z"  -- 2004-09-22
+        DESCRIPTION     "Initial MIB creation."
+
+        ::= { enterprises 22764 }
+    
+-- gospell Products
+   gsDsl            OBJECT IDENTIFIER ::= { gospell 7900 }
+   gsPON                OBJECT IDENTIFIER ::= { gospell 7800}  
+
+-- END of gospell-MIB
+--
+
+END

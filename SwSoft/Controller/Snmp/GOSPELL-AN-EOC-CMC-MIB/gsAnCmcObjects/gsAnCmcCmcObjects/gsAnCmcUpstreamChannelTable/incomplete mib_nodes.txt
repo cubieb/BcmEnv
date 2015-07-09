@@ -1,0 +1,5 @@
+gsAnCmcUpChannelErrorRate
+gsAnCmcUpChannelSnr
+gsAnCmcUpChannelActiveCmCount
+gsAnCmcUpChannelRegisterCmCount
+gsAnCmcUpChannelUnregisterCmCount

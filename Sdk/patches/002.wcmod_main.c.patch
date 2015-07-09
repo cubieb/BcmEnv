@@ -1,0 +1,18 @@
+--- sdk-all-6.2.2/src/soc/phy/wcmod/src/wcmod_main.c	2012-12-20 10:11:42.000000000 -0800
++++ sdk-all-6.2.2/src/soc/phy/wcmod/src/wcmod_main.new.c	2013-12-22 18:50:50.081939000 -0800
+@@ -62,7 +62,6 @@
+ #endif /* INCLUDE_XGXS_WCMOD */
+ #endif
+ 
+-#ifdef INCLUDE_XGXS_WCMOD
+ #include "wcmod_main.h"
+ #include "wcmod_functions.h"
+ #ifndef _SDK_WCMOD_
+@@ -160,6 +159,7 @@
+   }
+ }
+ 
++#ifdef INCLUDE_XGXS_WCMOD
+ /*! 
+ \brief (Internal). Convert #wcmod_spd_intfc_set string to enum number.
+ 

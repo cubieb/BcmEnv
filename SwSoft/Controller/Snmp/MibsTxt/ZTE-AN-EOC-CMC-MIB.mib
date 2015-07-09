@@ -1,0 +1,1915 @@
+--------------------------------------------------------------------------------
+-- File Name : ZTE-AN-EOC-CMC-MIB.mib
+-- Date      : 2012-10-18
+-- Author    : ZTE NMS department.
+--
+-- ZTE EoC Equipment MIB for DOCSIS CMC
+--------------------------------------------------------------------------------
+
+ZTE-AN-EOC-CMC-MIB  DEFINITIONS ::= BEGIN
+
+    IMPORTS
+        RowStatus, DisplayString, TruthValue, MacAddress 
+            FROM SNMPv2-TC
+        Integer32, OBJECT-TYPE, MODULE-IDENTITY, IpAddress 
+            FROM SNMPv2-SMI
+        InetAddressType, InetAddress 
+            FROM INET-ADDRESS-MIB
+        docsIfCmtsCmStatusIndex 
+            FROM DOCS-IF-MIB
+        enterprises
+            FROM RFC1155-SMI;
+
+    zxAnCmcMib MODULE-IDENTITY 
+        LAST-UPDATED "2012101914Z"
+        ORGANIZATION
+            "ZTE Corporation"
+        CONTACT-INFO
+            "zhen weimin ZTE Corporation
+             Mail: zhen.weimin@zte.com.cn
+             Tel : +86-21-68897359"
+        DESCRIPTION
+            "This MIB defines DOCSIS CMC node managed objects."
+        ::=  { zxAn 9026 }
+
+    zte OBJECT IDENTIFIER   ::= { enterprises 3902 }
+
+    zxAn OBJECT IDENTIFIER  ::= { zte 1015 }
+    
+    zxAnCmcObjects           OBJECT IDENTIFIER ::= { zxAnCmcMib 2 }
+    
+    zxAnCmcCmObjects         OBJECT IDENTIFIER ::= { zxAnCmcObjects 1 }
+    
+    zxAnCmcCmcObjects        OBJECT IDENTIFIER ::= { zxAnCmcObjects 2 }
+    
+    zxCableDocsSpectrumObjects  OBJECT IDENTIFIER ::= { zxAnCmcObjects 3 }
+     
+    zxCableDocsLoadBalObjects   OBJECT IDENTIFIER ::= { zxAnCmcObjects 4 }
+    
+    zxCableDocsServiceFlowObjects   OBJECT IDENTIFIER ::= { zxAnCmcObjects 5 }
+               
+  --------------------------------------------------------------------------------     
+  
+    zxAnCmcCmStatistics       OBJECT IDENTIFIER ::= {zxAnCmcCmObjects 1}
+
+    zxAnCmcCmTotal      OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "The total number of cable modem"
+        ::=  {  zxAnCmcCmStatistics  1  }
+
+    zxAnCmcCmActive     OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "The number of cable modem in active state"
+        ::=  {  zxAnCmcCmStatistics  2  }
+        
+    zxAnCmcCmOnline     OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "The number of cable modem in online state"
+        ::=  {  zxAnCmcCmStatistics  3  }
+        
+    zxAnCmcCmOffline    OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "The number of cable modem in offline state"
+        ::=  {  zxAnCmcCmStatistics  4  }
+        
+    zxAnCmcCmInitR      OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "The number of cable modem in ranging state"
+        ::=  {  zxAnCmcCmStatistics  5  }
+        
+    zxAnCmcCmRC         OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "The number of cable modem in ranging-success state"
+        ::=  {  zxAnCmcCmStatistics  6  }
+        
+    zxAnCmcCmDHCPDiscover   OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "The number of cable modem in dhcp-discover state"
+        ::=  {  zxAnCmcCmStatistics  7  }
+        
+    zxAnCmcCmDHCPOffer      OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "The number of cable modem in dhcp-offer state"
+        ::=  {  zxAnCmcCmStatistics  8  }
+        
+    zxAnCmcCmDHCPRequest    OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "The number of cable modem in dhcp-request state"
+        ::=  {  zxAnCmcCmStatistics  9  }
+        
+    zxAnCmcCmDHCPAck        OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "The number of cable modem in dhcp-ack state"
+        ::=  {  zxAnCmcCmStatistics  10  }
+        
+    zxAnCmcCmInitF      OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "The number of cable modem which is downloading the configuration file"
+        ::=  {  zxAnCmcCmStatistics  11  }
+        
+    zxAnCmcCmFC         OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "The number of cable modem which download the configuration file successfully"
+        ::=  {  zxAnCmcCmStatistics  12  }
+        
+    zxAnCmcCmInitREG    OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "The number of cable modem which in registration state"
+        ::=  {  zxAnCmcCmStatistics  13  }
+        
+  --------------------------------------------------------------------------------     
+  
+    zxAnCmcCmUniTable  OBJECT-TYPE
+        SYNTAX  SEQUENCE  OF  ZxAnCmcCmUniEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION 
+            "This table show the user infomation of the CM UNI port."
+        ::=  { zxAnCmcCmObjects  2 }
+
+    zxAnCmcCmUniEntry  OBJECT-TYPE
+        SYNTAX  ZxAnCmcCmUniEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION 
+            "An entry in zxAnCmcCmUniTable."
+        INDEX  {  docsIfCmtsCmStatusIndex, zxAnCmcCmUserMacAddress  }
+        ::=  { zxAnCmcCmUniTable  1 }
+
+    ZxAnCmcCmUniEntry  ::=  SEQUENCE 
+        {
+            zxAnCmcCmUserMacAddress     MacAddress,
+            zxAnCmcCmUserIpAddressType  InetAddressType,
+            zxAnCmcCmUserIpAddress        InetAddress,
+            zxAnCmcCmConnectState         Integer32,
+            zxAnCmcCmOnlineTime           TimeTicks,
+            zxAnCmcCmDocsisVersion        Integer32,
+            zxAnCmcCmTimeOffSet           Integer32,
+            zxAnCmcCmMicroReflect         Integer32,
+            zxAnCmcCmPrimaryUsChannel     Integer32,
+            zxAnCmcCmPrimaryDsChannel     Integer32,
+            zxAnCmcCmUpstreamSNR          Integer32,
+            zxAnCmcCmUpstreamPower        Integer32,            
+            zxAnCmcCmDownstreamSNR        Integer32,
+            zxAnCmcCmDownstreamPower      Integer32,
+            zxAnCmcCmNumberOfCPEs         Integer32,
+            zxAnCmcCmConfigFile           OCTET STRING,
+            zxAnCmcCmResetNow             TruthValue,
+            zxAnCmcCmDeleteNow            TruthValue,
+            zxAnCmcCmUpstreamBandWidth    Integer32,
+            zxAnCmcCmDownstreamBandWidth  Integer32
+        }
+
+    zxAnCmcCmUserMacAddress  OBJECT-TYPE 
+        SYNTAX  MacAddress
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION     
+            "The MAC address of the user device."
+        ::=  {  zxAnCmcCmUniEntry  1  }
+
+    zxAnCmcCmUserIpAddressType  OBJECT-TYPE 
+        SYNTAX  InetAddressType
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The type of IP address used by this entry."
+        DEFVAL { ipv4 }
+        ::=  {  zxAnCmcCmUniEntry  2  }
+        
+    zxAnCmcCmUserIpAddress  OBJECT-TYPE 
+        SYNTAX  InetAddress
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The IP address of the user device."
+        ::=  {  zxAnCmcCmUniEntry  3  }
+
+    zxAnCmcCmConnectState  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+           "The CM connectivity state: 
+            Other =1
+            InitialRanging =2
+            RangingAutoAdjComplete = 4
+            startEae =10
+            startDhcpv4 = 11
+            startDhcpv6 =12
+            Dhcpv4Complete = 5
+            Dhcpv6Complete = 13
+            StartConfigFileDownload = 14
+            configFileDownloadComplete = 15
+            startRegistration = 16
+            registrationComplete =6
+            operational =8
+            BpiInit =9
+            forwardingDisabled = 17
+            rfMuteAll = 18"
+        ::=  {  zxAnCmcCmUniEntry  4  }
+
+    zxAnCmcCmOnlineTime  OBJECT-TYPE 
+        SYNTAX  TimeTicks
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+           "the cable modem online time"
+        ::=  {  zxAnCmcCmUniEntry  5  }
+
+    zxAnCmcCmDocsisVersion  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+           "the cable modem DOCSIS version:
+            1  Docsis10
+            2  Docsis11
+            3  Docsis20
+            4  Docsis30"
+        ::=  {  zxAnCmcCmUniEntry  6  }
+
+    zxAnCmcCmTimeOffSet  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+           "the cable modem timing offset. units : millisecond."
+        ::=  {  zxAnCmcCmUniEntry  7  }
+
+    zxAnCmcCmMicroReflect  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+           "Total Micro-reflections measured in dBc"
+        ::=  {  zxAnCmcCmUniEntry  8  }
+                        
+    zxAnCmcCmPrimaryUsChannel   OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "This attribute contains the primary upstream channel,which the cable modem belong to."
+        ::=  {  zxAnCmcCmUniEntry  9  }       
+
+    zxAnCmcCmPrimaryDsChannel   OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "This attribute contains the primary downstream channel,which the cable modem belong to."
+        ::=  {  zxAnCmcCmUniEntry  10  }   
+
+    zxAnCmcCmUpstreamSNR  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "the cable modem upstream SNR.unit:tenthdB"
+        ::=  {  zxAnCmcCmUniEntry  11  }
+        
+    zxAnCmcCmUpstreamPower  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "the cable modem upstream send power.unit:tenthdBmV"
+        ::=  {  zxAnCmcCmUniEntry  12  }
+        
+    zxAnCmcCmDownstreamSNR  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "the cable modem downstream SNR.unit:tenthdB"
+        ::=  {  zxAnCmcCmUniEntry  13  }
+        
+    zxAnCmcCmDownstreamPower  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "the cable modem downstream receive power.unit:tenthdBmV"
+        ::=  {  zxAnCmcCmUniEntry  14  }
+                
+    zxAnCmcCmNumberOfCPEs  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "the number of CPEs in the cable modem."
+        ::=  {  zxAnCmcCmUniEntry  15  }
+        
+      zxAnCmcCmConfigFile  OBJECT-TYPE 
+        SYNTAX  OCTET STRING (SIZE (128))
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The config file cable modem config file."
+        ::=  {  zxAnCmcCmUniEntry  16  }       
+                 
+      zxAnCmcCmResetNow OBJECT-TYPE
+        SYNTAX      TruthValue
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+            "Setting this object to true(1) causes the device to
+             reset.  Reading this object always returns false(2)."
+        ::=  {  zxAnCmcCmUniEntry  17  }
+        
+      zxAnCmcCmDeleteNow OBJECT-TYPE
+        SYNTAX      TruthValue
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+            "Setting this object to true(1) causes the device to
+             re-register.  Reading this object always returns false(2)."
+        ::=  {  zxAnCmcCmUniEntry  18  }
+        
+      zxAnCmcCmUpstreamBandWidth  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "the upstream bandwidth of one cm.unit:bps(bit per second)"
+        ::=  {  zxAnCmcCmUniEntry  19  }
+        
+      zxAnCmcCmDownstreamBandWidth  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "the downstream bandwidth of one cm.unit:bps(bit per second)"
+        ::=  {  zxAnCmcCmUniEntry  20  }
+  --------------------------------------------------------------------------------     
+  
+    zxAnCmcCmCpeTable  OBJECT-TYPE
+        SYNTAX  SEQUENCE  OF  zxAnCmcCmCpeEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION 
+            "This table show the cpe infomation of the CM UNI port."
+        ::=  { zxAnCmcCmObjects  3 }
+
+    zxAnCmcCmCpeEntry  OBJECT-TYPE
+        SYNTAX  zxAnCmcCmCpeEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION 
+            "An entry in zxAnCmcCmCpeTable."
+        INDEX  {  zxAnCmcCmIndex, zxAnCmcCmCpeIndex  }
+        ::=  { zxAnCmcCmCpeTable  1 }
+
+    zxAnCmcCmCpeEntry  ::=  SEQUENCE 
+        {
+            zxAnCmcCmIndex                Integer32,
+            zxAnCmcCmCpeIndex             Integer32,
+            zxAnCmcCmMacAddress           MacAddress,
+            zxAnCmcCmCpeMacAddress        MacAddress,
+            zxAnCmcCmCpeIpAddressType     InetAddressType,
+            zxAnCmcCmCpeIpAddress         InetAddress,
+            zxAnCmcCmCpeType              Integer32
+        }
+        
+    zxAnCmcCmIndex  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION     
+            "The cm id."
+        ::=  {  zxAnCmcCmCpeEntry  1  }
+        
+    zxAnCmcCmCpeIndex  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION     
+            "The cpe id of the CM UNI port."
+        ::=  {  zxAnCmcCmCpeEntry  2  }
+        
+    zxAnCmcCmMacAddress  OBJECT-TYPE 
+        SYNTAX  MacAddress
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The MAC address of the cm."
+        ::=  {  zxAnCmcCmCpeEntry  3  }
+        
+    zxAnCmcCmCpeMacAddress  OBJECT-TYPE 
+        SYNTAX  MacAddress
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The MAC address of the cpe."
+        ::=  {  zxAnCmcCmCpeEntry  4  }
+        
+    zxAnCmcCmCpeIpAddressType  OBJECT-TYPE 
+        SYNTAX  InetAddressType
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The IP address type of the cpe.
+             0: IPv4
+             1: IPv6"
+        ::=  {  zxAnCmcCmCpeEntry  5  }
+        
+    zxAnCmcCmCpeIpAddress  OBJECT-TYPE 
+        SYNTAX  InetAddress
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The IP address of the cpe."
+        ::=  {  zxAnCmcCmCpeEntry  6  }
+        
+    zxAnCmcCmCpeType  OBJECT-TYPE 
+        SYNTAX  Integer32 { MTA ( 1 ) , STB ( 2 ) , HOST ( 3 ) , WIFI ( 4 ) , ISTB ( 5 ) , OTHER ( 6 ) }
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The type of the cpe.
+             1: MTA
+             2: STB
+             3: HOST
+             4: WIFI
+             5: ISTB
+             6: OTHER"
+        ::=  {  zxAnCmcCmCpeEntry  7  }
+
+  --------------------------------------------------------------------------------     
+
+      zxAnCmcCmTrafficTable  OBJECT-TYPE
+        SYNTAX  SEQUENCE  OF  zxAnCmcCmTrafficEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION 
+            "This table show the traffic counters infomation of the CM port."
+        ::=  { zxAnCmcCmObjects  4 }
+
+    zxAnCmcCmTrafficEntry  OBJECT-TYPE
+        SYNTAX  zxAnCmcCmTrafficEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION 
+            "An entry in zxAnCmcCmTrafficTable."
+        INDEX  {  zxAnCmMacAddress, zxAnCmcCmIfIndex  }
+        ::=  { zxAnCmcCmTrafficTable  1 }
+
+    zxAnCmcCmTrafficEntry  ::=  SEQUENCE 
+        {
+            zxAnCmMacAddress              MacAddress,
+            zxAnCmcCmIfIndex              Integer32,
+            zxAnCmcCmIfInOctets           Counter,
+            zxAnCmcCmIfInUcastPkts        Counter,
+            zxAnCmcCmIfInNUcastPkts       Counter,
+            zxAnCmcCmIfInDiscards         Counter,
+            zxAnCmcCmIfInErrors           Counter,
+            zxAnCmcCmIfInUnknownProtos    Counter,
+            zxAnCmcCmIfOutOctets          Counter,
+            zxAnCmcCmIfOutUcastPkts       Counter,
+            zxAnCmcCmIfOutNUcastPkts      Counter,
+            zxAnCmcCmIfOutDiscards        Counter,
+            zxAnCmcCmIfOutErrors          Counter
+        }
+  
+   zxAnCmMacAddress  OBJECT-TYPE 
+        SYNTAX  MacAddress
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The MAC address of the cable modem."
+        ::=  {  zxAnCmcCmTrafficEntry  1  }
+
+   zxAnCmcCmIfIndex  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "A unique value for each cable modem interface."
+        ::=  {  zxAnCmcCmTrafficEntry  2  }
+
+   zxAnCmcCmIfInOctets  OBJECT-TYPE 
+        SYNTAX  Counter
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The total number of octets received on the cable modem
+            interface, including framing characters."
+        ::=  {  zxAnCmcCmTrafficEntry  3  }
+
+   zxAnCmcCmIfInUcastPkts  OBJECT-TYPE 
+        SYNTAX  Counter
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The number of subnetwork-unicast packets
+            delivered to a higher-layer protocol."
+        ::=  {  zxAnCmcCmTrafficEntry  4  }
+        
+   zxAnCmcCmIfInNUcastPkts  OBJECT-TYPE 
+        SYNTAX  Counter
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The number of non-unicast (i.e., subnetwork-
+            broadcast or subnetwork-multicast) packets
+            delivered to a higher-layer protocol."
+        ::=  {  zxAnCmcCmTrafficEntry  5  }   
+        
+   zxAnCmcCmIfInDiscards  OBJECT-TYPE 
+        SYNTAX  Counter
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The number of inbound packets which were chosen
+            to be discarded even though no errors had been
+            detected to prevent their being deliverable to a
+            higher-layer protocol.  One possible reason for
+            discarding such a packet could be to free up
+            buffer space."
+        ::=  {  zxAnCmcCmTrafficEntry  6  }   
+ 
+   zxAnCmcCmIfInErrors  OBJECT-TYPE 
+        SYNTAX  Counter
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+              "The number of inbound packets that contained
+              errors preventing them from being deliverable to a
+              higher-layer protocol."
+        ::=  {  zxAnCmcCmTrafficEntry  7  }   
+
+   zxAnCmcCmIfInUnknownProtos  OBJECT-TYPE 
+        SYNTAX  Counter
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The number of packets received via the interface
+            which were discarded because of an unknown or
+            unsupported protocol."
+        ::=  {  zxAnCmcCmTrafficEntry  8  } 
+
+   zxAnCmcCmIfOutOctets  OBJECT-TYPE 
+        SYNTAX  Counter
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The total number of octets transmitted out of the
+            interface, including framing characters."
+        ::=  {  zxAnCmcCmTrafficEntry  9  }   
+
+   zxAnCmcCmIfOutUcastPkts  OBJECT-TYPE 
+        SYNTAX  Counter
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The total number of packets that higher-level
+            protocols requested be transmitted to a
+            subnetwork-unicast address, including those that
+            were discarded or not sent."
+        ::=  {  zxAnCmcCmTrafficEntry  10  }   
+
+   zxAnCmcCmIfOutNUcastPkts  OBJECT-TYPE 
+        SYNTAX  Counter
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The total number of packets that higher-level
+            protocols requested be transmitted to a non-
+            unicast (i.e., a subnetwork-broadcast or
+            subnetwork-multicast) address, including those
+            that were discarded or not sent."
+        ::=  {  zxAnCmcCmTrafficEntry  11  }   
+
+   zxAnCmcCmIfOutDiscards  OBJECT-TYPE 
+        SYNTAX  Counter
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The number of outbound packets which were chosen
+            to be discarded even though no errors had been
+            detected to prevent their being transmitted.  One
+            possible reason for discarding such a packet could
+            be to free up buffer space."
+        ::=  {  zxAnCmcCmTrafficEntry  12  }   
+
+   zxAnCmcCmIfOutErrors  OBJECT-TYPE 
+        SYNTAX  Counter
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The number of outbound packets that could not be
+            transmitted because of errors."
+        ::=  {  zxAnCmcCmTrafficEntry  13  }   
+
+  --------------------------------------------------------------------------------     
+
+    zxAnCmcSystem       OBJECT IDENTIFIER ::= {zxAnCmcCmcObjects 1}
+
+    zxAnCmcChannelBinding      OBJECT-TYPE 
+        SYNTAX          Integer32 { Disabled ( 0 ) , Enable ( 1 ) } 
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "cmc upstream and downstream channel binding.
+                          0: Disabled
+                          1: Enable"
+        ::=  {  zxAnCmcSystem  1  }
+
+    zxAnCmcUpFrequencyStandard      OBJECT-TYPE 
+        SYNTAX          Integer32 { USA ( 1 ) , Euro ( 2 ) } 
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "the upstream channel frequency range.
+                          1: USA standard,5-42MHz 
+                          2: Euro standard,5-65MHz,"
+        ::=  {  zxAnCmcSystem  2  }
+        
+    zxAnCmcDownFrequencyStandard     OBJECT-TYPE 
+        SYNTAX          Integer32 { USA ( 1 ) , Euro ( 2 ) } 
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "the downstream channel frequency range.
+                          1: USA standard,88-860MHz
+                          2: Euro standard,108-862MHz"
+        ::=  {  zxAnCmcSystem  3  }
+                              
+--------------------------------------------------------------------------------     
+
+    zxAnCmcCdtTransSVidTable  OBJECT-TYPE
+        SYNTAX  SEQUENCE  OF  ZxAnCmcCdtTransSVidEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION 
+            "This table indicates the mapping between the service VLAN and 
+            the CoS of the CM upstream packets.
+            When the CMC receives the packets from the CM, it will translate 
+            the CDT(C-DOCSIS Data Tag) information into the service VLAN 
+            according to the CoS."
+        ::=  { zxAnCmcCmcObjects  2 }
+
+    zxAnCmcCdtTransSVidEntry  OBJECT-TYPE
+        SYNTAX  ZxAnCmcCdtTransSVidEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION 
+            "An entry in zxAnCmcCdtTransSVidTable."
+        INDEX  {  zxAnCmcCdtCos   }
+        ::=  { zxAnCmcCdtTransSVidTable 1 }
+
+     ZxAnCmcCdtTransSVidEntry  ::=
+        SEQUENCE {
+            zxAnCmcCdtCos                   Integer32,
+            zxAnCmcCdtTransSVid             Integer32,
+            zxAnCmcCdtTransSVidRowStatus    RowStatus
+        }
+        
+     zxAnCmcCdtCos  OBJECT-TYPE 
+        SYNTAX  Integer32(0..8)
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION     
+            "The CoS value, which is included in the CDT of the CM upstream 
+            packets."
+        ::=  {  zxAnCmcCdtTransSVidEntry  1  }
+        
+     zxAnCmcCdtTransSVid  OBJECT-TYPE 
+        SYNTAX  Integer32(1..4094)
+        MAX-ACCESS  read-create
+        STATUS  current
+        DESCRIPTION     
+            "The service VLAN, which will be used to replace the CDT of the 
+            CM upstream packets according to the CoS value."
+        ::=  {  zxAnCmcCdtTransSVidEntry  2  }
+        
+     zxAnCmcCdtTransSVidRowStatus  OBJECT-TYPE 
+        SYNTAX  RowStatus
+        MAX-ACCESS  read-create
+        STATUS  current
+        DESCRIPTION     
+            "The status of this conceptual row.
+
+            The supported actions of this conceptual row only include:
+            'createAndGo' and 'destroy'.
+            
+            To create a row in this table, a manager must set this object to 
+            createAndGo(4).
+            
+            To delete a row in this table, a manager must set this object to 
+            destroy(6). 
+             
+            To get this object, the agent always returns active(1)."
+        ::=  {  zxAnCmcCdtTransSVidEntry  50 }
+ 
+
+--------------------------------------------------------------------------------     
+
+    zxAnCmcUpstreamChannelTable  OBJECT-TYPE
+        SYNTAX  SEQUENCE  OF  zxAnCmcUpstreamChannelEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION 
+            "This table indicates the upstream channel."
+        ::=  { zxAnCmcCmcObjects  3 }
+
+    zxAnCmcUpstreamChannelEntry OBJECT-TYPE
+        SYNTAX  zxAnCmcUpstreamChannelEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION 
+            "An entry in zxAnCmcUpstreamChannelTable."
+        INDEX  {  zxAnCmcUpChannelId   }
+        ::=  { zxAnCmcUpstreamChannelTable 1 }
+
+     zxAnCmcUpstreamChannelEntry  ::=
+        SEQUENCE {
+            zxAnCmcUpChannelId                   Integer32,
+            zxAnCmcUpChannelErrorRate            Integer32,
+            zxAnCmcUpChannelSnr                  Integer32,
+            zxAnCmcUpChannelName                 OCTET STRING,
+            zxAnCmcUpChannelEnable               Integer32,
+            zxAnCmcUpChannelActiveCmCount        Integer32,
+            zxAnCmcUpChannelRegisterCmCount      Integer32,
+            zxAnCmcUpChannelUnregisterCmCount    Integer32,
+            zxAnCmcUpChannelInputPower           Integer32
+        }
+        
+     zxAnCmcUpChannelId  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION     
+            "The upstream channel id."
+        ::=  {  zxAnCmcUpstreamChannelEntry  1  }
+        
+     zxAnCmcUpChannelErrorRate  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The current  error rate of the cmc  upstream channel."
+        ::=  {  zxAnCmcUpstreamChannelEntry  2  }
+
+     zxAnCmcUpChannelSnr  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The current SNR(dB) of the cmc upstream channel."
+        ::=  {  zxAnCmcUpstreamChannelEntry  3  }
+        
+     zxAnCmcUpChannelName  OBJECT-TYPE 
+        SYNTAX  OCTET STRING
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The name of the cmc upstream channel."
+        ::=  {  zxAnCmcUpstreamChannelEntry  4  }
+        
+     zxAnCmcUpChannelEnable  OBJECT-TYPE 
+        SYNTAX  Integer32 { Disabled ( 0 ) , Enable ( 1 ) }
+        MAX-ACCESS  read-write
+        STATUS  current
+        DESCRIPTION     
+            "The current Setting of the cmc upstream channel.
+             0: Disabled
+             1: Enable"
+        ::=  {  zxAnCmcUpstreamChannelEntry  5  }
+        
+     zxAnCmcUpChannelActiveCmCount  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The current Count of the Active Cm."
+        ::=  {  zxAnCmcUpstreamChannelEntry  6  }
+        
+     zxAnCmcUpChannelRegisterCmCount  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The current Count of the Register Cm."
+        ::=  {  zxAnCmcUpstreamChannelEntry  7  }
+        
+     zxAnCmcUpChannelUnregisterCmCount  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The current Count of the Unregister Cm."
+        ::=  {  zxAnCmcUpstreamChannelEntry  8  }
+     
+     zxAnCmcUpChannelInputPower  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  read-write
+        STATUS  current
+        DESCRIPTION     
+            "The InputPower(dB) of the UpChannel."
+        ::=  {  zxAnCmcUpstreamChannelEntry  9  }
+--------------------------------------------------------------------------------     
+        
+     zxAnCmcDownstreamChannelTable  OBJECT-TYPE
+        SYNTAX  SEQUENCE  OF  zxAnCmcDownstreamChannelEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION 
+            "This table indicates the Downstream channel."
+        ::=  { zxAnCmcCmcObjects  4 }
+
+    zxAnCmcDownstreamChannelEntry OBJECT-TYPE
+        SYNTAX  zxAnCmcDownstreamChannelEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION 
+            "An entry in zxAnCmcDownstreamChannelTable."
+        INDEX  {  zxAnCmcDownChannelId   }
+        ::=  { zxAnCmcDownstreamChannelTable 1 }
+
+     zxAnCmcDownstreamChannelEntry  ::=
+        SEQUENCE {
+            zxAnCmcDownChannelId                 Integer32,
+            zxAnCmcDownChannelName               OCTET STRING,
+            zxAnCmcDownChannelEnable             Integer32,
+            zxAnCmcDownChannelStatus             Integer32,
+            zxAnCmcDownChannelActiveCmCount      Integer32,
+            zxAnCmcDownChannelRegisterCmCount    Integer32,
+            zxAnCmcDownChannelUnregisterCmCount  Integer32,
+            zxAnCmcDownChannelMtu                Integer32
+        }
+        
+     zxAnCmcDownChannelId  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION     
+            "The downstream channel id."
+        ::=  {  zxAnCmcDownstreamChannelEntry  1  }
+     
+     zxAnCmcDownChannelName  OBJECT-TYPE 
+        SYNTAX  OCTET STRING
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The name of the cmc downstream channel."
+        ::=  {  zxAnCmcDownstreamChannelEntry  2  }
+      
+      zxAnCmcDownChannelEnable  OBJECT-TYPE 
+        SYNTAX  Integer32 { Disabled ( 0 ) , EnabledDOCSIS ( 1 ) , EnabledIPQAM ( 2 )}
+        MAX-ACCESS  read-write
+        STATUS  current
+        DESCRIPTION     
+            "The current Setting of the cmc downstream channel.
+             0: Disabled
+             1: Enabled DOCSIS             
+             2: Enabled IPQAM"
+        ::=  {  zxAnCmcDownstreamChannelEntry  3  }
+        
+     zxAnCmcDownChannelStatus  OBJECT-TYPE 
+        SYNTAX  Integer32 { Disabled ( 0 ) , EnabledDOCSIS ( 1 ) , EnabledIPQAM ( 2 )}
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The current Status of the cmc downstream channel.
+             0: Disabled
+             1: Enabled DOCSIS
+             2: Enabled IPQAM"
+        ::=  {  zxAnCmcDownstreamChannelEntry  4  }
+        
+     zxAnCmcDownChannelActiveCmCount  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The current Count of the Active Cm."
+        ::=  {  zxAnCmcDownstreamChannelEntry  5  }
+        
+     zxAnCmcDownChannelRegisterCmCount  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The current Count of the Register Cm."
+        ::=  {  zxAnCmcDownstreamChannelEntry  6  }
+        
+     zxAnCmcDownChannelUnregisterCmCount  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The current Count of the Unregister Cm."
+        ::=  {  zxAnCmcDownstreamChannelEntry  7  }
+        
+     zxAnCmcDownChannelMtu  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The Mtu value of the DownChannel."
+        ::=  {  zxAnCmcDownstreamChannelEntry  8  }
+
+--------------------------------------------------------------------------------     
+        
+     zxAnCmcChannelStatisticsTable  OBJECT-TYPE
+        SYNTAX  SEQUENCE  OF  zxAnCmcChannelStatisticsEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION 
+            "This table indicates the statistics of channels."
+        ::=  { zxAnCmcCmcObjects  5 }
+
+     zxAnCmcChannelStatisticsEntry OBJECT-TYPE
+        SYNTAX  zxAnCmcChannelStatisticsEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION 
+            "An entry in zxAnCmcChannelStatisticsTable."
+        INDEX  {  zxAnCmcChannelStatisticsIndex  }
+        ::=  { zxAnCmcChannelStatisticsTable 1 }
+
+     zxAnCmcChannelStatisticsEntry  ::=
+        SEQUENCE {
+            zxAnCmcChannelStatisticsIndex            Integer32,
+            zxAnCmcChannelStatisticsIFIndex          Integer32,
+            zxAnCmcChannelStatisticsDir              Integer32,
+            zxAnCmcChannelStatisticsId               Integer32,
+            zxAnCmcChannelStatisticsName             DisplayString,
+            zxAnCmcChannelStatisticsSpeed            Integer32,
+            zxAnCmcChannelStatisticsBandWidth        Integer32,
+            zxAnCmcChannelStatisticsUtilization      Integer32
+        }
+        
+     zxAnCmcChannelStatisticsIndex  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION     
+            "The index of the cmc channel."
+        ::=  {  zxAnCmcChannelStatisticsEntry  1  }
+        
+     zxAnCmcChannelStatisticsIFIndex  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The interface index of the cmc channel."
+        ::=  {  zxAnCmcChannelStatisticsEntry  2  }
+        
+     zxAnCmcChannelStatisticsDir  OBJECT-TYPE 
+        SYNTAX  Integer32 { DownStream ( 128 ) , UpStream ( 129 ) }
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The direction of the cmc channel."
+        ::=  {  zxAnCmcChannelStatisticsEntry  3  }
+        
+     zxAnCmcChannelStatisticsId  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The id of the cmc channel."
+        ::=  {  zxAnCmcChannelStatisticsEntry  4  }
+        
+     zxAnCmcChannelStatisticsName  OBJECT-TYPE 
+        SYNTAX  DisplayString
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The name of the cmc channel."
+        ::=  {  zxAnCmcChannelStatisticsEntry  5  }
+        
+     zxAnCmcChannelStatisticsSpeed  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The current speed(Bytes/s) of the cmc channel."
+        ::=  {  zxAnCmcChannelStatisticsEntry  6  }
+        
+     zxAnCmcChannelStatisticsBandWidth  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The bandwidth(Mbps) of the cmc channel."
+        ::=  {  zxAnCmcChannelStatisticsEntry  7  }
+        
+     zxAnCmcChannelStatisticsUtilization  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The current utilization of the cmc channel."
+        ::=  {  zxAnCmcChannelStatisticsEntry  8  }
+
+--------------------------------------------------------------------------------     
+     
+        zxAnCmcPortStatisticsTable  OBJECT-TYPE
+        SYNTAX  SEQUENCE  OF  zxAnCmcPortStatisticsEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION 
+            "This table indicates the statistics of channels."
+        ::=  { zxAnCmcCmcObjects  6 }
+
+     zxAnCmcPortStatisticsEntry OBJECT-TYPE
+        SYNTAX  zxAnCmcPortStatisticsEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION 
+            "An entry in zxAnCmcPortStatisticsTable."
+        INDEX  {  zxAnCmcPortStatisticsIndex  }
+        ::=  { zxAnCmcPortStatisticsTable 1 }
+
+     zxAnCmcPortStatisticsEntry  ::=
+        SEQUENCE {
+            zxAnCmcPortStatisticsIndex            Integer32,
+            zxAnCmcPortStatisticsRxSpeed          DisplayString,
+            zxAnCmcPortStatisticsTxSpeed          DisplayString
+        }
+        
+     zxAnCmcPortStatisticsIndex  OBJECT-TYPE 
+        SYNTAX  Integer32{ GE ( 2 ) , INNER ( 3 ) , PON ( 4 ) }
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION     
+            "The port num of the cmc statistics."
+        ::=  {  zxAnCmcPortStatisticsEntry  1  }
+        
+     zxAnCmcPortStatisticsRxSpeed  OBJECT-TYPE 
+        SYNTAX  DisplayString
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The current receive speed(Bytes/s) of the cmc port."
+        ::=  {  zxAnCmcPortStatisticsEntry  2  }
+        
+         
+     zxAnCmcPortStatisticsTxSpeed  OBJECT-TYPE 
+        SYNTAX  DisplayString
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The current send speed(Bytes/s) of the cmc port."
+        ::=  {  zxAnCmcPortStatisticsEntry  3  }
+
+
+--------------------------------------------------------------------------------     
+
+     zxAnCmcPonIfMgmtTable  OBJECT-TYPE
+        SYNTAX  SEQUENCE  OF  zxAnCmcPonIfMgmtEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION 
+            "This table manage CMC uplink PON interface."
+        ::=  { zxAnCmcCmcObjects  7 }
+
+     zxAnCmcPonIfMgmtEntry OBJECT-TYPE
+        SYNTAX  zxAnCmcPonIfMgmtEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION 
+            "An entry in zxAnCmcPonIfMgmtTable."
+        INDEX  {  zxAnCmcPonIndex  }
+        ::=  { zxAnCmcPonIfMgmtTable 1 }
+
+     zxAnCmcPonIfMgmtEntry  ::=
+        SEQUENCE {
+            zxAnCmcPonIndex                       Integer32,
+            zxAnCmcPonRxPower                     DisplayString,
+            zxAnCmcPonTxPower                     DisplayString,
+            zxAnCmcPonName                        DisplayString,
+            zxAnCmcPonType                        Integer32,
+            zxAnCmcPonWorkStatus                  Integer32,
+            zxAnCmcOpticalModuleVender            DisplayString,
+            zxAnCmcOpticalModuleType              DisplayString
+        }
+        
+     zxAnCmcPonIndex  OBJECT-TYPE 
+        SYNTAX  Integer32 
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION     
+            "The pon port num of the cmc statistics."
+        ::=  {  zxAnCmcPonIfMgmtEntry  1  }
+        
+     zxAnCmcPonRxPower  OBJECT-TYPE 
+        SYNTAX  DisplayString
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The receive power (dbm) of the pon interface."
+        ::=  {  zxAnCmcPonIfMgmtEntry  2  }
+            
+     zxAnCmcPonTxPower  OBJECT-TYPE 
+        SYNTAX  DisplayString
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The transmit power (dbm) of the pon interface."
+        ::=  {  zxAnCmcPonIfMgmtEntry  3  }
+
+     zxAnCmcPonName  OBJECT-TYPE 
+        SYNTAX  DisplayString
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The pon interface name."
+        ::=  {  zxAnCmcPonIfMgmtEntry  4  }
+        
+     zxAnCmcPonType  OBJECT-TYPE 
+        SYNTAX  Integer32 { UNKNOWN ( 0 ), EPON ( 1 ), GPON ( 2 ) }
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The pon type."
+        ::=  {  zxAnCmcPonIfMgmtEntry  5  }
+
+     zxAnCmcPonWorkStatus  OBJECT-TYPE 
+        SYNTAX  Integer32 { Online ( 1 ), Offline ( 2 ) }
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The pon interface working status."
+        ::=  {  zxAnCmcPonIfMgmtEntry  6  }        
+
+     zxAnCmcOpticalModuleVender  OBJECT-TYPE 
+        SYNTAX  DisplayString
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The optical module vender name."
+        ::=  {  zxAnCmcPonIfMgmtEntry  22  }    
+        
+     zxAnCmcOpticalModuleType  OBJECT-TYPE 
+        SYNTAX  DisplayString
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The optical module type."
+        ::=  {  zxAnCmcPonIfMgmtEntry  23  }    
+                                    
+--------------------------------------------------------------------------------     
+    zxAnCmcVendorToVlanObjects   OBJECT IDENTIFIER ::= {zxAnCmcCmcObjects 8}
+
+    zxAnCmcVendorToVlanStatus   OBJECT-TYPE 
+        SYNTAX          Unsigned32 { Disable ( 0 ) , Enable ( 1 ) } 
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "the status of Vendor To Vlan, the change will take effect after save and reboot"
+        ::=  {  zxAnCmcVendorToVlanObjects  1  }    
+          
+    zxAnCmcVendorToVlanTable  OBJECT-TYPE
+        SYNTAX      SEQUENCE  OF  zxAnCmcVendorToVlanEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION "Vendor To Vlan table"
+        ::=  { zxAnCmcVendorToVlanObjects  2 }
+   
+    zxAnCmcVendorToVlanEntry  OBJECT-TYPE
+        SYNTAX      zxAnCmcVendorToVlanEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION "An entry in zxAnCmcVendorToVlanTable."
+        INDEX {VendorItemIndex
+           }
+     ::= { zxAnCmcVendorToVlanTable 1 }    
+
+    zxAnCmcVendorToVlanEntry  ::=  SEQUENCE {
+        VendorItemIndex                     Unsigned32,
+        zxAnCmcVendorToVlanCmMac            MacAddress, 
+        zxAnCmcVendorToVlanCmState          Unsigned32,
+        zxAnCmcVendorToVlanVlanID           Unsigned32,
+        zxAnCmcVendorToVlanVendorID         OCTET STRING
+        }
+
+        VendorItemIndex   OBJECT-TYPE 
+        SYNTAX          Unsigned32
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION     "id index"
+        ::=  {  zxAnCmcVendorToVlanEntry  1  }   
+        
+        zxAnCmcVendorToVlanCmMac   OBJECT-TYPE 
+        SYNTAX          MacAddress
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "cm's mac address"
+        ::=  {  zxAnCmcVendorToVlanEntry  2  }       
+        
+        zxAnCmcVendorToVlanCmState   OBJECT-TYPE 
+        SYNTAX          Unsigned32{ InitRng ( 0 ) , InitRC ( 1 ) , InitReg ( 2 ), Online ( 3 ), other ( 4 ) }
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "cm' state"
+        ::=  {  zxAnCmcVendorToVlanEntry  3  }
+        
+        zxAnCmcVendorToVlanVlanID   OBJECT-TYPE 
+        SYNTAX          Unsigned32
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "the vlan ID"
+        ::=  {  zxAnCmcVendorToVlanEntry  4  }    
+        
+        zxAnCmcVendorToVlanVendorID   OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "the Vendor ID"
+        ::=  {  zxAnCmcVendorToVlanEntry  5  }               
+--------------------------------------------------------------------------------     
+           
+   zxCableDocsUsSpectrumSystem       OBJECT IDENTIFIER ::= {zxCableDocsSpectrumObjects 1}
+        
+        zxCableDocsUsSpectrumFFTAveraging      OBJECT-TYPE 
+        SYNTAX          Integer32 { Disable ( 0 ) , Enable ( 1 )} 
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "Dynamic load balancing method.
+                          0: Disable
+                          1: Enable"
+        ::=  {  zxCableDocsUsSpectrumSystem  1  }
+                                                                           
+--------------------------------------------------------------------------------        
+    
+    zxCableDocsUsSpectrumChartTable  OBJECT-TYPE
+        SYNTAX      SEQUENCE  OF  zxCableDocsUsSpectrumChartEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION "Spectrum analysis chart table."
+        ::=  { zxCableDocsSpectrumObjects  2 }
+   
+    zxCableDocsUsSpectrumChartEntry  OBJECT-TYPE
+        SYNTAX      zxCableDocsUsSpectrumChartEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION "An entry in zxCableDocsSpectrumChartTable."
+        INDEX       {  zxCableDocsUsSpectrumIndex  }
+        ::=  { zxCableDocsUsSpectrumChartTable 1 }       
+
+    zxCableDocsUsSpectrumChartEntry  ::=  SEQUENCE {
+        zxCableDocsUsSpectrumIndex                 Integer32,
+        zxCableDocsUsSpectrumNumOfSamples          Integer32,   
+        zxCableDocsUsSpectrumFrequencyList         OCTET STRING,
+        zxCableDocsUsSpectrumMagnitudeList         OCTET STRING
+        }  
+        
+        zxCableDocsUsSpectrumIndex   OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "the index of upstream spectrum chart.There are many samples of upstream spectrum chart,
+        can't be sent by one time,so need a index."
+        ::=  {  zxCableDocsUsSpectrumChartEntry  1  }  
+
+        zxCableDocsUsSpectrumNumOfSamples   OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "the total Sample numbers of upstream spectrum chart."
+        ::=  {  zxCableDocsUsSpectrumChartEntry  2  }       
+         
+        zxCableDocsUsSpectrumFrequencyList   OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "This attribute contains the list of frequency of upstream spectrum samples."
+        ::=  {  zxCableDocsUsSpectrumChartEntry  3  }       
+
+        zxCableDocsUsSpectrumMagnitudeList   OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "This attribute contains the list of Magnitude of upstream spectrum samples."
+        ::=  {  zxCableDocsUsSpectrumChartEntry  4  }    
+        
+--------------------------------------------------------------------------------        
+    zxCableDocsLoadBalSystem       OBJECT IDENTIFIER ::= {zxCableDocsLoadBalObjects 1}
+        
+        zxCableDocsLoadBalMethod      OBJECT-TYPE 
+        SYNTAX          Integer32 { Disabled ( 0 ) , Dynamic ( 1 ), Static ( 2 ) } 
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "Dynamic load balancing method.
+                          0: Disable
+                          1: Dynamic(run-time statistics)
+                          2: Static(minimum reserved rate)"
+        ::=  {  zxCableDocsLoadBalSystem  1  }
+    
+        zxCableDocsLoadBalPeriod   OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "Time in seconds between load balancing checks. Minimum time is 30 seconds. (0=no change)"
+        ::=  {  zxCableDocsLoadBalSystem  2  }   
+
+        zxCableDocsLoadBalNumPeriods   OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "Number of periods for calculating the weighted average load. 
+        Each period gets twice the weight of the previous period. 
+        Valid values are 1, 2, or 4. Applies to Balancing Method 1 only. (0=no change)"
+        ::=  {  zxCableDocsLoadBalSystem  3  }   
+
+        zxCableDocsLoadBalOverloadThreshold   OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "A channel is considered overloaded when the load is at least this percent of capacity. 
+        Below this, no attempt is made to balance its load. Applies to Balancing Method 1 only. (0=no change)"
+        ::=  {  zxCableDocsLoadBalSystem  4  }   
+
+        zxCableDocsLoadBalDifferenceThreshold   OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "For channels at or above the overload threshold, only consider less loaded alternate channels 
+        where the load difference is at least this percent. Applies to Balancing Method 1 only. (0=no change)"
+        ::=  {  zxCableDocsLoadBalSystem  5  }   
+
+        zxCableDocsLoadBalMaxMovesPerPeriod   OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "Maximum number of modems allowed to be moved per load balancer period. (0=no change)"
+        ::=  {  zxCableDocsLoadBalSystem  6  }   
+        
+        zxCableDocsLoadBalMinHoldTimePerModem   OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "Minimum number of seconds that must elapse before moving the same modem to a different channel. (0=no change)"
+        ::=  {  zxCableDocsLoadBalSystem  7  }   
+        
+        zxCableDocsLoadBalRangingOverrideMode   OBJECT-TYPE 
+        SYNTAX          Integer32 { Enabled ( 1 ) , Disabled ( 2 ) } 
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "When enabled, a modem can be directed to a different channel via RNG-RSP prior to registration (0=no change)"
+        DEFVAL { enable } 
+        ::=  {  zxCableDocsLoadBalSystem  8  }   
+        
+        zxCableDocsLoadBalDCCInitTechATDMA   OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "DCC initialization technique used for ATDMA mode (valid values are 1, 2, 3, and 4."
+        ::=  {  zxCableDocsLoadBalSystem  9  }   
+
+        zxCableDocsLoadBalDCCInitTechSCDMA   OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "DCC initialization technique used for SCDMA mode (valid values are 1, 2, and 3."
+        ::=  {  zxCableDocsLoadBalSystem  10  } 
+
+        zxCableDocsLoadBalDBCInitTechATDMA   OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "DBC initialization technique used for ATDMA mode (valid values are 1, 2, 3, and 4."
+        ::=  {  zxCableDocsLoadBalSystem  11  }   
+
+        zxCableDocsLoadBalDBCInitTechSCDMA   OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "DBC initialization technique used for SCDMA mode (valid values are 1, 2, and 3."
+        ::=  {  zxCableDocsLoadBalSystem  12  } 
+                                
+--------------------------------------------------------------------------------        
+    
+    zxCableDocsLoadBalGrpCfgTable  OBJECT-TYPE
+        SYNTAX      SEQUENCE  OF  zxCableDocsLoadBalGrpCfgEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION "load balance group configuration table"
+        ::=  { zxCableDocsLoadBalObjects  2 }
+   
+    zxCableDocsLoadBalGrpCfgEntry  OBJECT-TYPE
+        SYNTAX      zxCableDocsLoadBalGrpCfgEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION "An entry in zxCableDocsLoadBalGrpCfgTable."
+        INDEX       {  zxCableDocsLoadBalGrpCfgId  }
+        ::=  { zxCableDocsLoadBalGrpCfgTable 1 }       
+
+    zxCableDocsLoadBalGrpCfgEntry  ::=  SEQUENCE {
+        zxCableDocsLoadBalGrpCfgId             Integer32,
+        zxCableDocsLoadBalGrpCfgType           Integer32,   
+        zxCableDocsLoadBalGrpCfgDsChList       OCTET STRING,
+        zxCableDocsLoadBalGrpCfgUsChList       OCTET STRING, 
+        zxCableDocsLoadBalGrpCfgActiveMacAddr  OCTET STRING,
+        zxCableDocsLoadBalGrpCfgOption         Integer32
+        }  
+        
+        zxCableDocsLoadBalGrpCfgId   OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "Group ID number for the load balancing group"
+        ::=  {  zxCableDocsLoadBalGrpCfgEntry  1  }  
+
+        zxCableDocsLoadBalGrpCfgType   OBJECT-TYPE 
+        SYNTAX          Integer32 { Static ( 1 ) , Dynamic ( 2 ) } 
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "load balancing group type."
+        ::=  {  zxCableDocsLoadBalGrpCfgEntry  2  }       
+         
+        zxCableDocsLoadBalGrpCfgDsChList   OBJECT-TYPE 
+        SYNTAX          OCTET STRING (SIZE (64))
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "This attribute contains the list of downstream channels 
+        of the Load Balancing Group."
+        ::=  {  zxCableDocsLoadBalGrpCfgEntry  3  }       
+
+        zxCableDocsLoadBalGrpCfgUsChList   OBJECT-TYPE 
+        SYNTAX          OCTET STRING (SIZE (64))
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "This attribute contains the list of upstream channels 
+        of the Load Balancing Group."
+        ::=  {  zxCableDocsLoadBalGrpCfgEntry  4  }                     
+                      
+        zxCableDocsLoadBalGrpCfgActiveMacAddr   OBJECT-TYPE 
+        SYNTAX          OCTET STRING (SIZE (3316))
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "get current list of active CMs in the specified load balancing group."
+        ::=  {  zxCableDocsLoadBalGrpCfgEntry  5  }       
+        
+        zxCableDocsLoadBalGrpCfgOption   OBJECT-TYPE 
+        SYNTAX          Integer32 { add ( 1 ) , drop ( 2 ) } 
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "load balancing group Option."
+        ::=  {  zxCableDocsLoadBalGrpCfgEntry  6  }       
+ 
+-------------------------------------------------------------------------------- 
+
+    zxCableDocsLoadBalMacRangeCfgTable  OBJECT-TYPE
+        SYNTAX      SEQUENCE  OF  zxCableDocsLoadBalMacRangeCfgEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION "load balance  mac range configuration table"
+        
+        ::=  { zxCableDocsLoadBalObjects  3 }
+   
+    zxCableDocsLoadBalMacRangeCfgEntry  OBJECT-TYPE
+        SYNTAX      zxCableDocsLoadBalMacRangeCfgEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION "An entry in zxCableDocsLoadBalMacRangeCfgTable."
+        INDEX { 
+                zxCableDocsLoadBalMacRangeGrpCfgId,
+                zxCableDocsLoadBalMacRangeCfgIndex
+           }
+        ::=  { zxCableDocsLoadBalMacRangeCfgTable 1 }       
+
+    zxCableDocsLoadBalMacRangeCfgEntry  ::=  SEQUENCE {
+        zxCableDocsLoadBalMacRangeGrpCfgId                    Integer32,
+        zxCableDocsLoadBalMacRangeCfgIndex            Integer32,   
+        zxCableDocsLoadBalMacRangeCfgstartMac         MacAddress,
+        zxCableDocsLoadBalMacRangeCfgendMac           MacAddress, 
+        zxCableDocsLoadBalMacRangeCfgOption           Integer32
+        }  
+        
+        zxCableDocsLoadBalMacRangeGrpCfgId   OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "Group ID number for the load balancing group"
+        ::=  {  zxCableDocsLoadBalMacRangeCfgEntry  1  }  
+
+        zxCableDocsLoadBalMacRangeCfgIndex   OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "load balancing mac range configure index"
+        ::=  {  zxCableDocsLoadBalMacRangeCfgEntry  2  }       
+         
+        zxCableDocsLoadBalMacRangeCfgstartMac   OBJECT-TYPE 
+        SYNTAX          MacAddress
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "This attribute contains the start mac address."
+        ::=  {  zxCableDocsLoadBalMacRangeCfgEntry  3  }       
+
+        zxCableDocsLoadBalMacRangeCfgendMac   OBJECT-TYPE 
+        SYNTAX          MacAddress
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "This attribute contains the end mac address."
+        ::=  {  zxCableDocsLoadBalMacRangeCfgEntry  4 }  
+         
+        zxCableDocsLoadBalMacRangeCfgOption    OBJECT-TYPE 
+        SYNTAX          Integer32 { add ( 1 ) , drop ( 2 ) } 
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "load balancing group Option."
+        ::=  {  zxCableDocsLoadBalMacRangeCfgEntry  5  }                   
+
+-------------------------------------------------------------------------------- 
+
+        zxCableDocsLoadBalExcludeMacCfgTable  OBJECT-TYPE
+        SYNTAX      SEQUENCE  OF  zxCableDocsLoadBalExcludeMacCfgEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION "load balance  Exclude Mac configuration table"   
+        ::=  { zxCableDocsLoadBalObjects  4 }
+   
+        zxCableDocsLoadBalExcludeMacCfgEntry  OBJECT-TYPE
+        SYNTAX      zxCableDocsLoadBalExcludeMacCfgEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION "An entry in zxCableDocsLoadBalExcludeMacCfgTable."
+        INDEX { zxCableDocsLoadBalExcludeMacCfgIndex }
+        ::=  { zxCableDocsLoadBalExcludeMacCfgTable 1 }       
+
+        zxCableDocsLoadBalExcludeMacCfgEntry  ::=  SEQUENCE {
+        zxCableDocsLoadBalExcludeMacCfgIndex            Integer32,   
+        zxCableDocsLoadBalExcludeMacCfgstartMac         MacAddress,
+        zxCableDocsLoadBalExcludeMacCfgendMac           MacAddress, 
+        zxCableDocsLoadBalExcludeMacCfgOption           Integer32
+        }    
+
+        zxCableDocsLoadBalExcludeMacCfgIndex   OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "load balancing mac range configure index"
+        ::=  {  zxCableDocsLoadBalExcludeMacCfgEntry  1  }       
+         
+        zxCableDocsLoadBalExcludeMacCfgstartMac   OBJECT-TYPE 
+        SYNTAX          MacAddress
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "This attribute contains the start mac address."
+        ::=  {  zxCableDocsLoadBalExcludeMacCfgEntry  2  }       
+
+        zxCableDocsLoadBalExcludeMacCfgendMac   OBJECT-TYPE 
+        SYNTAX          MacAddress
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "This attribute contains the end mac address."
+        ::=  {  zxCableDocsLoadBalExcludeMacCfgEntry  3 }  
+         
+        zxCableDocsLoadBalExcludeMacCfgOption    OBJECT-TYPE 
+        SYNTAX          Integer32 { add ( 1 ) , drop ( 2 ) } 
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "load balancing group Option."
+        ::=  {  zxCableDocsLoadBalExcludeMacCfgEntry  4  }       
+
+-------------------------------------------------------------------------------- 
+    zxAnCmcGlobalObject   OBJECT IDENTIFIER ::= { zxAnCmcObjects 25 }
+     
+    zxAnExtCmcUpstreamErrorRateThreshold OBJECT-TYPE
+        SYNTAX      Integer32 
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+           "The error rate threshold of the cmc channel. when 
+           zxAnCmcUpstreamErrorCodeRate is higher than 
+           zxAnExtCmcUpstreamErrorRateThreshold zxAnExtCmcUpstreamErrorRateAlm
+           should be generated."
+      ::= { zxAnCmcGlobalObject 1 }
+
+    zxAnExtCmcCmMacAddress OBJECT-TYPE
+        SYNTAX      MacAddress
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+           "The cm mac address."
+      ::= { zxAnCmcGlobalObject 2 }
+
+    zxAnExtCmcUpstreamSnrThreshold OBJECT-TYPE
+        SYNTAX      Integer32
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+           "The upstream SNR threshold,Unit(db)."
+      ::= { zxAnCmcGlobalObject 3 }
+
+    zxAnExtCmcMaxCmThreshold OBJECT-TYPE
+        SYNTAX      Integer32
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+           "The maximun number of cable modem threshold."
+      ::= { zxAnCmcGlobalObject 4 }
+
+    zxAnExtCmcCmNumber OBJECT-TYPE
+        SYNTAX      Integer32
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+           "The number of cable modem in cmc"
+      ::= { zxAnCmcGlobalObject 5 }
+
+    zxAnExtCmcDdosAttackType OBJECT-TYPE
+        SYNTAX      Integer32 { ARP ( 0 ) , IGMP ( 1 ) , ICMP ( 2 ) , DHCP ( 3 ) }
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+           "The type of ddos attack on cmc.
+             0: ARP
+             1: IGMP
+             2: ICMP
+             3: DHCP"
+      ::= { zxAnCmcGlobalObject 6 }
+
+    zxAnCmcAllCmResetNow OBJECT-TYPE
+        SYNTAX      TruthValue
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+            "Setting this object to true(1) causes the device to
+             reset.  Reading this object always returns false(2)."
+        ::= { zxAnCmcGlobalObject 7 }
+    
+    zxAnCmcAllCmDeleteNow OBJECT-TYPE
+        SYNTAX      TruthValue
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+            "Setting this object to true(1) causes the device to
+             re-register.  Reading this object always returns false(2)."
+        ::= { zxAnCmcGlobalObject 8 }
+
+    zxAnExtCmcUpstreamChannelTable  OBJECT-TYPE
+        SYNTAX  SEQUENCE  OF  zxAnExtCmcUpstreamChannelEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION 
+            "This table indicates the upstream channel.
+             Usually used in sengding trap."
+        ::=  { zxAnCmcGlobalObject  9 }
+
+    zxAnExtCmcUpstreamChannelEntry OBJECT-TYPE
+        SYNTAX  zxAnExtCmcUpstreamChannelEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION 
+            "An entry in zxAnExtCmcUpstreamChannelTable."
+        INDEX  {  zxAnCmcUpChannelId   }
+        ::=  { zxAnExtCmcUpstreamChannelTable 1 }
+
+     zxAnExtCmcUpstreamChannelEntry  ::=
+        SEQUENCE {
+            zxAnExtCmcUpChannelId                   Integer32,
+            zxAnExtCmcUpChannelFormerProfile        Integer32,
+            zxAnExtCmcUpChannelCurrentProfile       Integer32
+        }
+        
+     zxAnExtCmcUpChannelId  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION     
+            "The upstream channel id."
+        ::=  {  zxAnExtCmcUpstreamChannelEntry  1  }
+        
+     zxAnExtCmcUpChannelFormerProfile  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The former profile of the cmc upstream channel."
+        ::=  {  zxAnExtCmcUpstreamChannelEntry  2  }
+
+     zxAnExtCmcUpChannelCurrentProfile  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The current profile of the cmc upstream channel."
+        ::=  {  zxAnExtCmcUpstreamChannelEntry  3  }
+
+--------------------------------------------------------------------------------        
+    
+    zxCableDocsServiceFlowCfgTable  OBJECT-TYPE
+        SYNTAX      SEQUENCE  OF  zxCableDocsServiceFlowCfgEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION "service flow configuration table"
+        ::=  { zxCableDocsServiceFlowObjects  1 }
+   
+    zxCableDocsServiceFlowCfgEntry  OBJECT-TYPE
+        SYNTAX      zxCableDocsServiceFlowCfgEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION "An entry in zxCableDocsServiceFlowCfgTable."
+        INDEX {idIndex,
+             zxCableDocsServiceFlowSfid
+           }
+     ::= { zxCableDocsServiceFlowCfgTable 1 }    
+
+    zxCableDocsServiceFlowCfgEntry  ::=  SEQUENCE {
+        idIndex                                Unsigned32,
+        zxCableDocsServiceFlowSfid             Unsigned32,   
+        zxCableDocsServiceFlowSid              Unsigned32,
+        zxCableDocsServiceFlowCmMac            MacAddress, 
+        zxCableDocsServiceFlowDirection        Unsigned32,
+        zxCableDocsServiceFlowPrimary          Unsigned32
+        }
+
+
+        idIndex   OBJECT-TYPE 
+        SYNTAX          Unsigned32
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION     "id index"
+        ::=  {  zxCableDocsServiceFlowCfgEntry  1  }   
+        
+        zxCableDocsServiceFlowSfid   OBJECT-TYPE 
+        SYNTAX          Unsigned32
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION     "service flow id"
+        ::=  {  zxCableDocsServiceFlowCfgEntry  2  }       
+        
+        zxCableDocsServiceFlowSid   OBJECT-TYPE 
+        SYNTAX          Unsigned32
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "service flow id"
+        ::=  {  zxCableDocsServiceFlowCfgEntry  3  }
+        
+        zxCableDocsServiceFlowCmMac   OBJECT-TYPE 
+        SYNTAX          MacAddress
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "cm's mac address"
+        ::=  {  zxCableDocsServiceFlowCfgEntry  4  }       
+
+        zxCableDocsServiceFlowDirection   OBJECT-TYPE 
+        SYNTAX          Unsigned32 { Downstream ( 1 ) , Upstream ( 2 ) } 
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "the direction of the Service Flow"
+        ::=  {  zxCableDocsServiceFlowCfgEntry  5  }                     
+                      
+        zxCableDocsServiceFlowPrimary   OBJECT-TYPE 
+        SYNTAX          Unsigned32 { Primary ( 1 ) , Secondary ( 2 ) } 
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "whether Service Flow is the primary
+                         or a secondary Service Flow"
+        ::=  {  zxCableDocsServiceFlowCfgEntry  6  }
+        
+--------------------------------------------------------------------------------
+             -- The Cmc Alarms Group
+--------------------------------------------------------------------------------
+
+    zxAnCmcNotifications     OBJECT IDENTIFIER ::= { zxAnCmcMib 10 }
+ 
+    zxAnCmcExpandTrap     OBJECT IDENTIFIER ::= { zxAnCmcNotifications 1 }
+    
+    zxAnExtCmcUpstreamErrorRateAlm NOTIFICATION-TYPE
+        OBJECTS { zxAnCmcUpstreamErrorRate, zxAnExtCmcUpstreamErrorRateThreshold}
+        STATUS  current
+        DESCRIPTION
+           "It indicates that the agent has detected that the
+            zxAnCmcUpstreamErrorCodeRate object of the CMC has exceeded than the 
+            configured threshhold value of zxAnExtCmcUpstreamErrorRateThreshold."
+       ::= { zxAnCmcExpandTrap 1 }  
+
+    zxAnExtCmcUpstreamErrorRateClr NOTIFICATION-TYPE
+        OBJECTS { zxAnCmcUpstreamErrorRate, zxAnExtCmcUpstreamErrorRateThreshold }
+        STATUS  current
+        DESCRIPTION
+           "It indicates that the agent has detected that the
+            zxAnCmcUpstreamErrorCodeRate object of the CMC has less than the 
+            configured threshhold value of zxAnExtCmcUpstreamErrorRateThreshold."
+       ::= { zxAnCmcExpandTrap 2 }       
+ 
+    zxAnExtCmcCmOnlineNotification NOTIFICATION-TYPE
+        OBJECTS { zxAnExtCmcCmMacAddress}
+        STATUS  current
+        DESCRIPTION
+           "It indicates that the cm online."
+       ::= { zxAnCmcExpandTrap 3 }  
+
+    zxAnExtCmcCmOfflineNotification NOTIFICATION-TYPE
+        OBJECTS { zxAnExtCmcCmMacAddress}
+        STATUS  current
+        DESCRIPTION
+           "It indicates that the cm offline."
+       ::= { zxAnCmcExpandTrap 4 }
+       
+    zxAnExtCmcUpstreamLowSNRAlm NOTIFICATION-TYPE
+        OBJECTS { zxAnCmcUpstreamSnr, zxAnExtCmcUpstreamSnrThreshold}
+        STATUS  current
+        DESCRIPTION
+           "It indicates that the agent has detected that the
+            zxAnCmcUpstreamSnr object of the CMC has less than the 
+            configured threshhold value of zxAnExtCmcUpstreamSnrThreshold."
+       ::= { zxAnCmcExpandTrap 5 }  
+
+    zxAnExtCmcUpstreamLowSNRClr NOTIFICATION-TYPE
+        OBJECTS { zxAnCmcUpstreamSnr, zxAnExtCmcUpstreamSnrThreshold }
+        STATUS  current
+        DESCRIPTION
+           "It indicates that the agent has detected that the
+            zxAnCmcUpstreamSnr object of the CMC has exceeded than the 
+            configured threshhold value of zxAnExtCmcUpstreamSnrThreshold."
+       ::= { zxAnCmcExpandTrap 6 }           
+   
+    zxAnExtCmcCmExceedAlm NOTIFICATION-TYPE
+        OBJECTS { zxAnExtCmcCmNumber, zxAnExtCmcMaxCmThreshold}
+        STATUS  current
+        DESCRIPTION
+           "It indicates that the agent has detected that the
+            zxAnExtCmcCmNumber object of the CMC has exceeded than the 
+            configured threshhold value of zxAnExtCmcMaxCmThreshold."
+       ::= { zxAnCmcExpandTrap 7 }  
+
+    zxAnExtCmcCmExceedClr NOTIFICATION-TYPE
+        OBJECTS { zxAnExtCmcCmNumber, zxAnExtCmcMaxCmThreshold }
+        STATUS  current
+        DESCRIPTION
+           "It indicates that the agent has detected that the
+            zxAnExtCmcCmNumber object of the CMC has less than the 
+            configured threshhold value of zxAnExtCmcMaxCmThreshold."
+       ::= { zxAnCmcExpandTrap 8 } 
+   
+    zxAnExtCmcDdosAttackAlm NOTIFICATION-TYPE
+        OBJECTS { zxAnExtCmcDdosAttackType }
+        STATUS  current
+        DESCRIPTION
+           "It indicates that the agent has detected that 
+            the CMC is under DDoS attack.
+            The zxAnExtCmcDdosAttackType object of the CMC 
+            has indicated the type of the attack."
+       ::= { zxAnCmcExpandTrap 9 }  
+
+    zxAnExtCmcDdosAttackClr NOTIFICATION-TYPE
+        OBJECTS { zxAnExtCmcDdosAttackType }
+        STATUS  current
+        DESCRIPTION
+           "It indicates that the agent has detected that 
+            the CMC is not under DDoS attack any more.
+            The zxAnExtCmcDdosAttackType object of the CMC 
+            has indicated the type of the attack."
+       ::= { zxAnCmcExpandTrap 10 } 
+                                     
+    zxAnExtCmcUpstreamProfileChgAlm NOTIFICATION-TYPE
+        OBJECTS { zxAnExtCmcUpChannelFormerProfile, zxAnExtCmcUpChannelCurrentProfile}
+        STATUS  current
+        DESCRIPTION
+           "It indicates that the agent detected that the
+            upstream profile CMC has been automatically changed."
+       ::= { zxAnCmcExpandTrap 11 }  
+
+    zxAnExtCmcUpstreamProfileChgClr NOTIFICATION-TYPE
+        OBJECTS { zxAnExtCmcUpChannelFormerProfile, zxAnExtCmcUpChannelCurrentProfile }
+        STATUS  current
+        DESCRIPTION
+           "It indicates that the agent detected that the
+            upstream profile CMC has been manually changed."
+       ::= { zxAnCmcExpandTrap 12 } 
+    zxAnExtCmcCardOfflineAlm NOTIFICATION-TYPE
+        OBJECTS { zxAnExtCmcCardOfflineType }
+        STATUS  current
+        DESCRIPTION
+           "It indicates that the agent has detected that 
+            the DM card if offline."
+       ::= { zxAnCmcExpandTrap 15 }  
+
+    zxAnExtCmcCardOfflineClr NOTIFICATION-TYPE
+        OBJECTS { zxAnExtCmcCardOfflineType }
+        STATUS  current
+        DESCRIPTION
+           "It indicates that the agent has detected that 
+            the DM card if online."
+       ::= { zxAnCmcExpandTrap 16 } 
+                                     
+END

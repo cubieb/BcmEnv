@@ -1,0 +1,5188 @@
+
+-- File Name : GOSPELL-DSL-SYSCTRL-MIB.mib
+-- Date      : Tues Oct 12 15:13:24 GMT+08:00 2014
+-- Author    : GOSPELL Nms dept.
+
+--
+-- GOSPELL CMTS SYS-CTRL Mib 
+-- 
+-- 
+
+GOSPELL-DSL-SYSCTRL-MIB DEFINITIONS ::= BEGIN
+    IMPORTS     
+        gsDsl
+            FROM GOSPELL-DSL-MIB
+        RowStatus, DisplayString, TruthValue, MacAddress, TimeStamp, 
+        TEXTUAL-CONVENTION
+            FROM SNMPv2-TC
+        DisplayString, ifIndex,ifAdminStatus, ifOperStatus, ifType
+            FROM RFC1213-MIB
+        MODULE-IDENTITY, OBJECT-TYPE, NOTIFICATION-TYPE, IpAddress, TimeTicks, 
+        Counter32, Gauge32, Integer32, Unsigned32
+            FROM SNMPv2-SMI
+        SnmpAdminString
+            FROM SNMP-FRAMEWORK-MIB             
+        InetAddress, InetAddressType, InetAddressPrefixLength, InetAutonomousSystemNumber           
+            FROM INET-ADDRESS-MIB;
+
+    gsDslSysctrlMib MODULE-IDENTITY
+        LAST-UPDATED    "200404151500Z"
+        ORGANIZATION    "GOSPELL Corporation"
+        CONTACT-INFO    "ma ke
+                  Mail: info@gospell.com.cn
+                  Tel : 028-87839922"
+        DESCRIPTION     "This MIB defines gos dsl managed objects."
+        ::=  {  gsDsl  3  } 
+        
+    -- TEXTUAL-CONVENTIONS --
+    PortList ::= TEXTUAL-CONVENTION 
+        STATUS          current
+        DESCRIPTION
+            "Each octet within this value specifies a set of eight
+        ports, with the first octet specifying ports 1 through
+        8, the second octet specifying ports 9 through 16, etc.
+        Within each octet, the most significant bit represents
+        the lowest numbered port, and the least significant bit
+        represents the highest numbered port.  Thus, each port
+        of the bridge is represented by a single bit within the
+        value of this object.  If that bit has a value of '1'
+        then that port is included in the set of ports; the port
+        is not included if its bit has a value of '0'."
+        SYNTAX          OCTET STRING
+        
+
+    gsDslSysctrlObjects OBJECT IDENTIFIER
+        ::=  {  gsDslSysctrlMib  1  }
+
+    gsDslSysctrlTrapObjects OBJECT IDENTIFIER
+        ::=  {  gsDslSysctrlMib  2  }
+        
+    gsDslSysCompatibility OBJECT IDENTIFIER
+        ::=  {  gsDslSysctrlMib  3  }     
+        
+------------------------------------------------------------------------------------                
+    gsDslPhysical   OBJECT IDENTIFIER
+        ::=  {  gsDslSysctrlObjects  1  }   
+
+    gsDslRackTable  OBJECT-TYPE
+        SYNTAX      SEQUENCE  OF  GsDslRackEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION "This table includes common attributes describing
+           both ends of the line.  It is required for all ADSL
+           physical interfaces.  ADSL physical interfaces are
+           those ifEntries where ifType is equal to adsl(94)."
+        ::=  { gsDslPhysical  1 }
+
+    gsDslRackEntry  OBJECT-TYPE
+        SYNTAX      GsDslRackEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION "An entry in gsDslRackTable."
+        INDEX       {  gsDslRackNo  }
+        ::=  { gsDslRackTable 1 }
+
+    GsDslRackEntry  ::=  SEQUENCE {
+        gsDslRackNo  Integer32,
+        gsDslRackType  Integer32,
+        gsDslRackMaxShelfNum  Integer32,
+        gsDslRackRowStatus  RowStatus
+        }
+
+
+    gsDslRackNo OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION     ":i"
+        ::=  {  gsDslRackEntry  1  }
+
+
+    gsDslRackType   OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-create
+        STATUS          current
+        DESCRIPTION     ":z"
+        ::=  {  gsDslRackEntry  2  }
+
+
+    gsDslRackMaxShelfNum    OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     ",:? 'O:Fp"
+        ::=  {  gsDslRackEntry  3  }
+
+
+    gsDslRackRowStatus  OBJECT-TYPE 
+        SYNTAX          RowStatus
+        MAX-ACCESS      read-create
+        STATUS          current
+        DESCRIPTION     "insert,delete"
+        ::=  {  gsDslRackEntry  4  }
+
+    gsDslShelfTable OBJECT-TYPE
+        SYNTAX      SEQUENCE  OF  GsDslShelfEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION "This table includes common attributes describing
+           both ends of the line.  It is required for all ADSL
+           physical interfaces.  ADSL physical interfaces are
+           those ifEntries where ifType is equal to adsl(94)."
+        ::=  { gsDslPhysical  2 }
+
+    gsDslShelfEntry OBJECT-TYPE
+        SYNTAX      GsDslShelfEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION "An entry in gsDslShelfTable."
+        INDEX       {  gsDslShelfRackNo, gsDslShelfNo  }
+        ::=  { gsDslShelfTable 1 }
+
+    GsDslShelfEntry  ::=  SEQUENCE {
+        gsDslShelfRackNo    Integer32,
+        gsDslShelfNo        Integer32,
+        gsDslShelfType      Integer32,
+        gsDslShelfMaxSlotNum  Integer32,
+        gsDslShelfInvSn      DisplayString,
+        gsDslShelfCleiCode   DisplayString,
+        gsDslShelfRowStatus  RowStatus
+        }
+
+
+    gsDslShelfRackNo    OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION "Rack no."
+        DEFVAL {1}
+        ::=  {  gsDslShelfEntry  1  }
+
+
+    gsDslShelfNo    OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION "Shelf no."
+        DEFVAL {1}
+        ::=  {  gsDslShelfEntry  2  }
+
+
+    gsDslShelfType  OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-create
+        STATUS          current
+        DESCRIPTION ""
+        ::=  {  gsDslShelfEntry  3  }
+
+
+    gsDslShelfMaxSlotNum    OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION "Max Slot Number in a shelf."
+        ::=  {  gsDslShelfEntry  4  }
+
+
+    gsDslShelfInvSn     OBJECT-TYPE 
+        SYNTAX          DisplayString  ( SIZE ( 0 .. 64  ) )
+        MAX-ACCESS      read-create
+        STATUS          current
+        DESCRIPTION     "This MIB is defined for serial number of this shelf.
+              it is used by inventroy management."
+        ::=  {  gsDslShelfEntry  5  }
+        
+        
+    gsDslShelfCleiCode     OBJECT-TYPE 
+        SYNTAX          DisplayString  ( SIZE ( 0 .. 64  ) )
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "This MIB is defined for CLEI code of this card.
+              it is used by inventroy management.Pls reference 
+              http://www.commonlanguage.com to get knowledge about CLEI code. 
+              "
+        REFERENCE "http://www.commonlanguage.com"              
+        ::=  {  gsDslShelfEntry  6  }
+
+    gsDslShelfRowStatus OBJECT-TYPE 
+        SYNTAX          RowStatus
+        MAX-ACCESS      read-create
+        STATUS          current
+        DESCRIPTION     "insert,delete"
+        ::=  {  gsDslShelfEntry  15  }
+
+    gsDslBoardConfigTable   OBJECT-TYPE
+        SYNTAX      SEQUENCE  OF  GsDslBoardConfigEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION "This table includes common attributes describing
+           both ends of the line.  It is required for all ADSL
+           physical interfaces.  ADSL physical interfaces are
+           those ifEntries where ifType is equal to adsl(94)."
+        ::=  { gsDslPhysical  3 }
+
+    gsDslBoardConfigEntry   OBJECT-TYPE
+        SYNTAX      GsDslBoardConfigEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION "An entry in gsDslBoardConfigTable."
+        INDEX       {  gsDslBoardConfigRackNo, gsDslBoardConfigShelfNo, gsDslBoardConfigSlotNo  }
+        ::=  { gsDslBoardConfigTable 1 }
+
+    GsDslBoardConfigEntry  ::=  SEQUENCE {
+        gsDslBoardConfigRackNo  Integer32,
+        gsDslBoardConfigShelfNo  Integer32,
+        gsDslBoardConfigSlotNo  Integer32,
+        gsDslBoardConfigSubType  Integer32,
+        gsDslBoardConfigBaseType  Integer32,
+        gsDslBoardConfigHardVerType  Integer32,
+        gsDslBoardConfigRowStatus  RowStatus
+        }
+
+
+    gsDslBoardConfigRackNo  OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION     ""
+        ::=  {  gsDslBoardConfigEntry  1  }
+
+
+    gsDslBoardConfigShelfNo OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION     ""
+        ::=  {  gsDslBoardConfigEntry  2  }
+
+
+    gsDslBoardConfigSlotNo  OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION     ""
+        ::=  {  gsDslBoardConfigEntry  3  }
+
+
+    gsDslBoardConfigSubType OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-create
+        STATUS          current
+        DESCRIPTION     ""
+        ::=  {  gsDslBoardConfigEntry  4  }
+
+
+    gsDslBoardConfigBaseType    OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-create
+        STATUS          current
+        DESCRIPTION     ""
+        ::=  {  gsDslBoardConfigEntry  5  }
+    
+    gsDslBoardConfigHardVerType OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-create
+        STATUS          current
+        DESCRIPTION     "This is used to configure linecard supporting 8220V1.X version or 8220V2.X
+                                 version and ADSL1 or ADSL2"
+        ::=  {  gsDslBoardConfigEntry  6  }
+
+
+    gsDslBoardConfigRowStatus   OBJECT-TYPE 
+        SYNTAX          RowStatus
+        MAX-ACCESS      read-create
+        STATUS          current
+        DESCRIPTION     "insert,delete"
+        ::=  {  gsDslBoardConfigEntry  7  }
+
+    gsDslSplitBoardTable    OBJECT-TYPE
+        SYNTAX      SEQUENCE  OF  GsDslSplitBoardEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION "This table includes common attributes describing
+           both ends of the line.  It is required for all ADSL
+           physical interfaces.  ADSL physical interfaces are
+           those ifEntries where ifType is equal to adsl(94)."
+        ::=  { gsDslPhysical  4 }
+
+    gsDslSplitBoardEntry    OBJECT-TYPE
+        SYNTAX      GsDslSplitBoardEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION "An entry in gsDslSplitBoardTable."
+        INDEX       {  gsDslSplitBoardRackNo, gsDslSplitBoardShelfNo, gsDslSplitBoardSlotNo  }
+        ::=  { gsDslSplitBoardTable 1 }
+
+    GsDslSplitBoardEntry  ::=  SEQUENCE {
+        gsDslSplitBoardRackNo  Integer32,
+        gsDslSplitBoardShelfNo  Integer32,
+        gsDslSplitBoardSlotNo  Integer32,
+        gsDslSplitBoardPos  Integer32,
+        gsDslSplitBoardStatus  Integer32
+        }
+
+
+    gsDslSplitBoardRackNo   OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION     "rack number"
+        ::=  {  gsDslSplitBoardEntry  1  }
+
+
+    gsDslSplitBoardShelfNo  OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION     "shelf number"
+        ::=  {  gsDslSplitBoardEntry  2  }
+
+
+    gsDslSplitBoardSlotNo   OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION     "slot number"
+        ::=  {  gsDslSplitBoardEntry  3  }
+
+
+    gsDslSplitBoardPos  OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "splitter board position 1 == SelfRack, 2 == SplitterRack 0 == NULL"
+        ::=  {  gsDslSplitBoardEntry  4  }
+
+
+    gsDslSplitBoardStatus   OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "splitter board status"
+        ::=  {  gsDslSplitBoardEntry  5  }
+
+    gsDslSubBoardTable  OBJECT-TYPE
+        SYNTAX      SEQUENCE  OF  GsDslSubBoardEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION "This table includes common attributes describing
+           both ends of the line.  It is required for all ADSL
+           physical interfaces.  ADSL physical interfaces are
+           those ifEntries where ifType is equal to adsl(94)."
+        ::=  { gsDslPhysical  5 }
+
+    gsDslSubBoardEntry  OBJECT-TYPE
+        SYNTAX      GsDslSubBoardEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION "An entry in gsDslSubBoardTable."
+        INDEX       {  gsDslSubBoardRackNo, gsDslSubBoardShelfNo, gsDslSubBoardSlotNo, gsDslSubBoardSubCardNo  }
+        ::=  { gsDslSubBoardTable 1 }
+
+    GsDslSubBoardEntry  ::=  SEQUENCE {
+        gsDslSubBoardRackNo             Integer32,
+        gsDslSubBoardShelfNo            Integer32,
+        gsDslSubBoardSlotNo             Integer32,
+        gsDslSubBoardSubCardNo          Integer32,
+        gsDslSubBoardType               Integer32,
+        gsDslSubBoardDescr              OCTET STRING,      
+        gsDslSubBoardStatus             INTEGER,
+        gsDslSubBoardReset              Integer32,
+        gsDslSubBoardRowStatus          Integer32,        
+        gsDslSubBoardHardVersion        OCTET STRING,
+        gsDslSubBoardSoftVersion        OCTET STRING,
+        gsDslSubBoardPortNum            Integer32,
+        gsDslSubBoardBootwareVersion    DisplayString
+        }
+
+
+    gsDslSubBoardRackNo OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION     "rack number"
+        ::=  {  gsDslSubBoardEntry  1  }
+
+
+    gsDslSubBoardShelfNo    OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION     "shelf number"
+        ::=  {  gsDslSubBoardEntry  2  }
+
+
+    gsDslSubBoardSlotNo OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION     "slot number"
+        ::=  {  gsDslSubBoardEntry  3  }
+
+
+    gsDslSubBoardSubCardNo  OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION     "subcard number"
+        ::=  {  gsDslSubBoardEntry  4  }
+
+
+    gsDslSubBoardType   OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "subBoard type"
+        ::=  {  gsDslSubBoardEntry  5  }
+
+    gsDslSubBoardDescr  OBJECT-TYPE
+        SYNTAX          OCTET STRING  ( SIZE ( 1 .. 255  ) ) 
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "sub-board information."
+        ::=  {  gsDslSubBoardEntry  6  }
+    
+    gsDslSubBoardStatus OBJECT-TYPE 
+        SYNTAX          INTEGER
+            {
+             inService   (1),
+             notInService(2),
+             hwOnline(3),
+             hwOffline(4),
+             configuring(5),
+             configFailed(6),
+             typeMismatch(7),
+             deactived(8),
+             faulty(9),
+             invalid(10)             
+            }
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "This MIB is defined for the sub card status on the card.
+          inService(1)   --  card pluged in,running normally and service is being
+                             provided normally.
+          notInService(2)--  card pluged in,running normally but service is stopped.
+          hwOnline(3)    --  card pluged in AND card communication is ok,but software 
+                             isn't running now.
+          hwOffline(4)   --  card not pluged in,but added to agent's database only
+          configuring(5) --  card pluged in,but it is configuring
+          configFailed(6)--  card pluged in,but configuration failed
+          typeMismatch(7)--  card pluged in,but it's type is mismatch
+          deactived(8)   --  card pluged in,but it is deactivated by a manager
+          faulty(9)      --  fault occurs when card is running normally
+          invalid(10)    --  invalid card instance,such as adding card failed.    
+        "
+        ::=  {  gsDslSubBoardEntry  7  }
+
+    gsDslSubBoardReset  OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     ""
+        ::=  {  gsDslSubBoardEntry  8  }
+
+    gsDslSubBoardRowStatus  OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     ""
+        ::=  {  gsDslSubBoardEntry  9  }
+
+    gsDslSubBoardHardVersion   OBJECT-TYPE 
+        SYNTAX          OCTET STRING( SIZE ( 1 .. 32  ) )
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "sub board hard version, default is UNKNOWN"
+        ::=  {  gsDslSubBoardEntry  10  }
+
+    gsDslSubBoardSoftVersion   OBJECT-TYPE 
+        SYNTAX          OCTET STRING ( SIZE ( 1 .. 32  ) )
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "sub board software version, default is UNKNOWN"
+        ::=  {  gsDslSubBoardEntry  11  }
+
+    gsDslSubBoardPortNum   OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "sub board port number"
+        ::=  {  gsDslSubBoardEntry  12  }
+        
+    gsDslSubBoardBootwareVersion   OBJECT-TYPE 
+        SYNTAX      DisplayString (SIZE (1..32))
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION     
+            "Bootware version of sub card."
+        ::=  { gsDslSubBoardEntry  13 }              
+
+
+
+
+    gsDslBoardTable OBJECT-TYPE
+        SYNTAX      SEQUENCE  OF  GsDslBoardEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION "This table includes common attributes describing
+           both ends of the line.  It is required for all ADSL
+           physical interfaces.  ADSL physical interfaces are
+           those ifEntries where ifType is equal to adsl(94)."
+        ::=  { gsDslPhysical  6 }
+
+    gsDslBoardEntry OBJECT-TYPE
+        SYNTAX      GsDslBoardEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION "An entry in gsDslBoardTable."
+        INDEX       {  gsDslBoardRackNo, gsDslBoardShelfNo, gsDslBoardSlotNo  }
+        ::=  { gsDslBoardTable 1 }
+
+    GsDslBoardEntry  ::=  SEQUENCE {
+        gsDslBoardRackNo                Integer32,
+        gsDslBoardShelfNo               Integer32,
+        gsDslBoardSlotNo                Integer32,
+        gsDslBoardType                  Integer32,
+        gsDslBoardDescr                 OCTET STRING,
+        gsDslBoardPortNum               Integer32,
+        gsDslBoardPortType              Integer32,
+        gsDslBoardAdminStatus           INTEGER,
+        gsDslBoardOperStatus            INTEGER,
+        gsDslBoardHardVersion           OCTET STRING,
+        gsDslBoardSoftVersion           OCTET STRING,
+        gsDslBoardSoftLastChange        TimeTicks,
+        gsDslBoardReset                 Integer32,
+        gsDslBoardCpuLoad               Integer32,
+        gsDslBoardCpuLoadThreshhold     Integer32,
+        gsDslBoardMemUsage              Integer32,
+        gsDslBoardMemUsageThreshhold    Integer32,
+        gsDslBoardActPortNum            Integer32,
+        gsDslBoardHardVerStatus         Integer32,
+        gsDslBoardSoftVerCfg            Integer32,
+        gsDslBoardStandByStatus         INTEGER,
+        gsDslBoardMemTotalSize          Integer32,
+        gsDslBoardWorkMode              INTEGER,
+        gsDslBoardBootwareVersion       DisplayString,
+        gsDslBoardServiceStoppedReason  INTEGER,      
+        gsDslBoardSlaveCpuSwVersion     DisplayString,
+        gsDslBoardSlaveCpuBootVersion   DisplayString,
+        gsDslBoardCpuTemperature        Integer32,
+        gsDslBoardFwCreateTime          DisplayString
+        }
+
+
+    gsDslBoardRackNo    OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION     "rack number"
+        ::=  {  gsDslBoardEntry  1  }
+
+
+    gsDslBoardShelfNo   OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION     "shelf number"
+        ::=  {  gsDslBoardEntry  2  }
+
+
+    gsDslBoardSlotNo    OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION     "slot number"
+        ::=  {  gsDslBoardEntry  3  }
+
+
+    gsDslBoardType  OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "board type"
+        ::=  {  gsDslBoardEntry  4  }
+
+
+    gsDslBoardDescr OBJECT-TYPE 
+        SYNTAX          OCTET STRING ( SIZE ( 1 .. 32  ) )
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "board descript"
+        ::=  {  gsDslBoardEntry  5  }
+
+
+    gsDslBoardPortNum   OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "board portnum"
+        ::=  {  gsDslBoardEntry  6  }
+
+
+    gsDslBoardPortType  OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "board port type"
+        ::=  {  gsDslBoardEntry  7  }
+    
+    gsDslBoardAdminStatus   OBJECT-TYPE 
+        SYNTAX          INTEGER
+        {
+            unlock(3),
+            lock(4)
+        }
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "board administrative status."
+        DEFVAL { unlock }
+        ::=  {  gsDslBoardEntry  8  }
+
+    gsDslBoardOperStatus    OBJECT-TYPE 
+        SYNTAX          INTEGER
+                        {
+                            unknown(1),      --  card pluged in but can't get right state.
+                            offline(2),      --  card not pluged in,but added to agent's database only
+                            online(3),       --  card pluged in.hardware online or resetting
+                            inService(4),    --  card pluged in and running normally
+                            standby(5),      --  card pluged in,it is runing as a slave card.
+                            configuring(6)   --  card pluged in,but it is configuring data.
+                        }    
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "board operational status"
+        ::=  {  gsDslBoardEntry  9  }
+
+
+    gsDslBoardHardVersion   OBJECT-TYPE 
+        SYNTAX          OCTET STRING( SIZE ( 1 .. 32  ) )
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "board hard version"
+        ::=  {  gsDslBoardEntry  10  }
+
+
+    gsDslBoardSoftVersion   OBJECT-TYPE 
+        SYNTAX          OCTET STRING ( SIZE ( 1 .. 32  ) )
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "board software version"
+        ::=  {  gsDslBoardEntry  11  }
+
+
+    gsDslBoardSoftLastChange    OBJECT-TYPE 
+        SYNTAX          TimeTicks
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "soft last change"
+        ::=  {  gsDslBoardEntry  12  }
+        
+    gsDslBoardReset OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "Server as reset card"
+        ::=  {  gsDslBoardEntry  13  }
+    
+    gsDslBoardCpuLoad   OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "Server as cup load of card"
+        ::=  {  gsDslBoardEntry  14  }
+    
+    gsDslBoardCpuLoadThreshhold OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "Server as cup load of card"
+        ::=  {  gsDslBoardEntry  15  }
+        
+    gsDslBoardMemUsage  OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "Server as memory usage rate of card"
+        ::=  {  gsDslBoardEntry  16  }
+    
+    gsDslBoardMemUsageThreshhold    OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "Server as memory usage rate of card"
+        ::=  {  gsDslBoardEntry  17  }
+    
+    gsDslBoardActPortNum    OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "Server as active port numbers of card"
+        ::=  {  gsDslBoardEntry  18  }
+    
+    gsDslBoardHardVerStatus OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "Server as v1 or v2 line card of 8000, g1 or g2 line type of 8000"
+        ::=  {  gsDslBoardEntry  19  }
+    
+    gsDslBoardSoftVerCfg    OBJECT-TYPE 
+        SYNTAX          Integer32 
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "Server as configuring the running software type on atugb"
+        ::=  {  gsDslBoardEntry  20  }        
+    
+    gsDslBoardStandByStatus OBJECT-TYPE 
+        SYNTAX          INTEGER{master(1), slave(2), single(3)}
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "Board standBy status.
+                NOTE: Not available now. "
+        ::=  {  gsDslBoardEntry  21  }        
+        
+    gsDslBoardMemTotalSize    OBJECT-TYPE 
+        SYNTAX          Integer32 
+        UNITS              "KB"
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "Total memory size of board"
+        ::=  {  gsDslBoardEntry  22  }        
+
+    gsDslBoardWorkMode  OBJECT-TYPE
+        SYNTAX      INTEGER
+        {
+            dsl(1),         --DSL Mode
+            pwe3Frame(2),   --PWE3 Frame Mode (N * 64k)
+            pwe3Unframe(3)  --PWE3 Unframe Mode (E1)
+        }
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+            "Board work mode, only effect on the board SSTDF, which can provide
+             various services (SHDSL, PWE3 Frame, PWE3 Unframe) by switching
+             work mode.
+
+             If operation target is not the board SSTDF, SNMP agent should
+             return error in response to SNMP SET and return 0xCCCCCCCC in
+             response to SNMP GET."
+        ::=  { gsDslBoardEntry 23 }     
+        
+    gsDslBoardBootwareVersion   OBJECT-TYPE 
+        SYNTAX      DisplayString (SIZE (1..32))
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION     
+            "Bootware version of card."
+        ::=  { gsDslBoardEntry  24 }
+        
+    gsDslBoardServiceStoppedReason OBJECT-TYPE 
+        SYNTAX          INTEGER {
+            overheatProtectionEffective(1),
+            powerOverheatProtectionEffective(2),
+            batteryEnergySavingEffective(3) 
+            }
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     
+            "The reason of board service stopped.
+            overheatProtectionEffective(1) means the overheat protection 
+            to stop card service going into effect.
+            powerOverheatProtectionEffective(2) means the power overheat 
+            protection to stop card service going into effect.
+            batteryEnergySavingEffective(3) means battery energy saving
+            to stop card service going into effect."
+        ::=  {  gsDslBoardEntry  25  }       
+        
+    gsDslBoardSlaveCpuSwVersion   OBJECT-TYPE 
+        SYNTAX      DisplayString (SIZE (0..32))
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION     
+            "Software version of slave CPU.
+            Only used for MSG5208 ADSL card(OASVC).
+            The size is zero when the card type isn't OASVC."
+        ::=  { gsDslBoardEntry  51 }
+        
+    gsDslBoardSlaveCpuBootVersion   OBJECT-TYPE
+        SYNTAX      DisplayString (SIZE (0..32))
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+            "Bootware version of slave CPU.
+            Only used for MSG5208 ADSL card(OASVC).
+            The size is zero when the card type isn't OASVC."
+        ::=  { gsDslBoardEntry  52 } 
+
+    gsDslBoardCpuTemperature        OBJECT-TYPE
+        SYNTAX      Integer32
+        UNITS       "centigrade"
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+            "CPU temperature."
+        ::=  { gsDslBoardEntry  53 }
+
+    gsDslBoardFwCreateTime   OBJECT-TYPE 
+        SYNTAX      DisplayString (SIZE (0..14))
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+            "Firmware creating time."
+        ::=  { gsDslBoardEntry  54 }
+
+--  Card Inventory Mgmt table
+  
+    gsDslCardInvMgmtTable       OBJECT-TYPE
+        SYNTAX SEQUENCE OF GsDslCardInvMgmtEntry
+        MAX-ACCESS not-accessible
+        STATUS current
+        DESCRIPTION
+            "A list of card entries."
+        ::= { gsDslPhysical 7 }
+
+    gsDslCardInvMgmtEntry OBJECT-TYPE
+        SYNTAX GsDslCardInvMgmtEntry 
+        MAX-ACCESS not-accessible
+        STATUS current
+        DESCRIPTION
+            "An card entry containing objects 
+            describing the card in some slot."
+        INDEX { gsDslCardInvRack, gsDslCardInvShelf, 
+                gsDslCardInvSlot, gsDslCardInvSubSlot }
+        ::= { gsDslCardInvMgmtTable 1 }
+
+    GsDslCardInvMgmtEntry ::= SEQUENCE {
+            gsDslCardInvRack          Integer32, 
+            gsDslCardInvShelf         Integer32,
+            gsDslCardInvSlot          INTEGER,
+            gsDslCardInvSubSlot       INTEGER,
+            gsDslCardInvSn            DisplayString,
+            gsDslCardInvCleiCode      DisplayString
+            }
+
+    gsDslCardInvRack    OBJECT-TYPE
+        SYNTAX      Integer32
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION
+            "The rack number of the card"
+        ::= { gsDslCardInvMgmtEntry 1 }
+        
+     gsDslCardInvShelf  OBJECT-TYPE
+        SYNTAX      Integer32
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION
+            "The shelf number of the card"
+        ::= { gsDslCardInvMgmtEntry 2 }
+        
+     gsDslCardInvSlot   OBJECT-TYPE
+        SYNTAX      INTEGER(1..18)
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION
+            "The slot number of the card"
+        ::= { gsDslCardInvMgmtEntry 3 }
+
+
+     gsDslCardInvSubSlot    OBJECT-TYPE
+        SYNTAX      INTEGER(0..4)
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION
+            "The sub slot number of the card.If there is no sublot,then this value
+            is 0. "
+        ::= { gsDslCardInvMgmtEntry 4 }
+
+     gsDslCardInvSn     OBJECT-TYPE
+        SYNTAX      DisplayString
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+            "The series number of the card."
+        ::= { gsDslCardInvMgmtEntry 5 }
+
+
+     gsDslCardInvCleiCode   OBJECT-TYPE
+        SYNTAX      DisplayString
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+            "The CLEI code of the card.It is a present of a cardtype."
+        ::= { gsDslCardInvMgmtEntry 6 }
+
+--  Mixed Card Table
+
+    gsDslMixedCardTable  OBJECT-TYPE
+        SYNTAX      SEQUENCE  OF  GsDslMixedCardEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION 
+            "Mixed card table.
+             This table contains mixed card information of this device."
+        ::= { gsDslPhysical 8 }
+
+    gsDslMixedCardEntry   OBJECT-TYPE
+        SYNTAX      GsDslMixedCardEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION 
+            "Mixed card entry."
+        INDEX   { gsDslMixedCardRack, gsDslMixedCardShelf,
+                  gsDslMixedCardSlot, gsDslPortServiceType }
+        ::= { gsDslMixedCardTable 1 }
+
+    GsDslMixedCardEntry ::= SEQUENCE {
+            gsDslMixedCardRack      Integer32,
+            gsDslMixedCardShelf     Integer32,
+            gsDslMixedCardSlot      Integer32,
+            gsDslPortServiceType    INTEGER,
+            gsDslPortNum            Integer32
+        }
+
+    gsDslMixedCardRack  OBJECT-TYPE 
+        SYNTAX      Integer32
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION     
+            "Mixed card rack No."
+        ::= { gsDslMixedCardEntry 1 }
+
+    gsDslMixedCardShelf  OBJECT-TYPE 
+        SYNTAX      Integer32
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION     
+            "Mixed card shelf No."
+        ::= { gsDslMixedCardEntry 2 }
+
+    gsDslMixedCardSlot  OBJECT-TYPE 
+        SYNTAX      Integer32
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION     
+            "Mixed card slot No."
+        ::= { gsDslMixedCardEntry 3 }
+
+    gsDslPortServiceType  OBJECT-TYPE
+        SYNTAX      INTEGER {
+            adsl(1),
+            vdsl(2),
+            shdsl(3),
+            ethernet(4),
+            pstn(5),
+            isdn(6)
+        }
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION     
+            "Port Service Type."
+        ::= { gsDslMixedCardEntry 4 }
+
+    gsDslPortNum  OBJECT-TYPE 
+        SYNTAX      Integer32
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION     
+            "The port number of mixed card, counting according to port service
+             type."
+        ::= { gsDslMixedCardEntry 5 }
+        
+-------------------------------------------------------------------------------
+--gsDslUnitTable
+-------------------------------------------------------------------------------       
+    gsDslUnitTable OBJECT-TYPE
+        SYNTAX      SEQUENCE OF GsDslUnitEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION
+            "Unit table.Only used for MSG5208."
+        ::= { gsDslPhysical 9 }
+
+    gsDslUnitEntry OBJECT-TYPE
+        SYNTAX      GsDslUnitEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION
+            "Unit entry."
+        INDEX { gsDslUnitRack, gsDslUnitShelf, gsDslUnitNo }
+        ::={gsDslUnitTable 1}
+
+    GsDslUnitEntry ::= SEQUENCE { 
+        gsDslUnitRack                      Integer32,
+        gsDslUnitShelf                     Integer32,
+        gsDslUnitNo                        Integer32,
+        gsDslUnitReset                     INTEGER
+        }
+        
+    gsDslUnitRack  OBJECT-TYPE
+        SYNTAX      Integer32
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION 
+            "Rack number of unit."
+        ::= { gsDslUnitEntry 1 } 
+        
+    gsDslUnitShelf  OBJECT-TYPE
+        SYNTAX      Integer32
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION 
+            "Shelf number of unit."
+        ::= { gsDslUnitEntry 2 } 
+        
+    gsDslUnitNo  OBJECT-TYPE
+        SYNTAX      Integer32
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION 
+            "Unit number of unit."
+        ::= { gsDslUnitEntry 3 } 
+        
+    gsDslUnitReset  OBJECT-TYPE
+        SYNTAX      INTEGER {
+            reset(1)
+            }
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION 
+            "Reset unit."
+        ::= { gsDslUnitEntry 4 }
+        
+    gsDslBackplane  OBJECT IDENTIFIER ::= {gsDslPhysical 30}
+    
+    gsDslBackplaneGlobalObjects  OBJECT IDENTIFIER ::= {gsDslBackplane 1}
+    
+    gsDslBackplaneSn  OBJECT-TYPE 
+        SYNTAX      DisplayString(SIZE(1..12))
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION 
+            "Backplane serial number."
+        ::= { gsDslBackplaneGlobalObjects 1 }
+    
+--------------------------------------------------------------------------------
+-- Dsl enviroment monitoring mgmt,such as chassis temperature and fans.
+
+   gsDslEnvMon      OBJECT IDENTIFIER ::= {gsDslSysctrlObjects 2}
+
+   gsDslEnvChassisTemperature OBJECT-TYPE
+       SYNTAX       Integer32 
+       UNITS        "centigrade"
+       MAX-ACCESS   read-only
+       STATUS       current
+       DESCRIPTION
+            "The current temperature of the chassis."
+       ::= { gsDslEnvMon 1 }
+
+
+   gsDslEnvTemperatureThreshold OBJECT-TYPE
+       SYNTAX       Integer32 
+       UNITS        "centigrade"
+       MAX-ACCESS   read-write
+       STATUS       current
+       DESCRIPTION
+            "The threshold of the chassis temperature,gsDslEnvTempExceeded trap 
+        should be generated when gsDslEnvChassisTemperature is lareger than it.
+       Otherwise,gsDslEnvTempNormal trap should be generated when 
+        gsDslEnvChassisTemperature is less than it."
+       DEFVAL { 75 }
+       ::= { gsDslEnvMon 2 }
+
+    gsDslEnvTemperatureTrapEnable OBJECT-TYPE
+        SYNTAX     INTEGER{
+            enable(1),
+            disable(2)
+        }
+        MAX-ACCESS  read-write
+        STATUS current
+        DESCRIPTION
+            "The adminstrative status of temperature alarm trap."
+        DEFVAL { enable }
+        ::= { gsDslEnvMon 3 } 
+        
+-- Fans mgmt   ----------------
+
+   gsDslEnvFanMgmtCap OBJECT-TYPE
+        SYNTAX     BITS
+                {
+                    unused(0),
+                    "speed_control"(1),
+                    "alarm_send"(2),
+                    "shutdown_control"(3)
+                }
+        MAX-ACCESS  read-only
+        STATUS current
+        DESCRIPTION
+            "The capbilities to be controlled.
+               speed_control(1) -- The speed of fun can be controlled
+               alarm_send(2)    -- Alarm of fans can be generated and send to manager.
+               shutdown_control(3) -- Which fan is running can be controlled.
+            "
+        ::= { gsDslEnvMon 4 }  
+          
+          
+   gsDslEnvFanSpeedCtrlType OBJECT-TYPE
+        SYNTAX     INTEGER
+                {
+                    "auto_SpeedControl"(1),
+                    "fix_Speed"(2),
+                    noSpeedControl(3)
+                }
+        MAX-ACCESS  read-write
+        STATUS      deprecated
+        DESCRIPTION
+            "The control type of fan speed.
+            If fix_Speed(2) is selected,gsDslEnvFanSpeed in gsDslEnvFanTable
+            should be configured.
+            "
+        ::= { gsDslEnvMon 5 }  
+          
+       
+   gsDslEnvFanTrapEnable OBJECT-TYPE
+        SYNTAX     INTEGER{
+            enable(1),
+            disable(2)
+        }
+        MAX-ACCESS  read-write
+        STATUS current
+        DESCRIPTION
+            "The adminstrative status of fun's alarm trap."
+        DEFVAL { enable }
+        ::= { gsDslEnvMon 6 } 
+
+       
+   gsDslEnvFanTrayAlarmBeep OBJECT-TYPE
+        SYNTAX     INTEGER{
+            enable(1),
+            disable(2)
+        }
+        MAX-ACCESS  read-write
+        STATUS current
+        DESCRIPTION
+            "Enable or disable the alarm beep for fun tray."
+        DEFVAL { enable }
+        ::= { gsDslEnvMon 7 } 
+
+       
+   gsDslEnvEpmRelaySwitchEnable OBJECT-TYPE
+        SYNTAX     INTEGER{
+            enable(1),
+            disable(2)
+        }
+        MAX-ACCESS  read-write
+        STATUS current
+        DESCRIPTION
+            "Enable or disable the EPM relay switch.
+            if it's disabled, there will be four environment switch,
+            and if it's enabled, there will be only two environment switch.
+            Other two environment switch and the EMP serial port are alternative."
+        DEFVAL { enable }
+        ::= { gsDslEnvMon 8 } 
+        
+        
+   gsDslEnvLossOfPowerTrapEnable OBJECT-TYPE
+        SYNTAX     INTEGER{
+            enable(1),
+            disable(2)
+        }
+        MAX-ACCESS  read-write
+        STATUS current
+        DESCRIPTION
+            "Enable or disable the dying gasp event when the device is 
+             power off or power failure."
+        DEFVAL { enable }
+        ::= { gsDslEnvMon 9 }         
+            
+        
+-- fans table ----------------
+    
+   gsDslEnvFanTable OBJECT-TYPE
+        SYNTAX SEQUENCE OF GsDslEnvFanEntry 
+        MAX-ACCESS not-accessible
+        STATUS     current
+        DESCRIPTION
+            "The table of fan's managed objects.Each row instance represents 
+            a controllable fan unit,may be a controlled fan or a controlled fan tray.
+            
+            When gsDslEnvFanOperstatus and gsDslEnvFanAdminstatus are mismatched,
+            gsDslEnvFanFailed trap should be sent to manager.If this error state
+            doesn't exist,gsDslEnvFanRecovered trap should be sent.
+            "
+        ::= { gsDslEnvMon 10 }
+
+   gsDslEnvFanEntry  OBJECT-TYPE
+        SYNTAX     GsDslEnvFanEntry 
+        MAX-ACCESS not-accessible
+        STATUS     current
+        DESCRIPTION
+            "a entry of this table."
+        INDEX      { gsDslEnvFanIndex }
+        ::= { gsDslEnvFanTable 1 }
+
+    GsDslEnvFanEntry ::= SEQUENCE {
+        gsDslEnvFanIndex               Integer32,
+        gsDslEnvFanSpeed               INTEGER,
+        gsDslEnvFanAdminstatus         INTEGER, 
+        gsDslEnvFanOperstatus          INTEGER,
+        gsDslEnvFanActualSpeed         Integer32
+    }
+        
+    gsDslEnvFanIndex OBJECT-TYPE
+        SYNTAX     Integer32 
+        MAX-ACCESS not-accessible
+        STATUS     current
+        DESCRIPTION
+            "The index of this fan or fan tray referred to in this table entry."
+        ::= { gsDslEnvFanEntry 1 }   
+       
+    gsDslEnvFanSpeed    OBJECT-TYPE 
+        SYNTAX          INTEGER
+            {
+                "auto_speed"(0),-- read only
+                "low_speed"(1),
+                "middle_speed"(2),
+                "normal_speed"(3),
+                "high_speed"(4)
+            }
+        MAX-ACCESS      read-create
+        STATUS          deprecated
+        DESCRIPTION     
+            "The speed of fan.
+             If it is to be set, gsDslEnvFanSpeedCtrlType must be fix_Speed(2).
+            "
+       DEFVAL { normal_speed }
+        ::=  {  gsDslEnvFanEntry  2  }
+    
+    gsDslEnvFanAdminstatus  OBJECT-TYPE 
+        SYNTAX          INTEGER 
+            {
+                up(1),
+                down(2)
+            }
+        MAX-ACCESS      read-create
+        STATUS          current
+        DESCRIPTION     "The adminstrative status of fan"
+        DEFVAL { up }
+        ::=  {  gsDslEnvFanEntry  3  }  
+
+    gsDslEnvFanOperstatus   OBJECT-TYPE 
+        SYNTAX          INTEGER 
+            {
+                up(1),
+                down(2)
+            }
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "The operational status of a fan."
+        ::=  {  gsDslEnvFanEntry  4  }
+        
+    gsDslEnvFanActualSpeed   OBJECT-TYPE 
+        SYNTAX          Integer32
+        UNITS           "rpm"
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     
+            "The actual speed of a fan."
+        ::=  {  gsDslEnvFanEntry  5  }
+            
+-- switch table ----------------
+
+   gsDslEnvDeviceTable OBJECT-TYPE
+       SYNTAX      SEQUENCE OF GsDslEnvDeviceEntry 
+       MAX-ACCESS  not-accessible
+       STATUS      current
+       DESCRIPTION
+           "The table of environment monitor Device."
+       ::= { gsDslEnvMon 11 }
+
+   gsDslEnvDeviceEntry  OBJECT-TYPE
+       SYNTAX      GsDslEnvDeviceEntry 
+       MAX-ACCESS  not-accessible
+       STATUS      current
+       DESCRIPTION
+           "a entry of this table."
+       INDEX       { gsDslEnvEnvDeviceIndex }
+       ::= { gsDslEnvDeviceTable 1 }
+
+    GsDslEnvDeviceEntry ::= SEQUENCE {
+        gsDslEnvEnvDeviceIndex               Integer32,
+        gsDslEnvEnvDeviceName                DisplayString,
+        gsDslEnvDeviceRowStatus              RowStatus
+    }
+        
+    gsDslEnvEnvDeviceIndex OBJECT-TYPE
+        SYNTAX     Integer32 
+        MAX-ACCESS not-accessible
+        STATUS     current
+        DESCRIPTION
+            "The index of this environment monitor Device.
+            "
+        ::= { gsDslEnvDeviceEntry 1 }   
+       
+    gsDslEnvEnvDeviceName OBJECT-TYPE 
+        SYNTAX      DisplayString  (SIZE(0..32))                 
+        MAX-ACCESS  read-create
+        STATUS      current
+        DESCRIPTION     
+            "the name of environment monitor Device.
+            gsDslEnvEnvDeviceIndex 1-50 is default value,can't delete or modify.
+            "        
+        ::= { gsDslEnvDeviceEntry 2 }
+
+    gsDslEnvDeviceRowStatus OBJECT-TYPE 
+        SYNTAX      RowStatus
+        MAX-ACCESS  read-create
+        STATUS      current
+        DESCRIPTION   "The status of this table."
+        ::=  { gsDslEnvDeviceEntry 3 }
+    
+   gsDslEnvSwitchTable OBJECT-TYPE
+        SYNTAX SEQUENCE OF GsDslEnvSwitchEntry 
+        MAX-ACCESS not-accessible
+        STATUS     current
+        DESCRIPTION
+            "The table of switch's managed objects.Each row instance represents 
+            a device connected with this switch.
+            "
+        ::= { gsDslEnvMon 12 }
+
+   gsDslEnvSwitchEntry  OBJECT-TYPE
+        SYNTAX     GsDslEnvSwitchEntry 
+        MAX-ACCESS not-accessible
+        STATUS     current
+        DESCRIPTION
+            "a entry of this table."
+        INDEX      { gsDslEnvSwitchIndex }
+        ::= { gsDslEnvSwitchTable 1 }
+
+    GsDslEnvSwitchEntry ::= SEQUENCE {
+        gsDslEnvSwitchIndex               Integer32,
+        gsDslEnvDeviceId                  Integer32,
+        gsDslEnvSwitchNormalStatus        INTEGER,
+        gsDslEnvSwitchEnable              INTEGER,
+        gsDslEnvSwitchCurrentStatus       INTEGER
+    }
+        
+    gsDslEnvSwitchIndex OBJECT-TYPE
+        SYNTAX     Integer32 
+        MAX-ACCESS not-accessible
+        STATUS     current
+        DESCRIPTION
+            "The index of this Switch."
+        ::= { gsDslEnvSwitchEntry 1 }   
+       
+    gsDslEnvDeviceId    OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     
+            "The device id.If this switch can't connect with any device,
+            gsDslEnvDeviceId set to 0."
+        DEFVAL { 0 }
+        ::= { gsDslEnvSwitchEntry 2 }             
+        
+    gsDslEnvSwitchNormalStatus  OBJECT-TYPE 
+        SYNTAX      INTEGER  
+        { 
+            low(0),
+            high(1)
+        } 
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION   
+            "The Threshold of this environment monitor Device."
+        ::= { gsDslEnvSwitchEntry 3 }
+   
+    gsDslEnvSwitchEnable  OBJECT-TYPE 
+        SYNTAX      INTEGER  
+        { 
+            enable(1),
+            disable(2)
+        } 
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION   
+            "Enables and disables Trap of this environment monitor Device."
+        ::= { gsDslEnvSwitchEntry 4 }        
+     
+    gsDslEnvSwitchCurrentStatus  OBJECT-TYPE 
+        SYNTAX      INTEGER  
+        { 
+            low(0),
+            high(1)
+        } 
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION   
+            "The current status of this environment monitor Device."
+        ::= { gsDslEnvSwitchEntry 5 }     
+        
+    gsDslEnvExteriorPower     OBJECT IDENTIFIER ::= {gsDslEnvMon 13}        
+  
+    gsDslEnvExteriorPowerEnable  OBJECT-TYPE 
+        SYNTAX      INTEGER  
+        { 
+            enable(1),
+            disable(2)
+        } 
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION   
+            "Enables and disables Trap of Exterior Power."
+        ::= { gsDslEnvExteriorPower 1 }        
+          
+    gsDslEnvBatteriesVoltage  OBJECT IDENTIFIER ::= {gsDslEnvMon 14}  
+
+    gsDslEnvBatteriesVoltageEnable  OBJECT-TYPE 
+        SYNTAX      INTEGER  
+        { 
+            enable(1),
+            disable(2)
+        } 
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION   
+            "Enables and disables Trap of Batteries Voltage."
+        ::= { gsDslEnvBatteriesVoltage 1 }        
+           
+    gsDslEnvPowerFailure      OBJECT IDENTIFIER ::= {gsDslEnvMon 15}           
+
+    gsDslEnvPowerFailureEnable  OBJECT-TYPE 
+        SYNTAX      INTEGER  
+        { 
+            enable(1),
+            disable(2)
+        } 
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION   
+            "Enables and disables Trap of Power Failure."
+        ::= { gsDslEnvPowerFailure 1 }        
+                  
+    gsDslEnvCtrlObjects      OBJECT IDENTIFIER ::= {gsDslEnvMon 16}          
+       
+    gsDslEnvMonitorInterfaceUsage OBJECT-TYPE
+        SYNTAX     INTEGER
+            {
+                epm(1),
+                battery(2),
+                noUse(3),
+                noSupport(4),
+                electricLock(5)
+            }
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+            "The equipment type connected to the enviroment monitor interface.
+             The possible values are:
+             epm(1) - connect to EPM device
+             battery(2) - direct connect to battery
+             noUse(3) - support enviroment monitor interface, but not use.  
+             noSupport(4) - doesn't support enviroment monitor interface.
+             electricLock(5) - connect to electric lock."
+        ::= { gsDslEnvCtrlObjects 1 }  
+        
+    gsDslEnvMonitorInterfaceTrapEnable OBJECT-TYPE
+        SYNTAX     INTEGER
+        {
+            enable(1),
+            disable(2)
+        }
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+           "Indicates whether linkUp/linkDown traps should be
+            generated for MonitorInterface."
+        DEFVAL { enable }        
+        ::= { gsDslEnvCtrlObjects 2 }                                                         
+                           
+    gsDslEnvFanAutoCtrlEnable OBJECT-TYPE
+        SYNTAX     INTEGER
+        {
+            enable(1),
+            disable(2)
+        }
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+           "Enable or disble the autocontrol of fan by temperature."
+        DEFVAL { disable }        
+        ::= { gsDslEnvCtrlObjects 3 }
+    
+    gsDslEnvFanCtrlTemperatureThresh OBJECT-TYPE
+        SYNTAX     Integer32
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+           "The temperature threshold of fan for start-up or shut down,
+            in Celsiur scale."
+        ::= { gsDslEnvCtrlObjects 4 }          
+        
+   gsDslEnvTemperatureLowerThreshold OBJECT-TYPE
+       SYNTAX       Integer32(-60..0) 
+       UNITS        "centigrade"
+       MAX-ACCESS   read-write
+       STATUS       current
+       DESCRIPTION
+            "The lower threshold of the chassis temperature,the
+             gsDslTempUnderThreshTrap trap should be generated when 
+             gsDslEnvChassisTemperature is lower than it. 
+             Otherwise,gsDslTempUnderThreshTrapCleared trap should be generated
+             when gsDslEnvChassisTemperature 2 degrees higher than it."
+       DEFVAL { -30 }
+       ::= { gsDslEnvCtrlObjects 5 }              
+     
+    gsDslEnvBatteryEnergySavingEnable OBJECT-TYPE
+        SYNTAX      INTEGER { enable(1), disable(2) }
+        MAX-ACCESS  read-write
+        STATUS      current
+         DESCRIPTION
+           "enable or disable energy saving for battery.
+           
+            if enabled, device will switch to energy saving mode when the 
+            exterior power lose and battery as power supply. 
+           "                           
+       DEFVAL      { disable }
+       ::= { gsDslEnvCtrlObjects 6 }              
+    
+    gsDslEnvFanFaultInfo OBJECT-TYPE
+        SYNTAX      DisplayString
+        MAX-ACCESS  read-only
+        STATUS      current
+         DESCRIPTION
+           "This object indicates the failed fan list. 
+            e.g., 1,3-5 means Fan 1,Fan 3,Fan 4 and Fan 5 are in failure.
+           "
+       ::= { gsDslEnvCtrlObjects 7 }              
+       
+    gsDslEnvFanTotalNumber OBJECT-TYPE
+        SYNTAX      Integer32
+        MAX-ACCESS  read-only
+        STATUS      current
+         DESCRIPTION
+           "The total Number of Fans."
+       ::= { gsDslEnvCtrlObjects 8 }
+            
+    gsDslEnvFanConfSpeedLevel OBJECT-TYPE
+        SYNTAX      INTEGER
+            {
+                stop(1),
+                level1(2),
+                level2(3),
+                level3(4),
+                level4(5),
+                level5(6),
+                level6(7),
+                fullSpeed(8)
+            }
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+            "Fan speed level. If gsDslEnvFanAutoCtrlEnable is disable(2),
+             gsDslEnvFanConfSpeedLevel should be configured.
+             
+             stop(1)      -- Fan stops.
+             level1(2)    -- Fan speed is 35% of full speed.             
+             level2(3)    -- Fan speed is 46% of full speed.
+             level3(4)    -- Fan speed is 57% of full speed.
+             level4(5)    -- Fan speed is 65% of full speed.
+             level5(6)    -- Fan speed is 76% of full speed.
+             level6(7)    -- Fan speed is 87% of full speed.
+             fullSpeed(8) -- Fan speed is 5000 rpm.
+            "
+        ::= { gsDslEnvCtrlObjects 9 }
+        
+    gsDslEnvVceTemperature OBJECT-TYPE
+        SYNTAX       Integer32 
+        UNITS        "centigrade"
+        MAX-ACCESS   read-only
+        STATUS       current
+        DESCRIPTION
+            "The current temperature of VCE card."
+        ::= { gsDslEnvCtrlObjects 10 }
+        
+    gsDslEnvBatteryChargeTempThresh OBJECT-TYPE
+        SYNTAX       Integer32(30..100) 
+        UNITS        "centigrade"
+        MAX-ACCESS   read-write
+        STATUS       current
+        DESCRIPTION
+            "The battery charging control temperature threshold,
+             when the gsDslEnvChassisTemperature is higher than  
+             it, the battery charging current should be set a low value(0.4A).
+             Otherwise,the battery charging current should be set 
+             a high value(0.8),when gsDslEnvChassisTemperature is two degrees 
+             lower than it."
+        DEFVAL { 55 }
+        ::= { gsDslEnvCtrlObjects 11 }
+        
+    gsDslEnvVceTempThresh OBJECT-TYPE
+        SYNTAX      Integer32(65..85) 
+        UNITS       "centigrade"
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+            "The VCE card temperature threshold.
+             The gsDslEnvVceHighTempAlm should be generated when 
+             gsDslEnvVceTemperature exceeds this threshold."
+        DEFVAL { 75 }
+        ::= { gsDslEnvCtrlObjects 12 }          
+        
+    gsDslEnvVceRecoveryTempThresh OBJECT-TYPE
+        SYNTAX      Integer32(55..65) 
+        UNITS       "centigrade"
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+            "The VCE card temperature recover threshold.
+             The gsDslEnvVceHighTempClr should be generated when 
+             gsDslEnvVceTemperature is lower than this threshold."
+        DEFVAL { 65 }
+        ::= { gsDslEnvCtrlObjects 13 }              
+
+    gsDslEnvMonitorElecLock   OBJECT IDENTIFIER ::= {gsDslEnvMon 17}  
+
+    gsDslEnvMonitorElecLockServerTable OBJECT-TYPE
+        SYNTAX SEQUENCE OF GsDslEnvMonitorElecLockServerEntry
+        MAX-ACCESS not-accessible
+        STATUS     current
+        DESCRIPTION
+            "electric lock server table. "
+        ::= { gsDslEnvMonitorElecLock 1 }
+
+    gsDslEnvMonitorElecLockServerEntry  OBJECT-TYPE
+        SYNTAX     GsDslEnvMonitorElecLockServerEntry 
+        MAX-ACCESS not-accessible
+        STATUS     current
+        DESCRIPTION
+            "electric lock server entry"
+        INDEX      { gsDslEnvMonitorElecLockServerAddress }
+        ::= { gsDslEnvMonitorElecLockServerTable 1 }
+
+    GsDslEnvMonitorElecLockServerEntry ::= SEQUENCE {
+        gsDslEnvMonitorElecLockServerAddress   InetAddress,
+        gsDslEnvMonitorElecLockServerRowStatus RowStatus
+    }
+        
+    gsDslEnvMonitorElecLockServerAddress OBJECT-TYPE
+        SYNTAX     InetAddress 
+        MAX-ACCESS not-accessible
+        STATUS     current
+        DESCRIPTION
+            "The server address for electric lock monitor."
+        ::= { gsDslEnvMonitorElecLockServerEntry 1 }   
+    
+    gsDslEnvMonitorElecLockServerRowStatus OBJECT-TYPE
+        SYNTAX          RowStatus
+        MAX-ACCESS      read-create
+        STATUS          current
+        DESCRIPTION     "rowstatus"
+        ::=  {  gsDslEnvMonitorElecLockServerEntry 2 }
+        
+--------------------------------------------------------------------------------
+-- Overheat Protection Table
+--------------------------------------------------------------------------------
+    gsDslEnvOverheatProtection      OBJECT IDENTIFIER ::= {gsDslEnvMon 18}  
+    
+    gsDslEnvOverheatProtectionTable OBJECT-TYPE
+        SYNTAX      SEQUENCE OF GsDslEnvOverheatProtectionEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION
+            "Overheat protection table."
+        ::= { gsDslEnvOverheatProtection 1 }
+
+    gsDslEnvOverheatProtectionEntry OBJECT-TYPE
+        SYNTAX      GsDslEnvOverheatProtectionEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION
+            "Overheat protection entry."
+        INDEX { gsDslEnvOverheatProtectionRack, 
+                gsDslEnvOverheatProtectionShelf,
+                gsDslEnvOverheatProtectionSlot }
+        ::= { gsDslEnvOverheatProtectionTable 1 } 
+
+    GsDslEnvOverheatProtectionEntry ::= SEQUENCE {
+        gsDslEnvOverheatProtectionRack      Integer32,
+        gsDslEnvOverheatProtectionShelf     Integer32,
+        gsDslEnvOverheatProtectionSlot      Integer32,
+        gsDslEnvOverheatProtectionEnable    TruthValue,  
+        gsDslEnvOverheatTmpThreshold        Integer32,       
+        gsDslEnvOverheatDurThreshold        Integer32,
+        gsDslEnvOverheatAutoRecoveryEn      TruthValue,        
+        gsDslEnvAutoRecoveryTmpThreshold    Integer32,
+        gsDslEnvOverheatProtectionStatus    INTEGER             
+    }
+
+    gsDslEnvOverheatProtectionRack  OBJECT-TYPE
+        SYNTAX      Integer32
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION
+            "Rack of card."
+        ::= { gsDslEnvOverheatProtectionEntry 1 } 
+        
+    gsDslEnvOverheatProtectionShelf  OBJECT-TYPE
+        SYNTAX      Integer32
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION
+            "Shelf of card."
+        ::= { gsDslEnvOverheatProtectionEntry 2 } 
+        
+    gsDslEnvOverheatProtectionSlot  OBJECT-TYPE
+        SYNTAX      Integer32
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION
+            "Slot of card.
+            255 means power card."
+        ::= { gsDslEnvOverheatProtectionEntry 3 } 
+        
+    gsDslEnvOverheatProtectionEnable OBJECT-TYPE
+        SYNTAX      TruthValue
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION      
+            "Enables or disables the overheat protection function."
+        DEFVAL { false }
+        ::=  {  gsDslEnvOverheatProtectionEntry  4  }
+        
+    gsDslEnvOverheatTmpThreshold  OBJECT-TYPE
+        SYNTAX      Integer32(60..120)
+        UNITS       "centigrade"        
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+            "The threshold of the card temperature.
+             Broadband service of the card will be stopped 
+             when the card temperature is above gsDslEnvOverheatTmpThreshold.
+             Only valid when gsDslEnvOverheatProtectionEnable is true.
+             Not used for power card." 
+        DEFVAL { 80 }             
+        ::= { gsDslEnvOverheatProtectionEntry 5 }                
+                               
+    gsDslEnvOverheatDurThreshold  OBJECT-TYPE
+        SYNTAX      Integer32(1..1400)
+        UNITS       "minutes"         
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+            "The threshold of the duration.
+             Narrowband service of the card will be stopped 
+             when the card temperature is above gsDslEnvOverheatTmpThreshold
+             and the high temperature duration is 
+             greater than gsDslEnvOverheatDurThreshold.
+             Only valid when gsDslEnvOverheatProtectionEnable is true.
+             Not used for power card." 
+        DEFVAL { 10 }              
+        ::= { gsDslEnvOverheatProtectionEntry 6 } 
+        
+    gsDslEnvOverheatAutoRecoveryEn OBJECT-TYPE
+        SYNTAX      TruthValue
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION      
+            "Enables or disables the automatic recovery service function."
+        DEFVAL { false }
+        ::=  {  gsDslEnvOverheatProtectionEntry  7  }
+        
+    gsDslEnvAutoRecoveryTmpThreshold  OBJECT-TYPE
+        SYNTAX      Integer32(50..120)
+        UNITS       "centigrade"        
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+            "The threshold of the card temperature. 
+             Broadband and narrowband service of the card will be restarted 
+             when the card's temperature is below it.
+             Only valid when gsDslEnvOverheatAutoRecoveryEn is true.
+             Not used for power card."
+        DEFVAL { 70 }      
+        ::= { gsDslEnvOverheatProtectionEntry 8 } 
+        
+    gsDslEnvOverheatProtectionStatus OBJECT-TYPE
+        SYNTAX      INTEGER { 
+            normal(1 ), 
+            broadbandServiceStopped(2), 
+            narrowbandServiceStopped(3),
+            allServiceStopped(4),
+            overheat(10)
+        } 
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION 
+            "The status of the card.
+            Overheat(10) status only used for power card,
+            and power card only has two status:normal(1) and overheat(10)."
+        ::=  {  gsDslEnvOverheatProtectionEntry  9  } 
+        
+--------------------------------------------------------------------------------
+-- Card Temperature
+--------------------------------------------------------------------------------
+    gsDslEnvCardTemperatureTable OBJECT-TYPE
+        SYNTAX      SEQUENCE OF GsDslEnvCardTemperatureEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION
+            "Card temperature table."
+        ::= { gsDslEnvMon 19 }
+
+    gsDslEnvCardTemperatureEntry OBJECT-TYPE
+        SYNTAX      GsDslEnvCardTemperatureEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION
+            "Card temperature entry."
+        INDEX { gsDslEnvCardTemperatureRack, 
+                gsDslEnvCardTemperatureShelf,
+                gsDslEnvCardTemperatureSlot }
+        ::= { gsDslEnvCardTemperatureTable 1 } 
+
+    GsDslEnvCardTemperatureEntry ::= SEQUENCE {
+        gsDslEnvCardTemperatureRack     Integer32,
+        gsDslEnvCardTemperatureShelf    Integer32,
+        gsDslEnvCardTemperatureSlot     Integer32, 
+        gsDslEnvCardTemperature         Integer32
+        }
+        
+    gsDslEnvCardTemperatureRack  OBJECT-TYPE
+        SYNTAX      Integer32
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION
+            "Rack of card."
+        ::= { gsDslEnvCardTemperatureEntry 1 } 
+        
+    gsDslEnvCardTemperatureShelf  OBJECT-TYPE
+        SYNTAX      Integer32
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION
+            "Shelf of card."
+        ::= { gsDslEnvCardTemperatureEntry 2 } 
+        
+    gsDslEnvCardTemperatureSlot  OBJECT-TYPE
+        SYNTAX      Integer32
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION
+            "Slot of card."
+        ::= { gsDslEnvCardTemperatureEntry 3 }        
+
+    gsDslEnvCardTemperature OBJECT-TYPE
+        SYNTAX      Integer32
+        UNITS       "centigrade"  
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+            "The temperature of the card enviroment."
+       ::= { gsDslEnvCardTemperatureEntry 4 }                
+       
+    gsDslEnvBatteryObjects             OBJECT IDENTIFIER ::= { gsDslEnvMon 20 }
+    
+    gsDslEnvBatteryGlobalObjects  
+                             OBJECT IDENTIFIER ::= { gsDslEnvBatteryObjects 1 }
+
+    gsDslEnvBatteryNotExistTrapEn  OBJECT-TYPE 
+        SYNTAX      INTEGER  
+        { 
+            enabled(1),
+            disabled(2)
+        } 
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION   
+            "Enables and disables gsDslEnvBatteryNotExistAlm."
+        DEFVAL { enabled }
+        ::= { gsDslEnvBatteryGlobalObjects 1 }
+
+    gsDslEnvBatteryOverVoltageTrapEn  OBJECT-TYPE 
+        SYNTAX      INTEGER  
+        { 
+            enabled(1),
+            disabled(2)
+        } 
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION   
+            "Enables and disables gsDslEnvBatteryOverVoltageAlm."
+        DEFVAL { enabled }
+        ::= { gsDslEnvBatteryGlobalObjects 2 } 
+
+--------------------------------------------------------------------------------
+    gsDslVersion       OBJECT IDENTIFIER ::= {gsDslSysctrlObjects 3}
+    
+    gsDslVerCfgTable    OBJECT-TYPE
+        SYNTAX      SEQUENCE  OF  GsDslVerCfgEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION "A table entry containing AdslVersion information  for each
+        port. These variables are not in RFC2495 configuration table."
+        ::=  { gsDslVersion  1 }
+    
+    gsDslVerCfgEntry    OBJECT-TYPE
+        SYNTAX      GsDslVerCfgEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION "AdslVersion information entry"
+        INDEX       {  gsDslVerTypeName  }
+        ::=  { gsDslVerCfgTable 1 }
+        
+    GsDslVerCfgEntry  ::=  SEQUENCE {
+        gsDslVerTypeName   SnmpAdminString,
+        gsDslEraseFileName         SnmpAdminString,
+        gsDslActiveFileName         SnmpAdminString,
+        gsDslEraseVerType   Unsigned32
+        }
+        
+    gsDslVerTypeName      OBJECT-TYPE   
+        SYNTAX          SnmpAdminString( SIZE ( 0 .. 32  ) )
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION     "
+             "
+        ::=  {  gsDslVerCfgEntry  1  }
+
+    gsDslEraseFileName  OBJECT-TYPE 
+        SYNTAX          SnmpAdminString( SIZE ( 0 .. 32  ) )
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "
+             "
+        ::=  {  gsDslVerCfgEntry  2  }
+    
+    gsDslActiveFileName OBJECT-TYPE 
+        SYNTAX          SnmpAdminString( SIZE ( 0 .. 32  ) )
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "
+             "
+        ::=  {  gsDslVerCfgEntry  3  }
+    
+    gsDslEraseVerType   OBJECT-TYPE 
+        SYNTAX          Unsigned32
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "
+             "
+        ::=  {  gsDslVerCfgEntry  4  }
+        
+        
+        gsDslVersionTable   OBJECT-TYPE
+        SYNTAX      SEQUENCE  OF  GsDslVersionEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION "A table entry containing AdslVersion information  for each
+        port. These variables are not in RFC2495 configuration table."
+        ::=  { gsDslVersion  2 }
+
+    gsDslVersionEntry   OBJECT-TYPE
+        SYNTAX      GsDslVersionEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION "AdslVersion information entry"
+        INDEX       {  gsDslVerTypeName, gsDslVerFileName  }
+        ::=  { gsDslVersionTable 1 }
+
+    GsDslVersionEntry  ::=  SEQUENCE {      
+        gsDslVerFileName  OCTET STRING,
+        gsDslVersionNo  OCTET STRING,
+        gsDslVerType  OCTET STRING,
+        gsDslVerCreateTime  OCTET STRING,
+        gsDslVerDownLoadTime  OCTET STRING,
+        gsDslVersionStatus  OCTET STRING,               
+        gsDslVerLen  Unsigned32,               
+        gsDslVersionState  OCTET STRING          
+        }
+
+    gsDslVerFileName    OBJECT-TYPE 
+        SYNTAX          OCTET STRING ( SIZE ( 0 .. 64  ) )
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION     "the file name of the version "
+        ::=  {  gsDslVersionEntry  1  }
+
+
+    gsDslVersionNo  OBJECT-TYPE 
+        SYNTAX          OCTET STRING ( SIZE ( 0 .. 16  ) )
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "the  version id"
+        ::=  {  gsDslVersionEntry  2  }
+
+
+    gsDslVerType    OBJECT-TYPE 
+        SYNTAX          OCTET STRING ( SIZE ( 0 .. 16  ) )
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "the  version type"
+        ::=  {  gsDslVersionEntry  3  }
+
+
+    gsDslVerCreateTime  OBJECT-TYPE 
+        SYNTAX          OCTET STRING ( SIZE ( 0 .. 16  ) )
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "the  version Create Time"
+        ::=  {  gsDslVersionEntry  4  }
+
+
+    gsDslVerDownLoadTime    OBJECT-TYPE 
+        SYNTAX          OCTET STRING ( SIZE ( 0 .. 16  ) )
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "the  version DownLoad Time"
+        ::=  {  gsDslVersionEntry  5  }
+
+
+    gsDslVersionStatus  OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "the  version Status"
+        ::=  {  gsDslVersionEntry  6  }
+
+
+    gsDslVerLen OBJECT-TYPE 
+        SYNTAX          Unsigned32
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "the  version length"
+        ::=  {  gsDslVersionEntry  7  }
+        
+
+    gsDslVersionState  OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "the  version active state"
+        ::=  {  gsDslVersionEntry  8  }
+        
+        
+        
+    gsDslPatchTable   OBJECT-TYPE
+        SYNTAX      SEQUENCE  OF  GsDslPatchEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION "A table entry containing patch information."
+        ::=  { gsDslVersion  3 }
+
+    gsDslPatchEntry   OBJECT-TYPE
+        SYNTAX      GsDslPatchEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION "patch information entry"
+        INDEX       {  gsDslPatchName  }
+        ::=  { gsDslPatchTable 1 }
+
+    GsDslPatchEntry  ::=  SEQUENCE {   
+        gsDslPatchName           OCTET STRING,
+        gsDslPatchSystemVersion  OCTET STRING,  
+        gsDslPatchVersionNo      OCTET STRING,        
+        gsDslPatchSize           Unsigned32,    
+        gsDslPatchStatus         OCTET STRING,     
+        gsDslPatchCreateTime     OCTET STRING,
+        gsDslPatchActiveTime    OCTET STRING,
+        gsDslPatchRunningTime        OCTET STRING,          
+        gsDslPatchDesc           OCTET STRING,
+        gsDslPatchAdminStatus    INTEGER                   
+        }
+
+    gsDslPatchName      OBJECT-TYPE 
+        SYNTAX          OCTET STRING ( SIZE ( 0 .. 64  ) )
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION     "the file name of the patch "
+        ::=  {  gsDslPatchEntry  1  }
+
+    gsDslPatchSystemVersion  OBJECT-TYPE 
+        SYNTAX          OCTET STRING ( SIZE ( 0 .. 32  ) )
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "the system version of the patch"
+        ::=  {  gsDslPatchEntry  2  }
+        
+    gsDslPatchVersionNo  OBJECT-TYPE 
+        SYNTAX          OCTET STRING ( SIZE ( 0 .. 32  ) )
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "the version no of the patch"
+        ::=  {  gsDslPatchEntry  3  }
+
+    gsDslPatchSize OBJECT-TYPE 
+        SYNTAX          Unsigned32
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "the  version length of the patch"
+        ::=  {  gsDslPatchEntry  4  }
+        
+    gsDslPatchStatus  OBJECT-TYPE 
+        SYNTAX          OCTET STRING ( SIZE ( 0 .. 32  ) )
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "the status of the patch, such as activated, deactivated and autorun"
+        ::=  {  gsDslPatchEntry  5  }
+        
+    gsDslPatchCreateTime  OBJECT-TYPE 
+        SYNTAX          OCTET STRING ( SIZE ( 0 .. 16  ) )
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "the patch create time"
+        ::=  {  gsDslPatchEntry  6  }
+        
+    gsDslPatchActiveTime  OBJECT-TYPE 
+        SYNTAX          OCTET STRING ( SIZE ( 0 .. 16  ) )
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "the patch active time"        
+        ::=  {  gsDslPatchEntry  7  }
+        
+    gsDslPatchRunningTime  OBJECT-TYPE 
+        SYNTAX          OCTET STRING ( SIZE ( 0 .. 16  ) )
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "the running time of the patch"
+        ::=  {  gsDslPatchEntry  8  }
+    
+    gsDslPatchDesc  OBJECT-TYPE 
+        SYNTAX          OCTET STRING ( SIZE ( 0 .. 64  ) )
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "the patch description"
+        ::=  {  gsDslPatchEntry  9  }
+        
+    gsDslPatchAdminStatus  OBJECT-TYPE 
+        SYNTAX          INTEGER  { active ( 1 ) , save ( 2 ), deactive ( 3 ),  delete( 4 ) } 
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "config the status of patch"
+        ::=  {  gsDslPatchEntry  10  }
+    
+-------------------------------------------------------------------------------
+    
+    gsDslBoardCpldTable  OBJECT-TYPE
+        SYNTAX      SEQUENCE  OF  GsDslBoardCpldEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION 
+            "Board CPLD version table."
+        ::=  { gsDslVersion  4 }
+
+    gsDslBoardCpldEntry  OBJECT-TYPE
+        SYNTAX      GsDslBoardCpldEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION 
+            "An entry in gsDslBoardCpldTable."
+        INDEX       
+            {  
+                gsDslBoardRackNo, 
+                gsDslBoardShelfNo, 
+                gsDslBoardSlotNo
+            }
+        ::=  { gsDslBoardCpldTable 1 }
+
+    GsDslBoardCpldEntry  ::=  SEQUENCE {
+        gsDslBoardCpldUpdateEnable           INTEGER,        
+        gsDslBoardCpldRunningVersion         DisplayString,
+        gsDslBoardCpldSavedVersion           DisplayString,
+        gsDslBoardCpldUpdateStatus           INTEGER,
+        gsDslBoardCpldUpdateFailReason       INTEGER
+        }
+    
+    gsDslBoardCpldUpdateEnable   OBJECT-TYPE 
+        SYNTAX        INTEGER 
+        { 
+            enabled(1),
+            disabled(2)
+        }
+        MAX-ACCESS    read-write
+        STATUS        current
+        DESCRIPTION   
+            "Enable/disable to update board CPLD version.
+             Value 1 means that board CPLD will be updated when board is 
+             reset."
+        DEFVAL  { disabled }
+        ::=  {  gsDslBoardCpldEntry  1  }
+    
+    gsDslBoardCpldRunningVersion OBJECT-TYPE 
+        SYNTAX        DisplayString(SIZE(0..16))
+        MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION   
+            "Running CPLD version."
+        ::=  {  gsDslBoardCpldEntry  2  }
+
+    gsDslBoardCpldSavedVersion  OBJECT-TYPE 
+        SYNTAX        DisplayString(SIZE(0..16))
+        MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION   
+            "Saved CPLD version."
+        ::=  {  gsDslBoardCpldEntry  3  }
+    
+    gsDslBoardCpldUpdateStatus    OBJECT-TYPE 
+        SYNTAX        INTEGER
+        { 
+            notStarted(1),
+            inProgress(2),            
+            succeeded(3),
+            failed(4)
+        }
+        MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION   
+            "CPLD updating status."
+        ::=  {  gsDslBoardCpldEntry  4  }
+        
+    gsDslBoardCpldUpdateFailReason       OBJECT-TYPE
+        SYNTAX        INTEGER
+        {
+            noError(1),
+            noSupportCardHwVersion(2), 
+            mismatchCardHwVersion(3),
+            mismatchCardConfData (4),
+            noSwInNe(5),
+            cardUpdateCpldFailed(6),
+            otherErrors(255)
+        }
+        MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION   
+            "The reason when updating CPLD version failed."
+        ::=  {  gsDslBoardCpldEntry  5  }
+
+-------------------------------------------------------------------------------
+    
+    gsDslBoardBootTable  OBJECT-TYPE
+        SYNTAX      SEQUENCE  OF  GsDslBoardBootEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION 
+            "Board boot version table."
+        ::=  { gsDslVersion  5 }
+
+    gsDslBoardBootEntry  OBJECT-TYPE
+        SYNTAX      GsDslBoardBootEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION 
+            "An entry in gsDslBoardBootTable."
+        INDEX       
+        {  
+            gsDslBoardRackNo, 
+            gsDslBoardShelfNo, 
+            gsDslBoardSlotNo
+        }
+        ::=  { gsDslBoardBootTable 1 }
+
+    GsDslBoardBootEntry  ::=  SEQUENCE {       
+        gsDslBoardBootRunningVersion     DisplayString,
+        gsDslBoardBootSavedVersion       DisplayString,
+        gsDslBoardBootUpdateStatus       INTEGER,
+        gsDslBoardBootUpdateFailReason   INTEGER,
+        gsDslBoardBootUpdateAction       INTEGER
+        }
+    
+    gsDslBoardBootRunningVersion OBJECT-TYPE 
+        SYNTAX       DisplayString(SIZE(0..16))
+        MAX-ACCESS   read-only
+        STATUS       current
+        DESCRIPTION  
+            "Running boot version."
+        ::=  {  gsDslBoardBootEntry  1  }
+
+    gsDslBoardBootSavedVersion  OBJECT-TYPE 
+        SYNTAX       DisplayString(SIZE(0..16))
+        MAX-ACCESS   read-only
+        STATUS       current
+        DESCRIPTION  
+            "Saved boot version."
+        ::=  {  gsDslBoardBootEntry  2  }
+            
+    gsDslBoardBootUpdateStatus    OBJECT-TYPE 
+        SYNTAX       INTEGER
+        { 
+            notStarted(1),
+            inProgress(2),            
+            succeeded(3),
+            failed(4)
+        }
+        MAX-ACCESS   read-only
+        STATUS       current
+        DESCRIPTION  
+            "Boot version updating status."
+        ::=  {  gsDslBoardBootEntry  3  }
+        
+    gsDslBoardBootUpdateFailReason       OBJECT-TYPE
+        SYNTAX       INTEGER
+        {
+            noError(1),
+            noSupportCardHwVersion(2), 
+            mismatchCardHwVersion(3),
+            mismatchCardConfData (4),
+            noSwInNe(5),
+            cardUpdateBootFailed(6),
+            otherErrors(255)
+        }
+        MAX-ACCESS   read-only
+        STATUS       current
+        DESCRIPTION   
+            "The reason when updating boot version failed."
+        ::=  {  gsDslBoardBootEntry  4  }
+        
+    gsDslBoardBootUpdateAction OBJECT-TYPE 
+        SYNTAX      INTEGER{
+            start(1)
+        }
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION 
+            "The boot version update action. 
+             It means to start the update progress."
+        ::=  {  gsDslBoardBootEntry  5  }
+
+-------------------------------------------------------------------------------
+    
+    gsDslSubBoardCpldTable  OBJECT-TYPE
+        SYNTAX      SEQUENCE  OF  GsDslSubBoardCpldEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION 
+            "Subcard CPLD version table."
+        ::=  { gsDslVersion  6 }
+
+    gsDslSubBoardCpldEntry  OBJECT-TYPE
+        SYNTAX      GsDslSubBoardCpldEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION 
+            "An entry in gsDslSubBoardCpldTable."
+        INDEX       
+            {  
+                gsDslSubBoardRackNo, 
+                gsDslSubBoardShelfNo, 
+                gsDslSubBoardSlotNo,
+                gsDslSubBoardSubCardNo
+            }
+        ::=  { gsDslSubBoardCpldTable 1 }
+
+    GsDslSubBoardCpldEntry  ::=  SEQUENCE {
+        gsDslSubBoardCpldUpdateEnable         INTEGER,        
+        gsDslSubBoardCpldRunningVersion       DisplayString,
+        gsDslSubBoardCpldSavedVersion         DisplayString,
+        gsDslSubBoardCpldUpdateStatus         INTEGER,
+        gsDslSubBoardCpldUpdtFailReason       INTEGER
+        }
+    
+    gsDslSubBoardCpldUpdateEnable   OBJECT-TYPE 
+        SYNTAX        INTEGER 
+        { 
+            enabled(1),
+            disabled(2)
+        }
+        MAX-ACCESS    read-write
+        STATUS        current
+        DESCRIPTION   
+            "Enable/disable to update board CPLD version.
+             Value 1 means that board CPLD will be updated when board is 
+             reset."
+        DEFVAL  { disabled }
+        ::=  {  gsDslSubBoardCpldEntry  1  }
+    
+    gsDslSubBoardCpldRunningVersion OBJECT-TYPE 
+        SYNTAX        DisplayString(SIZE(0..16))
+        MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION   
+            "Running CPLD version."
+        ::=  {  gsDslSubBoardCpldEntry  2  }
+
+    gsDslSubBoardCpldSavedVersion  OBJECT-TYPE 
+        SYNTAX        DisplayString(SIZE(0..16))
+        MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION   
+            "Saved CPLD version."
+        ::=  {  gsDslSubBoardCpldEntry  3  }
+    
+    gsDslSubBoardCpldUpdateStatus    OBJECT-TYPE 
+        SYNTAX        INTEGER
+        { 
+            notStarted(1),
+            inProgress(2),            
+            succeeded(3),
+            failed(4)
+        }
+        MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION   
+            "CPLD updating status."
+        ::=  {  gsDslSubBoardCpldEntry  4  }
+        
+    gsDslSubBoardCpldUpdtFailReason       OBJECT-TYPE
+        SYNTAX        INTEGER
+        {
+            noError(1),
+            noSupportCardHwVersion(2), 
+            mismatchCardHwVersion(3),
+            mismatchCardConfData (4),
+            noSwInNe(5),
+            cardUpdateCpldFailed(6),
+            otherErrors(255)
+        }
+        MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION   
+            "The reason when updating CPLD version failed."
+        ::=  {  gsDslSubBoardCpldEntry  5  }
+
+-------------------------------------------------------------------------------
+    
+    gsDslSubBoardBootTable  OBJECT-TYPE
+        SYNTAX      SEQUENCE  OF  GsDslSubBoardBootEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION 
+            "Subcard boot version table."
+        ::=  { gsDslVersion  7 }
+
+    gsDslSubBoardBootEntry  OBJECT-TYPE
+        SYNTAX      GsDslSubBoardBootEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION 
+            "An entry in gsDslSubBoardBootTable."
+        INDEX       
+        {  
+            gsDslSubBoardRackNo, 
+            gsDslSubBoardShelfNo, 
+            gsDslSubBoardSlotNo,
+            gsDslSubBoardSubCardNo
+        }
+        ::=  { gsDslSubBoardBootTable 1 }
+
+    GsDslSubBoardBootEntry  ::=  SEQUENCE {       
+        gsDslSubBoardBootRunningVersion   DisplayString,
+        gsDslSubBoardBootSavedVersion     DisplayString,
+        gsDslSubBoardBootUpdateStatus     INTEGER,
+        gsDslSubBoardBootUpdtFailReason   INTEGER,
+        gsDslSubBoardBootUpdateAction     INTEGER
+        }
+    
+    gsDslSubBoardBootRunningVersion OBJECT-TYPE 
+        SYNTAX       DisplayString(SIZE(0..16))
+        MAX-ACCESS   read-only
+        STATUS       current
+        DESCRIPTION  
+            "Running boot version."
+        ::=  {  gsDslSubBoardBootEntry  1  }
+
+    gsDslSubBoardBootSavedVersion  OBJECT-TYPE 
+        SYNTAX       DisplayString(SIZE(0..16))
+        MAX-ACCESS   read-only
+        STATUS       current
+        DESCRIPTION  
+            "Saved boot version."
+        ::=  {  gsDslSubBoardBootEntry  2  }
+            
+    gsDslSubBoardBootUpdateStatus    OBJECT-TYPE 
+        SYNTAX       INTEGER
+        { 
+            notStarted(1),
+            inProgress(2),            
+            succeeded(3),
+            failed(4)
+        }
+        MAX-ACCESS   read-only
+        STATUS       current
+        DESCRIPTION  
+            "Boot version updating status."
+        ::=  {  gsDslSubBoardBootEntry  3  }
+        
+    gsDslSubBoardBootUpdtFailReason       OBJECT-TYPE
+        SYNTAX       INTEGER
+        {
+            noError(1),
+            noSupportCardHwVersion(2), 
+            mismatchCardHwVersion(3),
+            mismatchCardConfData (4),
+            noSwInNe(5),
+            cardUpdateBootFailed(6),
+            otherErrors(255)
+        }
+        MAX-ACCESS   read-only
+        STATUS       current
+        DESCRIPTION   
+            "The reason when updating boot version failed."
+        ::=  {  gsDslSubBoardBootEntry  4  }
+        
+    gsDslSubBoardBootUpdateAction OBJECT-TYPE 
+        SYNTAX      INTEGER{
+            start(1)
+        }
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION 
+            "The boot version update action. 
+             It means to start the update progress."
+        ::=  {  gsDslSubBoardBootEntry  5  }
+        
+-------------------------------------------------------------------------------
+
+    gsDslCommon       OBJECT IDENTIFIER ::= {gsDslSysctrlObjects 4}
+        
+        gsDslCliPrompt      OBJECT-TYPE 
+        SYNTAX          OCTET STRING  ( SIZE ( 0 .. 16  ) ) 
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "prompt name of the gsDsl. (ex. fasp#)"
+        ::=  {  gsDslCommon  1  }
+    
+    gsDslLineTestRootMode   OBJECT-TYPE 
+        SYNTAX          INTEGER  { rootMode ( 1 ) , notRootMode ( 2 ) } 
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "A flag is to indicate whether the MasterToSLave transfering is going on."
+        ::=  {  gsDslCommon  2  }   
+
+    gsDslEPMConfType    OBJECT-TYPE 
+        SYNTAX          INTEGER  { csv ( 0 ) , epm ( 1 ) } 
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "the EPM config type."
+        ::=  {  gsDslCommon  3  }
+    
+    gsDslSaveToNvm  OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     ""
+        REFERENCE       ""
+        DEFVAL          { 0 }
+        ::=  {  gsDslCommon  4  }
+    
+    gsDslEraseNvm   OBJECT-TYPE 
+        SYNTAX          Integer32  ( -2147483648 .. 2147483647  ) 
+        MAX-ACCESS      read-write
+        STATUS          current
+        DEFVAL          { 0 }
+        ::=  {  gsDslCommon  5  }
+
+    gsDslSwapCore   OBJECT-TYPE 
+        SYNTAX          INTEGER  { switch ( 1 ) } 
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "The flag that master to slave."
+        ::=  {  gsDslCommon  6  }       
+    
+    gsDslBorrowBoardSet OBJECT-TYPE 
+        SYNTAX          INTEGER  { default ( 1 ) , slot10 ( 10 ) , slot12 ( 12 ) } 
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "The borrow board type."
+        ::=  {  gsDslCommon  7  }
+
+    gsDslBorrowBoardGet OBJECT-TYPE 
+        SYNTAX          INTEGER  { default ( 1 ) , slot10 ( 10 ) , slot12 ( 12 ) } 
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "The actual borrow board type"
+        ::=  {  gsDslCommon  8  }
+
+    gsDslSysDateTime    OBJECT-TYPE 
+        SYNTAX          OCTET STRING  ( SIZE ( 0 .. 20  ) ) 
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "yyyy-mm-dd HH:MM:SS.For example(2001-01-01 02:22:33)."
+        ::=  {  gsDslCommon  9  }
+
+
+    gsDslTimeZoneOffset       OBJECT-TYPE 
+        SYNTAX          Integer32(-12..12)
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "Time zone offset.
+           The zone offset can be 0 for GMT or it can be a value '+' or '-' 
+        from GMT. 
+        "
+        ::=  {  gsDslCommon  10  }
+
+
+    gsDslIsHalfTimeZone  OBJECT-TYPE 
+        SYNTAX          TruthValue
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "Whether it is a half zone.If it is true(1),the local 
+            time should be plused 0.5 hours."
+        ::=  {  gsDslCommon  11  }
+   
+    gsDslSystemReboot   OBJECT-TYPE 
+        SYNTAX          INTEGER
+        {
+            warmStart(1),
+            coldStart(2)
+        }
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     
+            "Reboot system.
+             The value 1 means reboot system by warm start. 
+             The value 2 means reboot system by cold start.
+            "
+        ::=  {  gsDslCommon  12  }
+        
+    gsDslSystemPortList OBJECT-TYPE 
+        SYNTAX          PortList
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "Server as port batch configuring."
+        ::=  {  gsDslCommon  13  }
+
+    gsDslAutoSaveToNvmInterval  OBJECT-TYPE 
+        SYNTAX          Integer32(0..168)
+        UNITS           "hours" 
+        MAX-ACCESS      read-write
+        STATUS          deprecated
+        DESCRIPTION     "The interval to save running configuration of agent to 
+                    flash media automatically.
+                         The value 0 means disable the auto save flash operation."
+        DEFVAL          { 0 }
+        ::=  {  gsDslCommon  14  }        
+
+    gsDslTimingSaveModifiedToNvmInterval  OBJECT-TYPE
+        SYNTAX          Integer32(0..1440)
+        UNITS           "minutes" 
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "The interval to save flash if running configuration of 
+                         agent modified, value 0 means disable the auto save flash
+                         operation."
+        DEFVAL          { 0 }
+        ::=  {  gsDslCommon  15  }
+        
+    gsDslTimingSaveToNvmInterval  OBJECT-TYPE 
+        SYNTAX          Integer32(0..8760)
+        UNITS           "hours" 
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "The interval to force saving flash , value 0 means disable 
+                         the force save saving operation."
+        DEFVAL          { 0 }
+        ::=  {  gsDslCommon  16  }
+        
+    gsDslUserSideMtu  OBJECT-TYPE 
+        SYNTAX          Integer32(64..2047)
+        UNITS           "byte" 
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "The user side maximum transmission unit, 
+                         the packge from user side will be discard 
+                         while it exceed this limit."
+        DEFVAL          { 1700 }
+        ::=  {  gsDslCommon  17  }
+        
+    gsDslSysMaxPortNumPerSlot  OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "The max port number per slot of the device.
+                         This number is used to compute the ifIndex."
+        ::=  {  gsDslCommon  18  }
+        
+    gsDslSysOutbandPortUsage OBJECT-TYPE 
+        SYNTAX         INTEGER
+            {
+                outbandPort(1),
+                cascadePort(2)
+            }
+        MAX-ACCESS     read-write
+        STATUS         current
+        DESCRIPTION     
+            "The usage of outband port.
+             outbandPort(1) - Switch the port usage to outband port.
+             cascadePort(2) - Switch the port usage to cascade port.
+            "
+        DEFVAL {  outbandPort  }
+        ::=  {  gsDslCommon  19  }
+        
+    gsDslSysDebugUserEnable OBJECT-TYPE
+        SYNTAX         INTEGER
+            {
+                enabled(1),
+                disabled(2)
+            }
+        MAX-ACCESS     read-write
+        STATUS         current
+        DESCRIPTION     
+            "Enable/disable the user 'gos_debug'."
+        DEFVAL {  disabled  }
+        ::=  {  gsDslCommon  20  }
+        
+    gsDslSerialPortBaudRate  OBJECT-TYPE
+        SYNTAX      INTEGER
+        {
+            baud110(1),
+            baud300(2),
+            baud600(3),
+            baud1200(4),
+            baud2400(5),
+            baud4800(6),
+            baud9600(7),
+            baud14400(8),
+            baud19200(9),
+            baud28800(10),
+            baud38400(11),
+            baud57600(12),
+            baud115200(13)
+        }
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION     
+            "Serial port baud rate."
+        DEFVAL  { baud9600 }
+        ::= { gsDslCommon 21 }    
+    
+    gsDslPerfStatTable  OBJECT-TYPE
+        SYNTAX      SEQUENCE  OF  GsDslPerfStatEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION "This table provides one row for each adsl interface.
+          Each row contains the perf statistic parameters for this adsl line"
+        ::=  { gsDslCommon  30 }
+
+    gsDslPerfStatEntry  OBJECT-TYPE
+        SYNTAX      GsDslPerfStatEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION "An entry containing additional performance management information
+               applicable to a adsl line interface."
+        INDEX       {  ifIndex  }
+        ::=  { gsDslPerfStatTable 1 }
+
+    GsDslPerfStatEntry  ::=  SEQUENCE {
+        gsDslPerfStatType       INTEGER,
+        gsDslPerfStatTableList  BITS,
+        gsDslPerfStatAction     INTEGER       
+        }
+    
+    gsDslPerfStatType   OBJECT-TYPE 
+        SYNTAX          INTEGER  
+                        { 
+                            adsl (1),
+                            shdsl(2),
+                            vdsl (3),
+                            etherlike(4)
+                        } 
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     
+                "The type of performance metrics to be updated."
+        ::=  {  gsDslPerfStatEntry  1  }
+
+
+    gsDslPerfStatTableList  OBJECT-TYPE 
+        SYNTAX          BITS 
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "bitmap for perf statistic object table"
+        ::=  {  gsDslPerfStatEntry  2  }
+
+
+    gsDslPerfStatAction OBJECT-TYPE 
+        SYNTAX          INTEGER  { actOnPort ( 1 ) , noop ( 2 ) , actOnBoard ( 3 ) } 
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "bitmap for perf statistic object table"
+        ::=  {  gsDslPerfStatEntry  3  }
+
+
+    gsDslUserTable  OBJECT-TYPE
+        SYNTAX      SEQUENCE  OF  GsDslUserEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION "A table contain user information for web and console and telnet.."
+        ::=  { gsDslCommon  31 }
+
+    gsDslUserEntry  OBJECT-TYPE
+        SYNTAX      GsDslUserEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION "A list of user information."
+        INDEX       {  gsDslUserIndex  }
+        ::=  { gsDslUserTable 1 }
+
+    GsDslUserEntry  ::=  SEQUENCE {
+        gsDslUserIndex      Integer32,
+        gsDslUserName       DisplayString,
+        gsDslUserPwd        DisplayString,
+        gsDslUserAccess     Integer32,
+        gsDslUserRowStatus  INTEGER,
+        gsDslUserOperStatus INTEGER
+        }
+
+
+    gsDslUserIndex  OBJECT-TYPE 
+        SYNTAX          Integer32  ( 1 .. 8  ) 
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION     "A simple index into 'TmsCommonMiscUserTable'."
+        ::=  {  gsDslUserEntry  1  }
+
+
+    gsDslUserName   OBJECT-TYPE 
+        SYNTAX          DisplayString  ( SIZE ( 0 .. 15  ) ) 
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "A simple index into 'TmsCommonMiscUserTable'."
+        ::=  {  gsDslUserEntry  2  }
+
+
+    gsDslUserPwd    OBJECT-TYPE 
+        SYNTAX          DisplayString  ( SIZE ( 0 .. 32  ) ) 
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "A simple index into 'TmsCommonMiscUserTable'."
+        ::=  {  gsDslUserEntry  3  }
+
+
+    gsDslUserAccess OBJECT-TYPE 
+        SYNTAX          Integer32  ( 1 .. 10  ) 
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "the user access in this row."
+        ::=  {  gsDslUserEntry  4  }
+
+
+    gsDslUserRowStatus  OBJECT-TYPE 
+        SYNTAX          INTEGER  { valid ( 1 ) , invalid ( 2 ) } 
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "the user state in this row."
+        ::=  {  gsDslUserEntry  5  }
+        
+    gsDslUserOperStatus  OBJECT-TYPE 
+        SYNTAX          INTEGER
+            {
+                normal(1),
+                suspended(2)
+            } 
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "CLI user operational status."
+        ::=  {  gsDslUserEntry  6  }
+
+----        
+    gsDslTrapHostTable  OBJECT-TYPE
+        SYNTAX      SEQUENCE  OF  GsDslTrapHostEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION "This table, which provides Trap target."
+        ::=  { gsDslCommon  33 }
+
+    gsDslTrapHostEntry  OBJECT-TYPE
+        SYNTAX      GsDslTrapHostEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION ""
+        INDEX       {  gsDslTrapHostIpAddr  }
+        ::=  { gsDslTrapHostTable 1 }
+
+    GsDslTrapHostEntry  ::=  SEQUENCE {
+        gsDslTrapHostIpAddr  IpAddress,
+        gsDslTrapHostSnmpVer  Integer32,
+        gsDslTrapHostCommunity  DisplayString,
+        gsDslTrapHostIsGosNmsSever  TruthValue,
+        gsDslTrapHostRowStatus  RowStatus,
+        
+        gsDslTrapHostEventType      BITS,
+        gsDslTrapHostMinEventLevel  INTEGER
+        }
+
+
+    gsDslTrapHostIpAddr OBJECT-TYPE 
+        SYNTAX          IpAddress
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION     ""
+        ::=  {  gsDslTrapHostEntry  1  }
+
+
+    gsDslTrapHostSnmpVer    OBJECT-TYPE 
+        SYNTAX          Integer32  ( 0 .. 1  ) 
+        MAX-ACCESS      read-create
+        STATUS          current
+        DESCRIPTION     ""
+        ::=  {  gsDslTrapHostEntry  2  }
+
+    gsDslTrapHostCommunity  OBJECT-TYPE 
+        SYNTAX          DisplayString  ( SIZE ( 0 .. 64  ) ) 
+        MAX-ACCESS      read-create
+        STATUS          current
+        DESCRIPTION     ""
+        ::=  {  gsDslTrapHostEntry  3  }
+
+
+    gsDslTrapHostIsGosNmsSever  OBJECT-TYPE
+        SYNTAX  TruthValue 
+        MAX-ACCESS read-create
+        STATUS current
+        DESCRIPTION
+            "If or not it is a gos's nms.
+            true(1): it is a gos's nms;
+            false(2): it is not a gos's nms.
+            "
+        ::= { gsDslTrapHostEntry 4  }
+
+    gsDslTrapHostRowStatus  OBJECT-TYPE 
+        SYNTAX          RowStatus
+        MAX-ACCESS      read-create
+        STATUS          current
+        DESCRIPTION     ""
+        ::=  {  gsDslTrapHostEntry  5  }        
+        
+        
+    gsDslTrapHostEventType  OBJECT-TYPE
+        SYNTAX BITS {
+                     equipmentEvent(0),
+                     qualityOfServiceEvent(1),
+                     communicationsEvent(2),
+                     environmentEvent(3),
+                     processingErrorEvent(4)
+                    }
+        MAX-ACCESS read-create
+        STATUS current
+        DESCRIPTION
+            "The event type that a receiver expects.
+             
+            The event type are defined in ITU-T X.733.
+            
+            -  equipment event type: 
+                An event of this type is principally 
+            associated with an equipment fault;
+             
+            -  quality of service event type: 
+                An event of this type is
+             principally associated with a degradation in the quality of a 
+             service;
+             
+            -  communications event type: 
+                An event of this type is principally
+             associated with the procedures and/or processes required to convey 
+             information from one point to another;
+            
+            -  environmental event type:
+                An event of this type is principally 
+            associated with a condition relating to an enclosure in which the 
+            equipment resides.
+
+            -  processing error event type: 
+                An event of this type is 
+            principally associated with a software or processing fault;
+            "
+        DEFVAL { { equipmentEvent,qualityOfServiceEvent,communicationsEvent,
+                environmentEvent,processingErrorEvent  } }
+        ::= { gsDslTrapHostEntry 6 }
+
+    gsDslTrapHostMinEventLevel  OBJECT-TYPE
+        SYNTAX INTEGER {
+                     cleared(0),
+                     critical(1),
+                     major(2),
+                     minor(3),
+                     warning(4),
+                     notification(5)
+                    }
+        MAX-ACCESS read-create
+        STATUS current
+        DESCRIPTION
+            "The min event level that a receiver expects.If the actual event 
+            level is more serious than this value,the event will be sent to 
+            Event Receiver. For example,if this value is warning(4),all the 
+            events that the level in cleared(0),critical(1),major(2),minor(3),
+            warning(4) will be sent,but notification(5) will not be sent.
+            
+            The event levels are defined in ITU-T X.733.            
+            
+           -   cleared: The Cleared severity level indicates the clearing of 
+            one or more previously reported alarms. This alarm clears all 
+            alarms for this managed object that have the same Alarm type,
+            Probable cause and Specific problems (if given).  
+            Multiple associated notifications may be cleared by using 
+            the Correlated notifications parameter (defined below).
+            This Recommendation | International Standard does not require that
+            the clearing of previously reported alarms be reported.  
+            Therefore, a managing system cannot assume that the absence of
+            an alarm with the Cleared severity level means that the condition
+            that caused the generation of previous alarms is still present.  
+               Managed object definers shall state if, and under which 
+            conditions, the Cleared severity level is used.
+            
+           -  critical: The Critical severity level indicates that a service 
+             affecting condition has occurred and an immediate corrective action
+             is required.  Such a severity can be reported, for example, when 
+             a managed object becomes totally out of service and its capability 
+             must be restored. 
+             
+           -   major: The Major severity level indicates that a service 
+            affecting condition has developed and an urgent corrective action 
+            is required.  Such a severity can be reported, for example, when 
+            there is a severe degradation in the capability of the managed 
+            object and its full capability must be restored. 
+            
+           -   minor: The Minor severity level indicates the existence of 
+            a non-service affecting fault condition and that corrective action 
+            should be taken in order to prevent a more serious (for example, 
+            service affecting) fault. Such a severity can be reported, 
+            for example, when the detected alarm condition is not currently 
+            degrading the capacity of the managed object. 
+                        
+           -   warning: The Warning severity level indicates the detection of 
+            a potential or impending service affecting fault, before any 
+            significant effects have been felt. Action should be taken to 
+            further diagnose (if necessary) and correct the problem in order 
+            to prevent it from becoming a more serious service affecting fault.               
+
+            -  notification: The notification severity level indicates that 
+            only a infomation to be report and it is either a fault or 
+            a potential fault. 
+
+            "
+        DEFVAL { notification }
+        ::= { gsDslTrapHostEntry 7 }
+            
+        
+
+----
+        gsDslSysIfCtrlTable OBJECT-TYPE
+        SYNTAX      SEQUENCE  OF  GsDslSysIfCtrlEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION "An (conceptual) table listing  of gsDsl system interface extend attribute."
+        ::=  { gsDslCommon  34 }
+
+    gsDslSysIfCtrlEntry OBJECT-TYPE
+        SYNTAX      GsDslSysIfCtrlEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION "An entry (conceptual) table listing  of gsDsl system interface extend attribute."
+        INDEX       {  ifIndex  }
+        ::=  { gsDslSysIfCtrlTable 1 }
+
+    GsDslSysIfCtrlEntry  ::=  SEQUENCE {
+        gsDslSysIfTrapCtrl  PortList,
+        gsDslSysIfType      Integer32
+        }
+    
+    
+    gsDslSysIfTrapCtrl  OBJECT-TYPE 
+        SYNTAX          PortList
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "port trap control."
+        ::=  {  gsDslSysIfCtrlEntry  1  }
+    
+    gsDslSysIfType  OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "If type ."
+        ::=  {  gsDslSysIfCtrlEntry  2  }
+        
+--------------------------------------------------------------------------------
+        
+        gsDslCluster    OBJECT IDENTIFIER
+        ::=  {  gsDslSysctrlObjects  5  }
+        gsDslStackModuleId  OBJECT-TYPE 
+        SYNTAX          Integer32  ( 1 .. 24  ) 
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "moduleId of this ZXDSL in this stack system."
+        ::=  {  gsDslCluster  1  }
+
+    gsDslStackModuleNum OBJECT-TYPE 
+        SYNTAX          Integer32  ( 1 .. 24  ) 
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "moduleNum of this ZXDSL in this stack system."
+        ::=  {  gsDslCluster  2  }
+
+    gsDslStackModuleRole    OBJECT-TYPE 
+        SYNTAX          INTEGER  { master ( 1 ) , slave ( 2 ) } 
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "role of this ZXDSL in this stack system."
+        ::=  {  gsDslCluster  3  }
+
+    gsDslStackTable OBJECT-TYPE
+        SYNTAX      SEQUENCE  OF  GsDslStackEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION "The (conceptual) table listing  of gsDsl system stack."
+        ::=  { gsDslCluster  4 }
+
+    gsDslStackEntry OBJECT-TYPE
+        SYNTAX      GsDslStackEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION "An entry (conceptual) table listing  of gsDsl system stack."
+        INDEX       {  gsDslStackIndex  }
+        ::=  { gsDslStackTable 1 }
+
+    GsDslStackEntry  ::=  SEQUENCE {
+        gsDslStackIndex  Integer32,
+        gsDslStackIpAddr  IpAddress,
+        gsDslStackRowStatus  RowStatus
+        }
+
+
+    gsDslStackIndex OBJECT-TYPE 
+        SYNTAX          Integer32  ( 1 .. 24  ) 
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION     "stackid of gsDsl system."
+        ::=  {  gsDslStackEntry  1  }
+
+
+    gsDslStackIpAddr    OBJECT-TYPE 
+        SYNTAX          IpAddress
+        MAX-ACCESS      read-create
+        STATUS          current
+        DESCRIPTION     "stack ip address of gsDsl system."
+        ::=  {  gsDslStackEntry  2  }
+
+
+    gsDslStackRowStatus OBJECT-TYPE 
+        SYNTAX          RowStatus  { active ( 1 ) , notInService ( 2 ) , 
+        notReady ( 3 ) , createAndGo ( 4 ) , createAndWait ( 5 ) , 
+        destroy ( 6 ) } 
+        MAX-ACCESS      read-create
+        STATUS          current
+        DESCRIPTION     "This object indicates the status of this entry."
+        ::=  {  gsDslStackEntry  3  }
+
+    
+
+--------------------------------------------------------------------------------
+        
+        gsDslFtp    OBJECT IDENTIFIER   
+        ::=  {  gsDslSysctrlObjects  7  }
+        
+    gsDslFtpManagedObjectType   OBJECT-TYPE 
+        SYNTAX          DisplayString  ( SIZE ( 1 .. 16  ) )
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "
+             Operation type, related with following operations.
+             switch configuration file    :switch
+             controller configuration file:controller
+             root fs file                 :rootfs
+             "
+        ::=  {  gsDslFtp  1  }
+
+    gsDslFtpAddress OBJECT-TYPE 
+        SYNTAX          IpAddress
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "
+             The IP Address for the FTP server used for downloading
+             and/or uploading files."
+        ::=  {  gsDslFtp  2  }
+
+    gsDslFtpUserName    OBJECT-TYPE 
+        SYNTAX          DisplayString  ( SIZE ( 1 .. 64  ) ) 
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "The FTP username."
+        ::=  {  gsDslFtp  3  }
+
+    gsDslFtpUserPwd OBJECT-TYPE 
+        SYNTAX          DisplayString  ( SIZE ( 1 .. 64  ) ) 
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "
+             The FTP User Password."
+        ::=  {  gsDslFtp  4  }
+
+    gsDslFtpFilePath    OBJECT-TYPE 
+        SYNTAX          DisplayString  ( SIZE ( 1 .. 64  ) ) 
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "
+             The FTP File Path, start from the root directory."
+        ::=  {  gsDslFtp  5  }
+
+    gsDslFtpFileName    OBJECT-TYPE 
+        SYNTAX          DisplayString  ( SIZE ( 1 .. 64  ) ) 
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     
+            "The FTP file path and name.
+             When gsDslFtpManagedObjectType is BULKPOOL_DAT and 
+             gsDslFtpLoadType is upload(1), gsDslFtpFileName should contain 
+             the file path without file name and end with '/'.
+            "
+        ::=  {  gsDslFtp  6  }
+
+    gsDslFtpLoadType    OBJECT-TYPE 
+        SYNTAX          INTEGER  { upload ( 1 ) , download ( 2 ) ,
+        versionDownloadAndOverwriteExisting ( 3 ) } 
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     " Ftp load type."
+        ::=  {  gsDslFtp  7  }
+
+    gsDslDownloadStatus OBJECT-TYPE 
+        SYNTAX          INTEGER  
+            { 
+                notStarted(1),
+                inProgress(2),
+                success(3),
+                masterFailed(4),
+                slaveFailed(5),
+                allFailed(6),
+                notEnoughSpace(7)
+            } 
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     " Ftp operation status."
+        ::=  {  gsDslFtp  8  }
+        
+    gsDslFtpAddressType OBJECT-TYPE
+        SYNTAX      InetAddressType
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+            "The type of IP Address for FTP server."
+        DEFVAL { 1 } 
+        ::= {   gsDslFtp  9   } 
+        
+    gsDslFtpIpv6Address OBJECT-TYPE
+        SYNTAX      InetAddress
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+            "The IPv6 Ip Address for FTP server."
+        ::= {   gsDslFtp  10   }
+
+    gsDslFtpProtocolType  OBJECT-TYPE     
+        SYNTAX     INTEGER 
+        {
+            ftp(1),
+            sftp(2)
+        } 
+        MAX-ACCESS read-write
+        STATUS     current
+        DESCRIPTION     
+            "gsDslFtpProtocolType is used to indicate the ftp protocol.
+             It includes two protocols: one is ftp and the other is sftp."
+        DEFVAL { ftp }
+        ::= {   gsDslFtp  11   }  
+        
+    gsDslFtpManagedObjectSubType  OBJECT-TYPE     
+        SYNTAX     DisplayString(SIZE(0..32))       
+        MAX-ACCESS read-write
+        STATUS     current
+        DESCRIPTION     
+            "FTP operation object sub-type.
+             When gsDslFtpManagedObjectType is BULKPOOL_DAT and 
+             gsDslFtpLoadType is upload(1), gsDslFtpManagedObjectSubType 
+             indicates which files will be uploaded to EMS.
+             When uploading bulk pool data file and 
+             gsDslFtpManagedObjectSubType is empty, NE will upload all bulk 
+             pool data files.
+            "
+        ::= {   gsDslFtp  12   }        
+
+--------------------------------------------------------------------------------
+        gsDslAddress    OBJECT IDENTIFIER   
+        ::=  {  gsDslSysctrlObjects  8  }   
+
+    gsDslOutBandIpAddress   OBJECT-TYPE 
+        SYNTAX          IpAddress
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "
+             "
+        ::=  {  gsDslAddress  1  }
+
+    gsDslOutBandIpMask  OBJECT-TYPE 
+        SYNTAX          IpAddress
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "
+             "
+        ::=  {  gsDslAddress  2  }
+
+    gsDslOutBandMACAddress  OBJECT-TYPE 
+        SYNTAX          MacAddress
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "
+             "
+        ::=  {  gsDslAddress  3  }
+
+    gsDslInBandMACAddress   OBJECT-TYPE 
+        SYNTAX          MacAddress
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "
+             "
+        ::=  {  gsDslAddress  4  }
+
+    gsDslInBandTable    OBJECT-TYPE
+        SYNTAX      SEQUENCE  OF  GsDslInBandEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION "A table of subnet parameters.  There is one entry
+             available for each of the 'tmsL3InBandMaxRows'
+             supported IP subnets."
+        ::=  { gsDslAddress  5 }
+
+    gsDslInBandEntry    OBJECT-TYPE
+        SYNTAX      GsDslInBandEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION "A list of subnet parameters."
+        INDEX       {  gsDslInBandIpAddr  }
+        ::=  { gsDslInBandTable 1 }
+
+    GsDslInBandEntry  ::=  SEQUENCE {
+        gsDslInBandIpAddr  IpAddress,
+        gsDslInBandIpMask  IpAddress,
+        gsDslInBandIpVid  Integer32,
+        gsDslInBandIpName  DisplayString,
+        gsDslInBandIpUseType  INTEGER,
+        gsDslInBandIpRowStatus  RowStatus
+        }
+
+
+    gsDslInBandIpAddr   OBJECT-TYPE 
+        SYNTAX          IpAddress
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION     "DURABLE:
+             The network management station uses this IP Address to talk
+             with the Agent on this subnet.  This IP address logically
+             AND'ed with 'tmsL3InBandMask' yields the actual subnet
+             value for this subnet."
+        ::=  {  gsDslInBandEntry  1  }
+
+
+    gsDslInBandIpMask   OBJECT-TYPE 
+        SYNTAX          IpAddress
+        MAX-ACCESS      read-create
+        STATUS          current
+        DESCRIPTION     "DURABLE:
+             The subnet mask for this subnet.  It contains 1's in the
+             bit positions for the net and subnet IDs and 0's in the
+             bit positions for host ID.  The 1's must be contiguous,
+             starting with the left most bit."
+        ::=  {  gsDslInBandEntry  2  }
+
+
+    gsDslInBandIpVid    OBJECT-TYPE 
+        SYNTAX          Integer32  ( 0 .. 4094  ) 
+        MAX-ACCESS      read-create
+        STATUS          current
+        DESCRIPTION     "DURABLE: { default=0:all }
+             For a L2/L3 hybrid switch, this object contains the actual
+             VLAN ID (VID) from 1 to 4094 or 0 if the VID is unassigned.
+             For a L3 only switch, this object contains the actual switch
+             interface from 1 to 4094 or 0 if unassigned.
+             
+             Changing this object for this row causes all rows with the same
+             'tmsL3InBandIfIndex' as this row to be changed to this new
+             'tmsL3InBandVidIface' value."
+        ::=  {  gsDslInBandEntry  3  }
+
+
+    gsDslInBandIpName   OBJECT-TYPE 
+        SYNTAX          DisplayString  ( SIZE ( 0 .. 16  ) ) 
+        MAX-ACCESS      read-create
+        STATUS          current
+        DESCRIPTION     "DURABLE:  { '':all )
+             A user reference name for this subnet."
+        ::=  {  gsDslInBandEntry  4  }
+    
+    gsDslInBandIpUseType    OBJECT-TYPE 
+        SYNTAX         INTEGER  
+            {
+                normal(1),
+                modem(2),
+                voip(3),
+                media(4),
+                normalSecondary(5),
+                layer3(6),
+                ieee1588(7),
+                serialPort(8),
+                secondaryInbandVlan(9)
+            } 
+        MAX-ACCESS      read-create
+        STATUS          current
+        DESCRIPTION     
+            "Inband IP address type.
+             normal             (1) - Inband IP address;
+             modem              (2) - Modem management;
+             voip               (3) - VoIP subnet IP address;
+             media              (4) - VoIP media subnet IP address;
+             normalSecondary    (5) - Secondary inband IP address;
+             layer3             (6) - Layer3 interface IP address;
+             ieee1588           (7) - IEEE 1588 IP address, just used by F829;
+             serialPort         (8) - Serial port IP address, just used by F809;
+             secondaryInbandVlan(9) - IP address in a secondary inband vlan;
+            "
+        ::=  {  gsDslInBandEntry  5  }
+
+
+    gsDslInBandIpRowStatus  OBJECT-TYPE 
+        SYNTAX          RowStatus
+        MAX-ACCESS      read-create
+        STATUS          current
+        DESCRIPTION     "DURABLE:
+             This object indicates the status of this entry.  A row in this
+             table must be created using the createAndWait(5) action state
+             (i.e., createAndGo(4) is not supported).  This object can only
+             be set to active(1) after all objects for this row are valid.
+             The 'tmsL3InBandName' is optional.
+             
+             Note that the notInService(2) state is not supported.  Objects
+             in this table row can be changed when this object is notReady(3)
+             or active(1)."
+        ::=  {  gsDslInBandEntry  6  }
+        
+            
+        
+--------------------------------------------------------------------------------
+        gsDslIpv6Objects    OBJECT IDENTIFIER   
+        ::=  {  gsDslSysctrlObjects  14  }       
+
+    gsDslIpv6InBandTable    OBJECT-TYPE
+        SYNTAX      SEQUENCE  OF  GsDslIpv6InBandEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION "A table of subnet parameters.  There is one entry
+             available for each of the 'tmsL3InBandMaxRows'
+             supported IP subnets."
+        ::=  { gsDslIpv6Objects  1 }
+
+    gsDslIpv6InBandEntry    OBJECT-TYPE
+        SYNTAX      GsDslIpv6InBandEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION "A list of subnet parameters."
+        INDEX       {  gsDslIpv6InBandInetAddress  }
+        ::=  { gsDslIpv6InBandTable 1 }
+
+    GsDslIpv6InBandEntry  ::=  SEQUENCE {
+        gsDslIpv6InBandInetAddress              InetAddress,
+        gsDslIpv6InBandInetAddressPrefixLength  InetAddressPrefixLength,
+        gsDslIpv6InBandIpVid                    Integer32,
+        gsDslIpv6InBandIpName                   DisplayString,
+        gsDslIpv6InBandIpUseType                INTEGER,
+        gsDslIpv6InBandIpRowStatus              RowStatus
+        }
+
+
+    gsDslIpv6InBandInetAddress   OBJECT-TYPE 
+        SYNTAX          InetAddress
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION     "DURABLE:
+             The network management station uses this IP Address to talk
+             with the Agent on this subnet.  This IP address logically
+             AND'ed with 'tmsL3InBandMask' yields the actual subnet
+             value for this subnet."
+        ::=  {  gsDslIpv6InBandEntry  1  }
+
+
+    gsDslIpv6InBandInetAddressPrefixLength   OBJECT-TYPE 
+        SYNTAX          InetAddressPrefixLength
+        MAX-ACCESS      read-create
+        STATUS          current
+        DESCRIPTION     "the prefix length of inband inet address."
+        ::=  {  gsDslIpv6InBandEntry  2  }
+
+
+    gsDslIpv6InBandIpVid    OBJECT-TYPE 
+        SYNTAX          Integer32  ( 0 .. 4094  ) 
+        MAX-ACCESS      read-create
+        STATUS          current
+        DESCRIPTION     "DURABLE: { default=0:all }
+             For a L2/L3 hybrid switch, this object contains the actual
+             VLAN ID (VID) from 1 to 4094 or 0 if the VID is unassigned.
+             For a L3 only switch, this object contains the actual switch
+             interface from 1 to 4094 or 0 if unassigned.
+             
+             Changing this object for this row causes all rows with the same
+             'tmsL3InBandIfIndex' as this row to be changed to this new
+             'tmsL3InBandVidIface' value."
+        ::=  {  gsDslIpv6InBandEntry  3  }
+
+
+    gsDslIpv6InBandIpName   OBJECT-TYPE 
+        SYNTAX          DisplayString  ( SIZE ( 0 .. 16  ) ) 
+        MAX-ACCESS      read-create
+        STATUS          current
+        DESCRIPTION     "DURABLE:  { '':all )
+             A user reference name for this subnet."
+        ::=  {  gsDslIpv6InBandEntry  4  }
+    
+    gsDslIpv6InBandIpUseType    OBJECT-TYPE 
+        SYNTAX          INTEGER
+            { 
+                normal(1),
+                modem(2),
+                voip(3),
+                media(4),
+                normalSecondary(5),
+                layer3(6),
+                ieee1588(7),
+                serialPort(8)
+            } 
+        MAX-ACCESS      read-create
+        STATUS          current
+        DESCRIPTION     
+            "IPv6 Inband IP address type.
+             normal         (1) - Inband IP address;
+             Modem          (2) - Modem management;
+             voip           (3) - VoIP subnet IP address;
+             media          (4) - VoIP media subnet IP address;
+             normalSecondary(5) - Secondary inband IP address;
+             layer3         (6) - Layer3 interface IP address;
+             ieee1588       (7) - IEEE 1588 IP address, just used by F829;
+             serialPort     (8) - Serial port IP address, just used by F809;
+            "
+        ::=  {  gsDslIpv6InBandEntry  5  }
+
+
+    gsDslIpv6InBandIpRowStatus  OBJECT-TYPE 
+        SYNTAX          RowStatus
+        MAX-ACCESS      read-create
+        STATUS          current
+        DESCRIPTION     "DURABLE:
+             This object indicates the status of this entry.  A row in this
+             table must be created using the createAndWait(5) action state
+             (i.e., createAndGo(4) is not supported).  This object can only
+             be set to active(1) after all objects for this row are valid.
+             The 'tmsL3InBandName' is optional.
+             
+             Note that the notInService(2) state is not supported.  Objects
+             in this table row can be changed when this object is notReady(3)
+             or active(1)."
+        ::=  {  gsDslIpv6InBandEntry  6  }
+        
+                
+    gsDslIpv6TrapHostTable  OBJECT-TYPE
+        SYNTAX      SEQUENCE  OF  GsDslIpv6TrapHostEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION "This table, which provides Trap target."
+        ::=  { gsDslIpv6Objects  2 }
+
+    gsDslIpv6TrapHostEntry  OBJECT-TYPE
+        SYNTAX      GsDslIpv6TrapHostEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION ""
+        INDEX       {  gsDslIpv6TrapHostIpAddr  }
+        ::=  { gsDslIpv6TrapHostTable 1 }
+
+    GsDslIpv6TrapHostEntry  ::=  SEQUENCE {
+        gsDslIpv6TrapHostIpAddr         InetAddress,
+        gsDslIpv6TrapHostSnmpVer        Integer32,
+        gsDslIpv6TrapHostCommunity      DisplayString,
+        gsDslIpv6TrapHostIsGosNmsSever  TruthValue,        
+        gsDslIpv6TrapHostEventType      BITS,
+        gsDslIpv6TrapHostMinEventLevel  INTEGER,
+        gsDslIpv6TrapHostRowStatus      RowStatus
+        }
+
+
+    gsDslIpv6TrapHostIpAddr OBJECT-TYPE 
+        SYNTAX          InetAddress
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION     ""
+        ::=  {  gsDslIpv6TrapHostEntry  1  }
+
+
+    gsDslIpv6TrapHostSnmpVer    OBJECT-TYPE 
+        SYNTAX          Integer32  ( 0 .. 1  ) 
+        MAX-ACCESS      read-create
+        STATUS          current
+        DESCRIPTION     ""
+        ::=  {  gsDslIpv6TrapHostEntry  2  }
+
+    gsDslIpv6TrapHostCommunity  OBJECT-TYPE 
+        SYNTAX          DisplayString  ( SIZE ( 0 .. 64  ) ) 
+        MAX-ACCESS      read-create
+        STATUS          current
+        DESCRIPTION     ""
+        ::=  {  gsDslIpv6TrapHostEntry  3  }
+
+
+    gsDslIpv6TrapHostIsGosNmsSever  OBJECT-TYPE
+        SYNTAX  TruthValue 
+        MAX-ACCESS read-create
+        STATUS current
+        DESCRIPTION
+            "If or not it is a gos's nms.
+            true(1): it is a gos's nms;
+            false(2): it is not a gos's nms.
+            "
+        ::= { gsDslIpv6TrapHostEntry 4  }       
+        
+    gsDslIpv6TrapHostEventType  OBJECT-TYPE
+        SYNTAX BITS {
+                     equipmentEvent(0),
+                     qualityOfServiceEvent(1),
+                     communicationsEvent(2),
+                     environmentEvent(3),
+                     processingErrorEvent(4)
+                    }
+        MAX-ACCESS read-create
+        STATUS current
+        DESCRIPTION
+            "The event type that a reciever expects.
+             
+            The event type are defined in ITU-T X.733.
+            
+            -  equipment event type: 
+                An event of this type is principally 
+            associated with an equipment fault;
+             
+            -  quality of service event type: 
+                An event of this type is
+             principally associated with a degradation in the quality of a service;
+             
+            -  communications event type: 
+                An event of this type is principally
+             associated with the procedures and/or processes required to convey 
+             information from one point to another;
+            
+            -  environmental event type:
+                An event of this type is principally 
+            associated with a condition relating to an enclosure in which the 
+            equipment resides.
+
+            -  processing error event type: 
+                An event of this type is 
+            principally associated with a software or processing fault;
+            "
+        DEFVAL { { equipmentEvent,qualityOfServiceEvent,communicationsEvent,
+                environmentEvent,processingErrorEvent  } }
+        ::= { gsDslIpv6TrapHostEntry 5 }
+
+    gsDslIpv6TrapHostMinEventLevel  OBJECT-TYPE
+        SYNTAX INTEGER {
+                     cleared(0),
+                     critical(1),
+                     major(2),
+                     minor(3),
+                     warning(4),
+                     notification(5)
+                    }
+        MAX-ACCESS read-create
+        STATUS current
+        DESCRIPTION
+            "The min event level that a reciever expects.If the actual event 
+            level is more serious then this value,the event will be sent to 
+            Event Reciever. For example,if this value is warning(4),all the 
+            events that the level in cleared(0),critical(1),major(2),minor(3),
+            warning(4) will be sent,but notification(5) will not be sent.
+            
+            The event levels are defined in ITU-T X.733.            
+            
+           -   cleared: The Cleared severity level indicates the clearing of 
+            one or more previously reported alarms. This alarm clears all 
+            alarms for this managed object that have the same Alarm type,
+            Probable cause and Specific problems (if given).  
+            Multiple associated notifications may be cleared by using 
+            the Correlated notifications parameter (defined below).
+            This Recommendation | International Standard does not require that
+            the clearing of previously reported alarms be reported.  
+            Therefore, a managing system cannot assume that the absence of
+            an alarm with the Cleared severity level means that the condition
+            that caused the generation of previous alarms is still present.  
+               Managed object definers shall state if, and under which 
+            conditions, the Cleared severity level is used.
+            
+           -  critical: The Critical severity level indicates that a service 
+             affecting condition has occurred and an immediate corrective action
+             is required.  Such a severity can be reported, for example, when 
+             a managed object becomes totally out of service and its capability 
+             must be restored. 
+             
+           -   major: The Major severity level indicates that a service 
+            affecting condition has developed and an urgent corrective action 
+            is required.  Such a severity can be reported, for example, when 
+            there is a severe degradation in the capability of the managed 
+            object and its full capability must be restored. 
+            
+           -   minor: The Minor severity level indicates the existence of 
+            a non-service affecting fault condition and that corrective action 
+            should be taken in order to prevent a more serious (for example, 
+            service affecting) fault. Such a severity can be reported, 
+            for example, when the detected alarm condition is not currently 
+            degrading the capacity of the managed object. 
+                        
+           -   warning: The Warning severity level indicates the detection of 
+            a potential or impending service affecting fault, before any 
+            significant effects have been felt. Action should be taken to 
+            further diagnose (if necessary) and correct the problem in order 
+            to prevent it from becoming a more serious service affecting fault.               
+
+            -  notification: The notification severity level indicates that 
+            only a infomation to be report and it is either a fault or 
+            a potential fault. 
+
+            "
+        DEFVAL { notification }
+        ::= { gsDslIpv6TrapHostEntry 6 }          
+        
+
+    gsDslIpv6TrapHostRowStatus  OBJECT-TYPE 
+        SYNTAX          RowStatus
+        MAX-ACCESS      read-create
+        STATUS          current
+        DESCRIPTION     ""
+        ::=  {  gsDslIpv6TrapHostEntry  30  }    
+        
+    gsDslIpv6GlobalObjects   OBJECT IDENTIFIER ::= { gsDslIpv6Objects 3 }
+    
+    gsDslIpv6Enable  OBJECT-TYPE 
+        SYNTAX      INTEGER
+        {
+            enable(1), 
+            disable(2)
+        }
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+            "Enable/Disable IPv6."
+        DEFVAL { disable }
+        ::= { gsDslIpv6GlobalObjects 1}
+
+    gsDslIpv6OutbandAddress   OBJECT IDENTIFIER ::=  {  gsDslIpv6Objects  4  } 
+    
+    gsDslIpv6OutBandInetAddr   OBJECT-TYPE 
+        SYNTAX          InetAddress
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     
+            "Outband inet address."
+        ::=  {  gsDslIpv6OutbandAddress  1  }
+
+    gsDslIpv6OutBandInetAddrPfxLen  OBJECT-TYPE 
+        SYNTAX          InetAddressPrefixLength
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     
+            "Outband inet address prefix length."
+        ::=  {  gsDslIpv6OutbandAddress  2  }
+
+--------------------------------------------------------------------------------
+    gsDslLocalizationObjects    OBJECT IDENTIFIER   
+        ::=  {  gsDslSysctrlObjects  15  }           
+        
+    gsDslLocalizationGlobalObjects   OBJECT IDENTIFIER 
+        ::=  { gsDslLocalizationObjects 1 }
+        
+    gsDslLanguage OBJECT-TYPE 
+        SYNTAX            INTEGER
+        {
+            english(1),
+            chinese(2)            
+        }
+        MAX-ACCESS        read-write
+        STATUS            current
+        DESCRIPTION       
+            "The language for console and telnet."         
+        DEFVAL { english }
+        ::=  {  gsDslLocalizationGlobalObjects 1 }    
+                   
+    gsDslLocalizationFileTable   OBJECT-TYPE
+        SYNTAX      SEQUENCE  OF  GsDslLocalizationFileEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION 
+            "This table includes the localization file information
+             for console and telnet."
+        ::=  { gsDslLocalizationObjects 2 }
+
+    gsDslLocalizationFileEntry   OBJECT-TYPE
+        SYNTAX      GsDslLocalizationFileEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION 
+            "An entry in gsDslLocalizationFileTable."
+        INDEX   {gsDslLocalizationFileType}
+        ::=  { gsDslLocalizationFileTable 1 }
+
+    GsDslLocalizationFileEntry  ::=  SEQUENCE {
+        gsDslLocalizationFileType         INTEGER, 
+        gsDslLocalizationFileVersion      DisplayString,
+        gsDslLocalizationFileSize         Unsigned32,
+        gsDslLocalizationFileCreateTime   DisplayString,                 
+        gsDslLocalizationFileAdminStatus  INTEGER
+        }         
+        
+    gsDslLocalizationFileType OBJECT-TYPE 
+        SYNTAX            INTEGER
+        {
+            english(1),
+            chinese(2)            
+        }
+        MAX-ACCESS        not-accessible
+        STATUS            current
+        DESCRIPTION       
+            "Localization file type."
+        ::=  {  gsDslLocalizationFileEntry  1  }            
+        
+    gsDslLocalizationFileVersion  OBJECT-TYPE 
+        SYNTAX          DisplayString (SIZE( 0..32))
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     
+            "The version number of the localization file."
+        ::=  {  gsDslLocalizationFileEntry  2  }
+
+    gsDslLocalizationFileSize OBJECT-TYPE 
+        SYNTAX          Unsigned32
+        UNITS           "byte"         
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     
+            "The version length of the localization file."
+        ::=  {  gsDslLocalizationFileEntry  3  }    
+        
+    gsDslLocalizationFileCreateTime  OBJECT-TYPE 
+        SYNTAX          DisplayString(SIZE( 0..16))
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     
+            "Create time of the localization file.The format is 
+             yyyymmdd HHMMSS.For example,20100707 131527"
+        ::=  {  gsDslLocalizationFileEntry  4  } 
+                              
+    gsDslLocalizationFileAdminStatus  OBJECT-TYPE 
+        SYNTAX          INTEGER  
+        { 
+            delete(1) 
+        } 
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     
+            "Delete localization file."
+        ::=  {  gsDslLocalizationFileEntry  10  }    
+
+--------------------------------------------------------------------------------
+
+    gsDslModuleFileObjects    OBJECT IDENTIFIER
+        ::=  {  gsDslSysctrlObjects  16  }
+        
+    gsDslModuleFileGlobalObjects   OBJECT IDENTIFIER 
+        ::=  { gsDslModuleFileObjects 1 }
+        
+    gsDslModuleFileStatus OBJECT-TYPE 
+        SYNTAX       INTEGER
+        {
+            notExist(1),
+            loadSucceeded(2),
+            loadFailed(3)
+        }
+        MAX-ACCESS   read-only
+        STATUS       current
+        DESCRIPTION       
+            "The status of the module file: 
+             notExist(1)       - Module file does not exist.
+             loadSucceeded(2)  - Load module file succeeded.
+             loadFailed(3)     - Load module file failed.
+            "
+        DEFVAL { notExist }
+        ::=  {  gsDslModuleFileGlobalObjects 1 }
+        
+    gsDslModuleFileInfo OBJECT-TYPE 
+        SYNTAX       DisplayString (SIZE(1..128))
+        MAX-ACCESS   read-only
+        STATUS       current
+        DESCRIPTION       
+            "The information of the module file which includes NE version name,
+             NE version No., module file version No. and module file build time.
+            "
+        ::=  {  gsDslModuleFileGlobalObjects 2 }
+        
+    gsDslEraseModuleFile OBJECT-TYPE 
+        SYNTAX       Integer32
+        MAX-ACCESS   read-write
+        STATUS       current
+        DESCRIPTION       
+            "Value 1 means to erase the module file."
+        ::=  {  gsDslModuleFileGlobalObjects 3 }
+    
+--------------------------------------------------------------------------------
+
+   gsDslNmsAccessCtrl   OBJECT IDENTIFIER   ::= {  gsDslSysctrlObjects  9  }
+
+    gsDslCommunityConfTable OBJECT-TYPE
+        SYNTAX SEQUENCE OF GsDslCommunityConfEntry
+        MAX-ACCESS not-accessible
+        STATUS current
+        DESCRIPTION
+            "A table of SNMPv1/v2c community string configuration."
+        ::= { gsDslNmsAccessCtrl 1 }
+
+    gsDslCommunityConfEntry OBJECT-TYPE
+        SYNTAX GsDslCommunityConfEntry
+        MAX-ACCESS not-accessible
+        STATUS current
+        DESCRIPTION
+            "A list of community strings."
+        INDEX { gsDslCommunityConfCommunity }
+        ::= { gsDslCommunityConfTable 1 }
+
+    GsDslCommunityConfEntry ::= SEQUENCE {
+        gsDslCommunityConfCommunity     DisplayString,
+        gsDslCommunityConfPermission    INTEGER,
+        gsDslCommunityConfViewName      DisplayString,
+        gsDslCommunityConfRowStatus     RowStatus
+    }
+
+    gsDslCommunityConfCommunity  OBJECT-TYPE
+        SYNTAX DisplayString (SIZE(1..20))
+        MAX-ACCESS not-accessible
+        STATUS current
+        DESCRIPTION
+            "DURABLE: { 'public','':all }
+             The SNMPv1/v2c community name string.  
+             Name must begin with alphabetic character or '_' and '@' shouldn't 
+             be used in community string.
+             Duplicate community names are not allowed in this table. 
+             Note that a null string is not a valid community name 
+             (i.e., a null string forces 'gsDslCommunityConfRowStatus' 
+             to 'notReady(3)')."
+        ::= { gsDslCommunityConfEntry 1 }
+
+
+    gsDslCommunityConfPermission OBJECT-TYPE
+        SYNTAX INTEGER {
+               readOnly(1),
+               readWrite(2)
+        }
+        MAX-ACCESS read-create
+        STATUS current
+        DESCRIPTION
+            "DURABLE: { readWrite:all }
+             This object specifies the type of access allowed. 'readOnly(1)'
+             allows GET operations (i.e., GET, GET-NEXT, GET-BULK) and
+             'readWrite(2)' allows both GET and SET operations."
+        ::= { gsDslCommunityConfEntry 2 }
+
+    gsDslCommunityConfViewName  OBJECT-TYPE
+        SYNTAX DisplayString (SIZE(1..32))
+        MAX-ACCESS read-create
+        STATUS current
+        DESCRIPTION
+            "
+             This object is reserved now.
+              
+             DURABLE: { 'internet':all }
+             At runtime (i.e., not when this object is SET), this view name
+             is compared to the 'vacmViewTreeFamilyViewName' in the
+             'vacmViewTreeFamilyTable' (see RFC2575).  If a match is
+             found and the varbind(s) specify valid object type and instance,
+             the 'gsDslCommunityConfPermission' privilege is permitted.
+             
+             Note that a null string is not a valid view name value.
+             Also note that the value of this object does not have to match
+             an existing entry in the 'vacmViewTreeFamilyTable' (if no match,
+             no access is allowed).
+             
+             Note that the factory default value for this object is 'internet',
+             which allows access to the subtree under '1.3.6.1'."
+        ::= { gsDslCommunityConfEntry 3 }
+        
+    gsDslCommunityConfRowStatus OBJECT-TYPE
+        SYNTAX  RowStatus
+        MAX-ACCESS  read-create
+        STATUS  current
+        DESCRIPTION
+            "DURABLE:
+             This object indicates the status of this entry.  A row in this
+             table can be created using the 'createAndGo(4)' (i.e., all
+             parameters must be valid - supplied in a single SNMP PDU or have
+             default values).
+             
+             Any object in a conceptual row can be modified independent of the
+             value of this object (e.g., can be changed while 'active(1)')."
+        ::= { gsDslCommunityConfEntry 4 }
+
+
+
+
+--------------------------------------------------------------------------------
+--  Ntp 
+--------------------------------------------------------------------------------
+    gsDslSntp               OBJECT IDENTIFIER ::= { gsDslSysctrlObjects  10 }
+
+
+    gsDslSntpEnable OBJECT-TYPE
+        SYNTAX  INTEGER{
+                        enable(1),
+                        disable(2)
+                        }
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+            "Enable/disable NTP in this system."
+        DEFVAL { disable }
+        ::= { gsDslSntp 1}
+
+
+    gsDslSntpServerIp OBJECT-TYPE
+      SYNTAX        IpAddress
+      MAX-ACCESS    read-write
+      STATUS        current
+      DESCRIPTION
+        " The NTP server's IP address "
+      ::= { gsDslSntp 2}
+
+    gsDslSntpPollInterval OBJECT-TYPE
+      SYNTAX        Integer32
+      UNITS         "seconds"
+      MAX-ACCESS    read-write
+      STATUS current
+      DESCRIPTION
+        " The NTP server's fetch time's interval time, the default is 64"
+      DEFVAL { 64 }
+      ::= { gsDslSntp 3}
+      
+
+    gsDslSntpStratum OBJECT-TYPE
+      SYNTAX        Integer32
+      MAX-ACCESS    read-only
+      STATUS        current
+      DESCRIPTION
+        " The local NTP server 's stratum.
+          If it is 16,then it means that this device has not synchronied time, 
+          and it is a invalid value. "
+      ::= { gsDslSntp 5}
+
+
+    gsDslSntpSynchStatus OBJECT-TYPE
+      SYNTAX        INTEGER
+              {
+                 alreadySyn(1),
+                 neverSyn(2)
+              }
+      MAX-ACCESS    read-only
+      STATUS        current
+      DESCRIPTION
+        " The NTP server whether is  synchronized or not "
+      ::= { gsDslSntp 6}
+
+
+    gsDslSntpSlaveServerIp OBJECT-TYPE
+      SYNTAX        IpAddress
+      MAX-ACCESS    read-write
+      STATUS        current
+      DESCRIPTION
+        " The slave NTP server's IP address "
+      ::= { gsDslSntp 7}
+
+
+    gsDslSntpCurrTryingSynchServerIp OBJECT-TYPE
+      SYNTAX        IpAddress
+      MAX-ACCESS    read-only
+      STATUS        current
+      DESCRIPTION
+        " The NTP server's IP which is being tried to synchronize time now."
+      ::= { gsDslSntp 8}
+
+
+    gsDslSntpLastSynchronizedServerIP OBJECT-TYPE
+      SYNTAX        IpAddress
+      MAX-ACCESS    read-only
+      STATUS        current
+      DESCRIPTION
+        " The NTP server's IP address of last ntp synchronization."
+      ::= { gsDslSntp 9}
+    
+
+
+    gsDslSysSntpCurrentOffset OBJECT-TYPE
+      SYNTAX      Integer32
+      UNITS       "seconds"
+      MAX-ACCESS  read-only
+      STATUS      current
+      DESCRIPTION
+          "The Time offset to the current selected reference time source.
+          "
+      ::= { gsDslSntp 10 }
+
+
+    gsDslSysSntpOffsetAlarmThreshold OBJECT-TYPE
+      SYNTAX      Integer32
+      UNITS       "seconds"
+      MAX-ACCESS  read-only
+      STATUS      current
+      DESCRIPTION
+          "The alarm threshold of NTP time offset to the current selected 
+          reference time source.When this threshold is across,the trap 
+          gsDslSysSntpOffsetOverThreshTrap  should be sent to a manager. 
+          "
+      DEFVAL { 7 }
+      ::= { gsDslSntp 11 }  
+
+
+
+   gsDslOpticalPower   OBJECT IDENTIFIER   ::= {  gsDslSysctrlObjects  11  }
+
+        gsDslOpticalPowerRx OBJECT-TYPE
+          SYNTAX    DisplayString
+          UNITS     "dBm"
+          MAX-ACCESS read-only
+          STATUS current
+          DESCRIPTION
+            "Received optical power"
+          ::= { gsDslOpticalPower 1}
+
+        gsDslOpticalPowerTx OBJECT-TYPE
+          SYNTAX    DisplayString
+          UNITS     "dBm"
+          MAX-ACCESS read-only
+          STATUS current
+          DESCRIPTION
+            "Transmitted optical power"
+          ::= { gsDslOpticalPower 2}
+
+
+   gsDslVoipDhcp   OBJECT IDENTIFIER   ::= {  gsDslSysctrlObjects  12  }
+
+    gsDslVoipDhcpEnable OBJECT-TYPE
+        SYNTAX     INTEGER{
+            enable(1),
+            disable(2)
+        }
+        MAX-ACCESS  read-write
+        STATUS current
+        DESCRIPTION
+            "The VOIP DHCP status. The IP subnet for VOIP should be configed first."
+        DEFVAL { disable }
+        ::= { gsDslVoipDhcp 1 } 
+        
+    gsDslVoipDhcpIpAddress   OBJECT-TYPE 
+        SYNTAX          IpAddress
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     
+            "The IP address for VOIP when gsDslVoipDhcpEnable is enable.
+             When gsDslVoipDhcpEnable is disable, VOIP IP address should be getted from IP subnet table."
+        ::= { gsDslVoipDhcp 2 } 
+
+    gsDslVoipDhcpIpMask  OBJECT-TYPE 
+        SYNTAX          IpAddress
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     
+            "The IP mask for VOIP when gsDslVoipDhcpEnable is enable.
+             When gsDslVoipDhcpEnable is disable, VOIP IP mask should be getted from IP subnet table."
+        ::= { gsDslVoipDhcp 3 } 
+
+    gsDslVoipDhcpRoute  OBJECT-TYPE 
+        SYNTAX          IpAddress
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     
+            "The route for VOIP when gsDslVoipDhcpEnable is enable.
+             When gsDslVoipDhcpEnable is disable, VOIP route should be getted from IP route table."
+        ::= { gsDslVoipDhcp 4 } 
+        
+    gsDslVoipDhcpOption60Enable OBJECT-TYPE
+        SYNTAX     INTEGER{
+            enable(1),
+            disable(2)
+        }
+        MAX-ACCESS  read-write
+        STATUS current
+        DESCRIPTION
+            "The VOIP DHCP Option60 status. "
+        DEFVAL { enable }
+        ::= { gsDslVoipDhcp 5 } 
+        
+    gsDslVoipDhcpOption60Vendor OBJECT-TYPE
+        SYNTAX     DisplayString (SIZE(1..32))
+        MAX-ACCESS  read-write
+        STATUS current
+        DESCRIPTION
+            "The VOIP DHCP Option60 Vendor. "
+        ::= { gsDslVoipDhcp 6 } 
+    
+    gsDslVoipDhcpOption60Category OBJECT-TYPE
+        SYNTAX     DisplayString (SIZE(1..32))
+        MAX-ACCESS  read-write
+        STATUS current
+        DESCRIPTION
+            "The VOIP DHCP Option60 Category. "
+        ::= { gsDslVoipDhcp 7 }  
+        
+    gsDslVoipDhcpOption60Model OBJECT-TYPE
+        SYNTAX     DisplayString (SIZE(1..32))
+        MAX-ACCESS  read-write
+        STATUS current
+        DESCRIPTION
+            "The VOIP DHCP Option60 Model. "
+        ::= { gsDslVoipDhcp 8} 
+        
+    gsDslVoipDhcpOption60Version OBJECT-TYPE
+        SYNTAX     DisplayString (SIZE(1..32))
+        MAX-ACCESS  read-write
+        STATUS current
+        DESCRIPTION
+            "The VOIP DHCP Option60 Version. "
+        ::= { gsDslVoipDhcp 9 } 
+        
+    gsDslVoipDhcpReRequestEnable OBJECT-TYPE
+        SYNTAX  INTEGER {
+            enable(1),
+            disable(2)
+        }
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+            "When gsDslVoipDhcpReRequestEnable is enable, device will
+             re-request an IP address by DHCP as VoIP service is broken.
+             This object is valid when gsDslVoipDhcpEnable is enable."
+        DEFVAL  { disable }  
+        ::= {gsDslVoipDhcp 10 }
+
+    gsDslVoipDhcpReRequestInterval OBJECT-TYPE
+        SYNTAX      Integer32(1..20)
+        UNITS       "minutes"
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+            "The interval that device re-requests an IP address after VoIP 
+             service is broken.
+             This object is valid when gsDslVoipDhcpReRequestEnable is enable."
+        DEFVAL  { 10 }
+        ::= {gsDslVoipDhcp 11 }
+        
+    gsDslSyslog   OBJECT IDENTIFIER   ::= {  gsDslSysctrlObjects  13  }  
+     
+    gsDslSyslogGlobalObjects  OBJECT IDENTIFIER  ::= {gsDslSyslog 1}
+    
+    gsDslSyslogFacility  OBJECT-TYPE 
+        SYNTAX           Integer32(0..23)
+        MAX-ACCESS       read-write
+        STATUS           current
+        DESCRIPTION      
+          "The syslog message facility. The priority value of PRI is calculated by first multiplying 
+           the Facility number by 8 and then adding the numerical value of the Severity.             
+             
+            Numerical Code       Facility             
+            0              kernel messages
+            1              user-level messages
+            2              mail system
+            3              system daemons
+            4              security/authorization messages (note 1)
+            5              messages generated internally by syslogd
+            6              line printer subsystem
+            7              network news subsystem
+            8              UUCP subsystem
+            9              clock daemon (note 2)
+            10             security/authorization messages (note 1)
+            11             FTP daemon
+            12             NTP subsystem
+            13             log audit (note 1)
+            14             log alert (note 1)
+            15             clock daemon (note 2)
+            16             local use 0  (local0)
+            17             local use 1  (local1)
+            18             local use 2  (local2)
+            19             local use 3  (local3)
+            20             local use 4  (local4)
+            21             local use 5  (local5)
+            22             local use 6  (local6)
+            23             local use 7  (local7)     
+            
+            More information, please refer to rfc3164.  
+            " 
+        ::=  {  gsDslSyslogGlobalObjects  1  }      
+        
+    gsDslSyslogSeverity  OBJECT-TYPE 
+        SYNTAX           Integer32(0..7)
+        MAX-ACCESS       read-write
+        STATUS           current
+        DESCRIPTION      
+          "The syslog message severity, The priority value of PRI is calculated by first multiplying 
+           the Facility number by 8 and then adding the numerical value of the Severity.             
+                          
+           Numerical Code       Severity          
+            0             Emergency: system is unusable
+            1             Alert: action must be taken immediately
+            2             Critical: critical conditions
+            3             Error: error conditions
+            4             Warning: warning conditions
+            5             Notice: normal but significant condition
+            6             Informational: informational messages
+            7             Debug: debug-level messages    
+            
+            More information, please refer to rfc3164.  
+            " 
+        ::=  {  gsDslSyslogGlobalObjects  2  }    
+        
+    gsDslSyslogSrcPort   OBJECT-TYPE 
+        SYNTAX           Integer32
+        MAX-ACCESS       read-write
+        STATUS           current
+        DESCRIPTION      
+             "The syslog source udp port. "
+        ::=  {  gsDslSyslogGlobalObjects  3  }
+        
+    gsDslSyslogCmdLogEnable OBJECT-TYPE 
+        SYNTAX           INTEGER{
+            enable(1),
+            disable(2)
+        }
+        MAX-ACCESS       read-write
+        STATUS           deprecated
+        DESCRIPTION      
+             "Enable/Disable the cmd log in syslog. " 
+        ::=  {  gsDslSyslogGlobalObjects  4  }
+        
+    gsDslSyslogSnmpLogEnable OBJECT-TYPE 
+        SYNTAX           INTEGER{
+            enable(1),
+            disable(2)
+        }
+        MAX-ACCESS       read-write
+        STATUS           deprecated
+        DESCRIPTION      
+             "Enable/Disable the snmp log in syslog. " 
+        ::=  {  gsDslSyslogGlobalObjects  5  }
+         
+    gsDslSyslogAlarmLogEnable OBJECT-TYPE 
+        SYNTAX           INTEGER{
+            enable(1),
+            disable(2)
+        }
+        MAX-ACCESS       read-write
+        STATUS           deprecated
+        DESCRIPTION      
+             "Enable/Disable the alarm log in syslog. " 
+        ::=  {  gsDslSyslogGlobalObjects  6  }
+        
+    gsDslSyslogAlarmLogLevel OBJECT-TYPE 
+        SYNTAX           Integer32(0..7)
+        MAX-ACCESS       read-write
+        STATUS           deprecated
+        DESCRIPTION      
+             "The alarm log level in syslog. " 
+        ::=  {  gsDslSyslogGlobalObjects  7  }                                
+     
+         
+    gsDslSyslogHostTable  OBJECT-TYPE
+        SYNTAX      SEQUENCE  OF  GsDslSyslogHostEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION "syslog host table."
+        ::=  { gsDslSyslog  2 }
+
+    gsDslSyslogHostEntry  OBJECT-TYPE
+        SYNTAX      GsDslSyslogHostEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION "An entry in gsDslSyslogHostTable."
+        INDEX       {  gsDslSyslogHostIpAddr  }
+        ::=  { gsDslSyslogHostTable 1 }
+
+    GsDslSyslogHostEntry  ::=  SEQUENCE {
+        gsDslSyslogHostIpAddr      IpAddress,
+        gsDslSyslogDesPort         Integer32,    
+        gsDslSyslogHostRowStatus   RowStatus
+        }  
+          
+    gsDslSyslogHostIpAddr  OBJECT-TYPE 
+        SYNTAX             IpAddress
+        MAX-ACCESS         not-accessible
+        STATUS             current
+        DESCRIPTION      
+             "The syslog server ip address. "
+        ::=  {  gsDslSyslogHostEntry  1  }                   
+
+    gsDslSyslogDesPort  OBJECT-TYPE 
+        SYNTAX           Integer32
+        MAX-ACCESS       read-create
+        STATUS           current
+        DESCRIPTION      
+             "The syslog destination udp port. " 
+        ::=  {  gsDslSyslogHostEntry  2  }        
+    
+    gsDslSyslogHostRowStatus  OBJECT-TYPE 
+        SYNTAX          RowStatus
+        MAX-ACCESS      read-create
+        STATUS          current
+        DESCRIPTION     ""
+        ::=  {  gsDslSyslogHostEntry  10  }
+        
+--------------------------------------------------------------------------------
+--  SNMP Proxy
+--------------------------------------------------------------------------------
+
+    gsDslSnmpProxyObjects  OBJECT IDENTIFIER  ::={  gsDslSysctrlObjects 17  }
+    
+    gsDslSnmpProxyGlobalObjects  OBJECT IDENTIFIER  
+    ::={  gsDslSnmpProxyObjects 1  }
+    
+    gsDslSnmpProxyMasterIpAddrType  OBJECT-TYPE 
+        SYNTAX           InetAddressType
+        MAX-ACCESS       read-write
+        STATUS           current
+        DESCRIPTION      
+            "Master IP address type." 
+        ::=  {  gsDslSnmpProxyGlobalObjects  1  }
+
+    gsDslSnmpProxyMasterIpAddress  OBJECT-TYPE 
+        SYNTAX           InetAddress
+        MAX-ACCESS       read-write
+        STATUS           current
+        DESCRIPTION      
+            "Master IP address.
+             This object is used to modify the IP address of SNMP response 
+             packet or trap that device sends to NMS." 
+        ::=  {  gsDslSnmpProxyGlobalObjects  2  }
+        
+    gsDslSnmpProxySlaveConfTable OBJECT-TYPE
+        SYNTAX     SEQUENCE OF GsDslSnmpProxySlaveConfEntry
+        MAX-ACCESS not-accessible
+        STATUS     current
+        DESCRIPTION
+            "SNMP proxy slave configuration table."
+        ::= { gsDslSnmpProxyObjects 2 }
+
+    gsDslSnmpProxySlaveConfEntry OBJECT-TYPE
+        SYNTAX     GsDslSnmpProxySlaveConfEntry
+        MAX-ACCESS not-accessible
+        STATUS     current
+        DESCRIPTION
+            "SNMP proxy slave configuration entry."
+        INDEX { gsDslSnmpProxySlaveId }
+        ::= { gsDslSnmpProxySlaveConfTable 1 }
+
+    GsDslSnmpProxySlaveConfEntry ::= SEQUENCE {
+        gsDslSnmpProxySlaveId             Integer32,
+        gsDslSnmpProxySlaveIpAddressType  InetAddressType,
+        gsDslSnmpProxySlaveIpAddress      InetAddress,
+        gsDslSnmpProxySlaveRowStatus      RowStatus
+    }
+    
+    gsDslSnmpProxySlaveId  OBJECT-TYPE 
+        SYNTAX        Integer32(1..16)
+        MAX-ACCESS    not-accessible
+        STATUS        current
+        DESCRIPTION      
+            "The SNMP proxy slave device ID."
+        ::=  {  gsDslSnmpProxySlaveConfEntry  1  }
+        
+    gsDslSnmpProxySlaveIpAddressType  OBJECT-TYPE
+        SYNTAX        InetAddressType
+        MAX-ACCESS    read-create
+        STATUS        current
+        DESCRIPTION
+            "The SNMP proxy slave IP address type."
+        ::=  {  gsDslSnmpProxySlaveConfEntry  2  }
+    
+    gsDslSnmpProxySlaveIpAddress  OBJECT-TYPE
+        SYNTAX        InetAddress
+        MAX-ACCESS    read-create
+        STATUS        current
+        DESCRIPTION
+            "The SNMP proxy slave IP address.
+             This object is used to modify the IP address of SNMP response 
+             packet or trap that master device sends to slave."
+        ::=  {  gsDslSnmpProxySlaveConfEntry  3  }
+    
+    gsDslSnmpProxySlaveRowStatus  OBJECT-TYPE 
+        SYNTAX        RowStatus
+        MAX-ACCESS    read-create
+        STATUS        current
+        DESCRIPTION   
+            "To create a row in this table, a manager must set this object to
+             createAndGo(4).
+          
+             In particular, a newly created row cannot be created until the 
+             corresponding gsDslSnmpProxySlaveCommunity, 
+             gsDslSnmpProxySlaveIpAddressType and gsDslSnmpProxySlaveIpAddress 
+             have been set.
+             
+             To delete a row in this table, a manager must set this object to 
+             destroy(6)."
+        ::=  {  gsDslSnmpProxySlaveConfEntry  50  }
+
+--------------------------------------------------------------------------------
+--  Bulk Pool
+--------------------------------------------------------------------------------
+
+    gsDslBulkPoolObjects  OBJECT IDENTIFIER  ::={  gsDslSysctrlObjects 18  }
+    
+    gsDslBulkPoolXmlFileTable OBJECT-TYPE
+        SYNTAX     SEQUENCE OF GsDslBulkPoolXmlFileEntry
+        MAX-ACCESS not-accessible
+        STATUS     current
+        DESCRIPTION
+            "This table includes XML file status."
+        ::= { gsDslBulkPoolObjects 2 }    
+        
+    gsDslBulkPoolXmlFileEntry OBJECT-TYPE
+        SYNTAX     GsDslBulkPoolXmlFileEntry
+        MAX-ACCESS not-accessible
+        STATUS     current
+        DESCRIPTION
+            "An entry in gsDslBulkPoolXmlFileTable."
+        INDEX { gsDslBulkPoolXmlFileName }
+        ::= { gsDslBulkPoolXmlFileTable 1 }
+
+    GsDslBulkPoolXmlFileEntry ::= SEQUENCE {
+        gsDslBulkPoolXmlFileName            DisplayString,
+        gsDslBulkPoolXmlFileRowStatus       RowStatus
+        }    
+
+    gsDslBulkPoolXmlFileName OBJECT-TYPE
+        SYNTAX         DisplayString(SIZE(1..32))
+        MAX-ACCESS     not-accessible
+        STATUS         current       
+        DESCRIPTION
+            " This object identifies a row in this table. "
+        ::= { gsDslBulkPoolXmlFileEntry 1 }
+
+    gsDslBulkPoolXmlFileRowStatus OBJECT-TYPE
+        SYNTAX         RowStatus
+        MAX-ACCESS     read-create
+        STATUS         current       
+        DESCRIPTION
+            "The status of this conceptual row.
+            
+            The supported actions of this conceptual row only include:
+            'destroy'.
+            
+            To delete a row in this table, a manager must set this object to 
+            destroy(6). 
+             
+            To get this object, the agent always returns active(1)."
+        ::= { gsDslBulkPoolXmlFileEntry 50 }
+--------------------------------------------------------------------------------
+-- gsDslDhcpRelay
+    gsDslDhcpRelay OBJECT IDENTIFIER ::= {  gsDslSysctrlObjects  100  }
+    gsDslDhcpServerAddress OBJECT-TYPE
+        SYNTAX          IpAddress
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "The IP Address of DHCP server."
+        ::=  {  gsDslDhcpRelay  1  }
+        
+--------------------------------------------------------------------------------
+-- definition of sysctrl traps.
+
+    gsDslPrimaryCtrlCardSwapped NOTIFICATION-TYPE
+        STATUS  current
+        DESCRIPTION
+            "A gsDslPrimaryCtrlCardSwapped trap indicates that the main control 
+            card has swapped to slave card."
+        ::= { gsDslSysctrlTrapObjects 1 }
+    
+    gsDslCardUp NOTIFICATION-TYPE
+        OBJECTS { gsDslBoardAdminStatus, gsDslBoardOperStatus }
+        STATUS  current
+        DESCRIPTION
+            "A gsDslCardUp trap indicates that the agent has detected that the
+            card has been online."
+       ::= { gsDslSysctrlTrapObjects 2 }
+       
+    gsDslCardDown NOTIFICATION-TYPE
+        OBJECTS { gsDslBoardAdminStatus, gsDslBoardOperStatus }
+        STATUS  current
+        DESCRIPTION
+            "A gsDslCardDown trap indicates that the agent has detected that the
+            card has been offline."
+       ::= { gsDslSysctrlTrapObjects 3 }
+       
+    gsDslCpuLoadAlarm NOTIFICATION-TYPE
+        OBJECTS { gsDslBoardCpuLoad, gsDslBoardCpuLoadThreshhold }
+        STATUS  current
+        DESCRIPTION
+            "A gsDslCpuLoadAlarm trap indicates that the agent has detected that the
+            gsDslCardCPULoad object of one card has exceeded the configured threshhold value of 
+            gsDslBoardCpuLoadThreshhold."
+       ::= { gsDslSysctrlTrapObjects 4 }
+    
+    gsDslCpuLoadAlarmCleard NOTIFICATION-TYPE
+        OBJECTS { gsDslBoardCpuLoad, gsDslBoardCpuLoadThreshhold }
+        STATUS  current
+        DESCRIPTION
+            "A gsDslCpuLoadAlarmCleard trap indicates that the agent has detected that the
+            gsDslCardCPULoad object of one card has less than the configured threshhold value of 
+            gsDslBoardCpuLoadThreshhold."
+       ::= { gsDslSysctrlTrapObjects 5 }
+              
+    gsDslMemoryOverLoad NOTIFICATION-TYPE
+        OBJECTS { gsDslBoardMemUsage, gsDslBoardMemUsageThreshhold }
+        STATUS  current
+        DESCRIPTION
+            "A gsDslMemoryOverLoad trap indicates that the agent has detected that the
+            gsDslCardMemUsage object of one card has exceeded the configured threshhold value of 
+            gsDslBoardMemUsageThreshhold."
+       ::= { gsDslSysctrlTrapObjects 6 }
+    
+    gsDslMemoryAlarmCleard NOTIFICATION-TYPE
+        OBJECTS { gsDslBoardMemUsage, gsDslBoardMemUsageThreshhold }
+        STATUS  current
+        DESCRIPTION
+            "A gsDslMemoryAlarmCleard trap indicates that the agent has detected that the
+            gsDslCardMemUsage object of one card has less than the configured threshhold value of 
+            gsDslBoardMemUsageThreshhold."
+       ::= { gsDslSysctrlTrapObjects 7 }            
+
+-- env trap
+    gsDslEnvTrapGroup OBJECT IDENTIFIER  ::= { gsDslSysctrlTrapObjects 8 }
+    
+    gsDslEnvTempExceeded NOTIFICATION-TYPE
+        OBJECTS {
+                  gsDslEnvChassisTemperature,
+                  gsDslEnvTemperatureThreshold
+                }
+        STATUS             current
+        DESCRIPTION
+           "A temperature inside the chassis has exceeded
+            normal operating temperature gsDslEnvTemperatureThreshold. 
+            The gsDslEnvChassisTemperature object identifies the current status."
+       ::= { gsDslEnvTrapGroup 1 }            
+
+    gsDslEnvTempNormal NOTIFICATION-TYPE
+        OBJECTS {
+                  gsDslEnvChassisTemperature,
+                  gsDslEnvTemperatureThreshold
+                }
+        STATUS             current
+        DESCRIPTION
+           "A temperature inside the chassis has returned to
+            normal operating temperature gsDslEnvTemperatureThreshold. 
+            The gsDslEnvChassisTemperature object identifies the current status."
+       ::= { gsDslEnvTrapGroup 2 }
+
+   gsDslEnvFanFailed NOTIFICATION-TYPE
+        OBJECTS { 
+                gsDslEnvFanAdminstatus,
+                gsDslEnvFanOperstatus  }
+        STATUS             current
+        DESCRIPTION
+           "A Fan tray on the device has failed. The
+            gsDslEnvFanOperstatus object identifies the failed fan Operstatus."
+        ::= { gsDslEnvTrapGroup 3 }
+ 
+   gsDslEnvFanRecovered NOTIFICATION-TYPE
+        OBJECTS { 
+                gsDslEnvFanAdminstatus,
+                gsDslEnvFanOperstatus  }
+        STATUS             current
+        DESCRIPTION
+           "A Fan tray on the device has recovered
+            after failure. The gsDslEnvFanOperstatus object identifies
+            the recovered Fan Operstatus."
+        ::= { gsDslEnvTrapGroup 4 }
+
+   gsDslEnvLossOfPower NOTIFICATION-TYPE
+        STATUS             current
+        DESCRIPTION
+           "This is device dying gasp event.It is generated when the device is 
+           power off or power failure."
+        ::= { gsDslEnvTrapGroup 5 }
+
+   gsDslEnvSwitchFailed NOTIFICATION-TYPE
+        OBJECTS {
+            gsDslEnvDeviceId,
+            gsDslEnvSwitchNormalStatus,
+            gsDslEnvSwitchCurrentStatus
+        }   
+        STATUS      current
+        DESCRIPTION
+           "It is generated when the switch is Faild."
+        ::= { gsDslEnvTrapGroup 6 }
+
+   gsDslEnvSwitchRecovered NOTIFICATION-TYPE
+        OBJECTS {
+            gsDslEnvDeviceId,
+            gsDslEnvSwitchNormalStatus,
+            gsDslEnvSwitchCurrentStatus
+        }    
+        STATUS      current
+        DESCRIPTION
+           "It is generated when the switch is Recovered."
+        ::= { gsDslEnvTrapGroup 7 }
+
+   gsDslEnvExteriorPowerFailed NOTIFICATION-TYPE
+        STATUS      current
+        DESCRIPTION
+           "It is generated when the Exterior Power is Faild."
+        ::= { gsDslEnvTrapGroup 8 }
+
+   gsDslEnvExteriorPowerRecovered NOTIFICATION-TYPE
+        STATUS      current
+        DESCRIPTION
+           "It is generated when the Exterior Power is Recovered."
+        ::= { gsDslEnvTrapGroup 9 }
+        
+   gsDslEnvBatteriesVoltageFailed NOTIFICATION-TYPE
+        STATUS      current
+        DESCRIPTION
+           "It is generated when the Batteries Voltage is Faild."
+        ::= { gsDslEnvTrapGroup 10 }
+
+   gsDslEnvBatteriesVoltageRecovered NOTIFICATION-TYPE
+        STATUS      current
+        DESCRIPTION
+           "It is generated when the Batteries Voltage is Recovered."
+        ::= { gsDslEnvTrapGroup 11 }
+        
+   gsDslEnvPowerFailed NOTIFICATION-TYPE
+        STATUS      current
+        DESCRIPTION
+           "It is generated when the Power is Faild."
+        ::= { gsDslEnvTrapGroup 12 }
+
+   gsDslEnvPowerRecovered NOTIFICATION-TYPE
+        STATUS      current
+        DESCRIPTION
+           "It is generated when the Power is Recovered."
+        ::= { gsDslEnvTrapGroup 13 }                                               
+
+
+    gsDslEnvMonitorInterfaceLinkDown NOTIFICATION-TYPE
+        STATUS  current
+        DESCRIPTION
+            "It indicates that the agent has detected that the
+             link at the enviroment monitoring inerface has been down."
+        ::= { gsDslEnvTrapGroup 14 }    
+       
+    gsDslEnvMonitorInterfaceLinkUp NOTIFICATION-TYPE
+        STATUS  current
+        DESCRIPTION
+            "It indicates that the agent has detected that the
+             link at the enviroment monitoring inerface has been up."
+        ::= { gsDslEnvTrapGroup 15 }      
+       
+    gsDslTempUnderThreshTrap NOTIFICATION-TYPE
+        OBJECTS 
+        {
+            gsDslEnvChassisTemperature,
+            gsDslEnvTemperatureLowerThreshold
+        }  
+        STATUS  current
+        DESCRIPTION
+            "It indicates that the gsDslEnvChassisTemperature is lower 
+             than gsDslEnvTemperatureLowerThreshold."
+        ::= { gsDslEnvTrapGroup 16 }    
+       
+    gsDslTempUnderThreshTrapCleared NOTIFICATION-TYPE
+        OBJECTS 
+        {
+            gsDslEnvChassisTemperature,
+            gsDslEnvTemperatureLowerThreshold
+        }
+        STATUS  current
+        DESCRIPTION
+            "It indicates that the gsDslTempUnderThreshTrap has Cleared."
+        ::= { gsDslEnvTrapGroup 17 }            
+
+    gsDslEnvFanFaultAlm NOTIFICATION-TYPE
+        OBJECTS { 
+                gsDslEnvFanFaultInfo,
+                gsDslEnvFanTotalNumber
+                }
+        STATUS             current
+        DESCRIPTION
+            "This trap signifies that a fan is in fault status.
+             gsDslEnvFanFaultInfo indicates the failed fan list.
+             gsDslEnvFanTotalNumber indicates the total number of fans."
+        ::= { gsDslEnvTrapGroup 18 } 
+        
+    gsDslEnvCardHighTempAlarm NOTIFICATION-TYPE
+        OBJECTS {
+                  gsDslEnvCardTemperature,
+                  gsDslEnvTemperatureThreshold
+                }
+        STATUS             current
+        DESCRIPTION
+            "A gsDslEnvCardHighTemperatureAlarm trap is sent when the agent
+            has detected that the card temperature is above 
+            gsDslEnvTemperatureThreshold. 
+            The gsDslEnvCardTemperature object identifies the current 
+            card temperature."
+        ::= { gsDslEnvTrapGroup 19 } 
+        
+    gsDslEnvCardHighTempAlarmCleared NOTIFICATION-TYPE
+        OBJECTS {
+                  gsDslEnvCardTemperature,
+                  gsDslEnvTemperatureThreshold
+                }
+        STATUS             current
+        DESCRIPTION
+            "A gsDslEnvCardHighTemperatureClr trap is sent when the agent 
+            has detected that the card temperature is below 
+            gsDslEnvTemperatureThreshold.
+            The gsDslEnvCardTemperature object identifies the current
+            card temperature."            
+       ::= { gsDslEnvTrapGroup 20 } 
+       
+    gsDslEnvCardLowTempAlarm NOTIFICATION-TYPE
+        OBJECTS {
+                  gsDslEnvCardTemperature,
+                  gsDslEnvTemperatureLowerThreshold
+                }
+        STATUS             current
+        DESCRIPTION
+            "A gsDslEnvCardLowTemperatureAlarm trap is sent when the agent
+            has detected that the card temperature is below 
+            gsDslEnvTemperatureLowerThreshold. 
+            The gsDslEnvCardTemperature object identifies the current 
+            card temperature."
+        ::= { gsDslEnvTrapGroup 21 } 
+        
+    gsDslEnvCardLowTempAlarmCleared NOTIFICATION-TYPE
+        OBJECTS {
+                  gsDslEnvCardTemperature,
+                  gsDslEnvTemperatureLowerThreshold
+                }
+        STATUS             current
+        DESCRIPTION
+            "A gsDslEnvCardLowTemperatureAlmClr trap is sent when the agent 
+            has detected that the card temperature is above 
+            gsDslEnvTemperatureLowerThreshold.
+            The gsDslEnvCardTemperature object identifies the current
+            card temperature."            
+       ::= { gsDslEnvTrapGroup 22 }    
+       
+    gsDslEnvPowerHighTempAlarm NOTIFICATION-TYPE
+        STATUS             current
+        DESCRIPTION
+            "A gsDslEnvPowerHighTempAlarm trap is sent when the agent
+            has detected that the power temperature is above high temperature 
+            threshold."
+        ::= { gsDslEnvTrapGroup 23 } 
+        
+    gsDslEnvPowerHighTempAlarmClr NOTIFICATION-TYPE
+        STATUS             current
+        DESCRIPTION
+            "A gsDslEnvPowerHighTempAlarmClr trap is sent when the agent 
+            has detected that the power temperature is below 
+            recovery temperature threshold."            
+       ::= { gsDslEnvTrapGroup 24 }
+       
+    gsDslCardOvhProtectStatusChanged      NOTIFICATION-TYPE
+        OBJECTS { gsDslEnvOverheatProtectionStatus }
+        STATUS  current
+        DESCRIPTION
+            "A gsDslCardOvhProtectStatusChanged is sent 
+            when overheat protection status changed." 
+        ::= { gsDslEnvTrapGroup 25 }
+        
+    gsDslEnvVceHighTempAlm NOTIFICATION-TYPE
+        OBJECTS 
+        {
+            gsDslEnvVceTemperature,
+            gsDslEnvVceTempThresh                  
+        }
+        STATUS             current
+        DESCRIPTION
+            "It indicates that VCE(Vectoring Control Entity) is overheat."
+        ::= { gsDslEnvTrapGroup 26 }
+
+    gsDslEnvVceHighTempClr NOTIFICATION-TYPE
+        OBJECTS 
+        {
+            gsDslEnvVceTemperature,
+            gsDslEnvVceRecoveryTempThresh                  
+        }
+        STATUS             current
+        DESCRIPTION
+            "It indicates that gsDslEnvVceHighTempAlm is cleared."
+        ::= { gsDslEnvTrapGroup 27 }
+       
+    gsDslEnvVceHighTempHaltAlm NOTIFICATION-TYPE
+        OBJECTS 
+        {
+            gsDslEnvVceTemperature
+        }
+        STATUS             current
+        DESCRIPTION
+            "A gsDslEnvVceHighTempHaltAlm trap is sent when VCE temperature is
+             above 85 degrees."
+        ::= { gsDslEnvTrapGroup 28 }
+       
+    gsDslEnvVceHighTempHaltClr NOTIFICATION-TYPE
+        OBJECTS 
+        {
+            gsDslEnvVceTemperature
+        }
+        STATUS             current
+        DESCRIPTION
+            "It indicates that gsDslEnvVceHighTempHaltAlm is cleared."
+        ::= { gsDslEnvTrapGroup 29 }
+        
+    gsDslEnvBatteryNotExistAlm  NOTIFICATION-TYPE
+        STATUS             current
+        DESCRIPTION
+            "A gsDslEnvBatteryNotExistAlm trap is sent when battery does not
+             exist."
+        ::= { gsDslEnvTrapGroup 30 }
+        
+    gsDslEnvBatteryNotExistClr  NOTIFICATION-TYPE
+        STATUS             current
+        DESCRIPTION
+            "It indicates that gsDslEnvBatteryNotExistAlm is cleared."
+        ::= { gsDslEnvTrapGroup 31 }
+        
+    gsDslEnvBatteryOverVoltageAlm  NOTIFICATION-TYPE
+        STATUS             current
+        DESCRIPTION
+            "A gsDslEnvBatteryOverVoltageAlm trap is sent when battery is over
+             voltage."
+        ::= { gsDslEnvTrapGroup 32 }
+        
+    gsDslEnvBatteryOverVoltageClr  NOTIFICATION-TYPE
+        STATUS             current
+        DESCRIPTION
+            "It indicates that gsDslEnvBatteryOverVoltageAlm is cleared."
+        ::= { gsDslEnvTrapGroup 33 }
+        
+    gsDslEnvFanFaultClr NOTIFICATION-TYPE
+        OBJECTS 
+        { 
+            gsDslEnvFanFaultInfo,
+            gsDslEnvFanTotalNumber
+        }
+        STATUS             current
+        DESCRIPTION
+            "It indicates that gsDslEnvFanFaultAlm is cleared."
+        ::= { gsDslEnvTrapGroup 34 }
+
+--- Port Traps
+
+    gsDslIfUplinkUp NOTIFICATION-TYPE
+        OBJECTS { ifAdminStatus, ifOperStatus, ifType }
+        STATUS  current
+        DESCRIPTION
+            "The operational status of uplink interface changes to up."
+        ::= { gsDslSysctrlTrapObjects 20 }
+
+    gsDslIfUplinkDown NOTIFICATION-TYPE
+        OBJECTS { ifAdminStatus, ifOperStatus, ifType }
+        STATUS  current
+        DESCRIPTION
+            "The operational status of uplink interface changes to down."
+        ::= { gsDslSysctrlTrapObjects 21 }
+
+    gsDslIfAccesslinkUp NOTIFICATION-TYPE
+        OBJECTS { ifAdminStatus, ifOperStatus, ifType }
+        STATUS  current
+        DESCRIPTION
+            "The operational status of access link interface changes to up."
+        ::= { gsDslSysctrlTrapObjects 22 }
+
+    gsDslIfAccesslinkDown NOTIFICATION-TYPE
+        OBJECTS { ifAdminStatus, ifOperStatus, ifType }
+        STATUS  current
+        DESCRIPTION
+            "The operational status of access link interface changes to down."
+        ::= { gsDslSysctrlTrapObjects 23 }
+    
+    gsDslUnexpectedCardTypePlugin NOTIFICATION-TYPE
+        OBJECTS { gsDslBoardType }
+        STATUS  current
+        DESCRIPTION
+            "A gsDslUnexpectedCardTypePlugin trap indicates that the card plug 
+             in the given slot is unexpected.
+             
+             For example, the ethernet user card can be plug in slot 2 of F821 
+             NE with HSMV, when ei8e card be pluged in other slot, this alarm 
+             will be generated."
+        REFERENCE    "F821"
+        ::= { gsDslSysctrlTrapObjects 24 }
+       
+    gsDslUnexpectedCardTypePluginCleared NOTIFICATION-TYPE
+        OBJECTS { gsDslBoardType }
+        STATUS  current
+        DESCRIPTION
+            "A gsDslUnexpectedCardTypePluginCleared trap indicates that the 
+             unexpected card plug-in is Recovered.
+             
+             For example, when ei8e card be unpluged from slot 3 of F821 NE 
+             with HSMV, this clear trap will be generated. "          
+        REFERENCE    "F821"
+        ::= { gsDslSysctrlTrapObjects 25 }
+     
+    gsDslMaxPortNumPerSlotChanged NOTIFICATION-TYPE
+        OBJECTS { gsDslSysMaxPortNumPerSlot }
+        STATUS  current
+        DESCRIPTION
+            "A gsDslMaxPortNumPerSlotChanged trap indicates that the value of
+             gsDslSysMaxPortNumPerSlot changed."
+        ::= { gsDslSysctrlTrapObjects 26 }
+        
+    gsDslCardChipDown NOTIFICATION-TYPE
+        OBJECTS { gsDslBoardType }
+        STATUS  current
+        DESCRIPTION
+            "A gsDslCardChipDown trap indicates that the card is in abnormal
+             status."
+        ::= { gsDslSysctrlTrapObjects 27 }
+       
+    gsDslCardChipDownCleared NOTIFICATION-TYPE
+        OBJECTS { gsDslBoardType }
+        STATUS  current
+        DESCRIPTION
+            "A gsDslCardChipDownCleared trap indicates that the abnormal card is
+             Recovered."
+        ::= { gsDslSysctrlTrapObjects 28 } 
+        
+    gsDslCardBbServiceStoppedAlm      NOTIFICATION-TYPE
+        OBJECTS { gsDslBoardServiceStoppedReason }
+        STATUS  current
+        DESCRIPTION
+            "A gsDslCardBbServiceStoppedAlm trap is sent 
+            when the card's broadband service stopped.
+            It is generally due to the overheat protection 
+            to stop card service going into effect." 
+        ::= { gsDslSysctrlTrapObjects 29 }
+        
+    gsDslCardBbServiceStoppedClr     NOTIFICATION-TYPE
+        OBJECTS { gsDslBoardServiceStoppedReason }
+        STATUS  current
+        DESCRIPTION
+            "A gsDslCardServiceStoppedClr trap is sent 
+            when the card's broadband service restarts."
+        ::= { gsDslSysctrlTrapObjects 30 } 
+        
+    gsDslCardNbServiceStoppedAlm      NOTIFICATION-TYPE
+        OBJECTS { gsDslBoardServiceStoppedReason }
+        STATUS  current
+        DESCRIPTION
+            "A gsDslCardNbServiceStoppedAlm trap is sent 
+            when the card's narrowband service stopped.
+            It is generally due to the overheat protection 
+            to stop card service going into effect." 
+        ::= { gsDslSysctrlTrapObjects 31 }
+        
+    gsDslCardNbServiceStoppedClr     NOTIFICATION-TYPE
+        OBJECTS { gsDslBoardServiceStoppedReason }
+        STATUS  current
+        DESCRIPTION
+            "A gsDslCardNbServiceStoppedClr trap is sent 
+            when the card's narrowband service restarts."
+        ::= { gsDslSysctrlTrapObjects 32 }                     
+   
+
+--------------------------------------------------------------------------------
+--  Ntp Trap
+--------------------------------------------------------------------------------
+    gsDslSysSntpTrapGroup  OBJECT IDENTIFIER  ::= { gsDslSysctrlTrapObjects 50 }
+
+    gsDslSysSntpOffsetOverThreshTrap      NOTIFICATION-TYPE
+            OBJECTS { gsDslSysSntpCurrentOffset,
+                      gsDslSysSntpOffsetAlarmThreshold  }
+            STATUS  current
+            DESCRIPTION
+                "gsDslSysSntpOffsetAlarmThreshold is reached."
+            ::= { gsDslSysSntpTrapGroup 1 }
+
+    gsDslSysSntpOffsetUnderThreshTrap      NOTIFICATION-TYPE
+            OBJECTS { gsDslSysSntpCurrentOffset,
+                      gsDslSysSntpOffsetAlarmThreshold  }
+            STATUS  current
+            DESCRIPTION
+                " gsDslSysSntpCurrentOffset is below gsDslSysSntpOffsetAlarmThreshold.
+                "
+            ::= { gsDslSysSntpTrapGroup 2 }
+
+
+    gsDslSysSntpSynchFailed      NOTIFICATION-TYPE
+            OBJECTS { gsDslSntpCurrTryingSynchServerIp }
+            STATUS  current
+            DESCRIPTION
+                "Faied to synchronize time from SNTP server."
+            ::= { gsDslSysSntpTrapGroup 3 }
+
+
+    gsDslSysSntpSynchFailedCleard   NOTIFICATION-TYPE
+            OBJECTS { gsDslSntpCurrTryingSynchServerIp }
+            STATUS  current
+            DESCRIPTION
+                "Cleared the alarm of gsDslSysSntpSynchFailed."
+            ::= { gsDslSysSntpTrapGroup 4 }            
+                        
+
+    gsDslSysCompatible  OBJECT-TYPE
+              SYNTAX      OCTET STRING (SIZE (4))
+              MAX-ACCESS  read-only
+              STATUS      current
+              DESCRIPTION
+                      "The compatibility of DSLAM. Every bit denotes the 
+                       compatibility of some function. If the value of the 
+                       bit is 1, the related function has compatible problem.
+                       The related function of the first bit is the naming 
+                       rules of string.
+                       
+                       bit 1: QoS Flow Policy of NE supports CCoS.
+                       bit 2: gsDslInBandIpUseType.  value 1 of this bit means normalSecondary(5), 0 means normalSecondary(3).
+                       bit 3: gsDslSyslog. value 1 means use gsDslSyslogHostTable, value 0 means just scalar value for Finland test.
+                       bit 4: gsDslTrapHostTable. value 1 means support event level and type.
+                       bit 5: QoS Queue Expand,include gsDslQosSchedulerID and gsDslQos8021p2CosQPortNumber. value 1 means gsDslQosSchedulerID 
+                              and gsDslQos8021p2CosQPortNumber support UNI-ETCA.
+                       bit 6: Different unit of ifLastChange, value 1 means 10 millisecond, 0 means 1 second.
+                       bit 7: value 1 means support IAP Igmp and Multicast MIB.
+                       bit 8: value 1 means support a200mgcinfo in a200mgccfgTable.
+                       bit 9: value 1 means support gsDslPortLocationIfaceDhcpv6Enable and Dhcpv6OptionTrust in gsDslPortLocationIfaceTable.
+                       bit 10: value 1 means support IPV6.
+                       bit 11: value 1 means support zxAnMvlanHostVersion.                       
+                       bit 12: For port egress QoS policy, value 1 means support gsDslQosPortEgressPolicyTable.
+                       bit 13: value 1 means support gsDslPortLocationIfaceCircuitIdSyntaxPrfName and gsDslPortLocationIfaceActualCircuitId
+                               in gsDslPortLocationIfaceTable.             
+                       bit 14: value 1 means support VdslDataRateTrap.            
+                       bit 15: value 1 means support gsDslDhcpv6PvcIfIpSourceGuardEnable,gsDslDhcpv6IfDhcpSnoopingEnable and gsDslDhcpv6IfDhcpSnoopingLimit
+                               for DHCPv6 in gsDslDhcpPvcIfTable and gsDslDhcpIfTable.      
+                       bit 16: value 1 means flowcontrol inndependent to auto-negotiation.            
+                       bit 17: value 1 means gsDslFtpManagedObjectType support DSL_PORT_INFO.      
+                       bit 18: value 1 means support gsDslMacAddressExtTable. 
+                       bit 19: value 1 means support pccw DSL_PORT_INFO (Modem Vendor, Modem Serial Number, Modem Firmware).  
+                       bit 20: value 1 means support aturInitFailureTrapEnable of ADSL and atucInitFailureTrapEnable and aturInitFailureTrapEnable of VDSL.
+                       bit 21: value 1 means support zxVoiceFlowStatisticRecordTime in zxVoipVoiceFlowStatisticTable.
+                       bit 22: value 1 means support a200sipproxysvrPort in a200sipproxysvrTable and the range of a200sipproxysvrindex is 1..4.
+                       bit 23: value 1 means support gsDslPortPppoeSyntaxPrfName and gsDslPortActPppoeCircuitId in gsDslPortLocationIfaceTable.
+                       bit 24: value 1 means support a200slcFeedCurrent in a200slcTable and
+                               msagSlcHighImpedacneOper and msagSlcNoneHighImpedanceOper in msagSlcCtrlTable.
+                       bit 25: value 1 means support a200sipproxysvrInfo and a200sipproxysvrDomainName in a200sipproxysvrTable. 
+                       bit 26: value 1 means support G.INP for VDSL Line.
+                       bit 27: value 1 means support G.INP for ADSL Line.
+                       bit 28: value 1 means support DPBO,PSDMASK(PSD mask) 
+                               and TXREFVN(transmitter referred virtual noise)
+                               for ADSL Line.
+                       bit 29: value 1 means support gsDslDevSecAclDestIpType,
+                               gsDslDevSecAclDestIp,
+                               gsDslDevSecAclDestIpMask, 
+                               gsDslDevSecAclDestIpv6PfxLen,
+                               gsDslDevSecAclEtherType,
+                               gsDslDevSecAclVlan 
+                               and gsDslDevSecAclPktRateLimit
+                               in gsDslDevSecurityAclTable.                      
+                       bit 30: value 1 means support pccw DSL_PORT_INFO (Modem Mode).
+                       "
+              REFERENCE
+                      ""
+              ::= { gsDslSysCompatibility 1 }
+END
+

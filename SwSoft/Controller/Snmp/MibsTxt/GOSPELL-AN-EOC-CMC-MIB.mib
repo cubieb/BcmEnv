@@ -1,0 +1,1962 @@
+--------------------------------------------------------------------------------
+-- File Name : GOSPELL-AN-EOC-CMC-MIB.mib
+-- Date      : 2012-10-18
+-- Author    : GOSPELL NMS department.
+--
+-- GOSPELL EoC Equipment MIB for DOCSIS CMC
+--------------------------------------------------------------------------------
+
+GOSPELL-AN-EOC-CMC-MIB  DEFINITIONS ::= BEGIN
+
+    IMPORTS
+        RowStatus, DisplayString, TruthValue, MacAddress 
+            FROM SNMPv2-TC
+        Integer32, OBJECT-TYPE, MODULE-IDENTITY, IpAddress 
+            FROM SNMPv2-SMI
+        InetAddressType, InetAddress 
+            FROM INET-ADDRESS-MIB
+        docsIfCmtsCmStatusIndex 
+            FROM DOCS-IF-MIB
+        enterprises
+            FROM RFC1155-SMI;
+
+    gsAnCmcMib MODULE-IDENTITY 
+        LAST-UPDATED "2012101914Z"
+        ORGANIZATION
+            "GOSPELL Corporation"
+        CONTACT-INFO
+            "
+             Mail: Wangqs@gospell.com
+             Tel : 028-87839922"
+        DESCRIPTION
+            "This MIB defines DOCSIS CMC node managed objects."
+        ::=  { gsAn 9026 }
+
+    gospell OBJECT IDENTIFIER   ::= { enterprises 22764 }
+
+    gsAn OBJECT IDENTIFIER  ::= { gospell 1015 }
+    
+    gsAnCmcObjects           OBJECT IDENTIFIER ::= { gsAnCmcMib 2 }
+    
+    gsAnCmcCmObjects         OBJECT IDENTIFIER ::= { gsAnCmcObjects 1 }
+    
+    gsAnCmcCmcObjects        OBJECT IDENTIFIER ::= { gsAnCmcObjects 2 }
+    
+    gsCableDocsSpectrumObjects  OBJECT IDENTIFIER ::= { gsAnCmcObjects 3 }
+     
+    gsCableDocsLoadBalObjects   OBJECT IDENTIFIER ::= { gsAnCmcObjects 4 }
+    
+    gsCableDocsServiceFlowObjects   OBJECT IDENTIFIER ::= { gsAnCmcObjects 5 }
+               
+  --------------------------------------------------------------------------------     
+  
+    gsAnCmcCmStatistics       OBJECT IDENTIFIER ::= {gsAnCmcCmObjects 1}
+
+    gsAnCmcCmTotal      OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "The total number of cable modem"
+        ::=  {  gsAnCmcCmStatistics  1  }
+
+    gsAnCmcCmActive     OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "The number of cable modem in active state"
+        ::=  {  gsAnCmcCmStatistics  2  }
+        
+    gsAnCmcCmOnline     OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "The number of cable modem in online state"
+        ::=  {  gsAnCmcCmStatistics  3  }
+        
+    gsAnCmcCmOffline    OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "The number of cable modem in offline state"
+        ::=  {  gsAnCmcCmStatistics  4  }
+        
+    gsAnCmcCmInitR      OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "The number of cable modem in ranging state"
+        ::=  {  gsAnCmcCmStatistics  5  }
+        
+    gsAnCmcCmRC         OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "The number of cable modem in ranging-success state"
+        ::=  {  gsAnCmcCmStatistics  6  }
+        
+    gsAnCmcCmDHCPDiscover   OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "The number of cable modem in dhcp-discover state"
+        ::=  {  gsAnCmcCmStatistics  7  }
+        
+    gsAnCmcCmDHCPOffer      OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "The number of cable modem in dhcp-offer state"
+        ::=  {  gsAnCmcCmStatistics  8  }
+        
+    gsAnCmcCmDHCPRequest    OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "The number of cable modem in dhcp-request state"
+        ::=  {  gsAnCmcCmStatistics  9  }
+        
+    gsAnCmcCmDHCPAck        OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "The number of cable modem in dhcp-ack state"
+        ::=  {  gsAnCmcCmStatistics  10  }
+        
+    gsAnCmcCmInitF      OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "The number of cable modem which is downloading the configuration file"
+        ::=  {  gsAnCmcCmStatistics  11  }
+        
+    gsAnCmcCmFC         OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "The number of cable modem which download the configuration file successfully"
+        ::=  {  gsAnCmcCmStatistics  12  }
+        
+    gsAnCmcCmInitREG    OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "The number of cable modem which in registration state"
+        ::=  {  gsAnCmcCmStatistics  13  }
+        
+  --------------------------------------------------------------------------------     
+  
+    gsAnCmcCmUniTable  OBJECT-TYPE
+        SYNTAX  SEQUENCE  OF  GsAnCmcCmUniEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION 
+            "This table show the user infomation of the CM UNI port."
+        ::=  { gsAnCmcCmObjects  2 }
+
+    gsAnCmcCmUniEntry  OBJECT-TYPE
+        SYNTAX  GsAnCmcCmUniEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION 
+            "An entry in gsAnCmcCmUniTable."
+        INDEX  {  docsIfCmtsCmStatusIndex, gsAnCmcCmUserMacAddress  }
+        ::=  { gsAnCmcCmUniTable  1 }
+
+    GsAnCmcCmUniEntry  ::=  SEQUENCE 
+        {
+            gsAnCmcCmUserMacAddress     MacAddress,
+            gsAnCmcCmUserIpAddressType  InetAddressType,
+            gsAnCmcCmUserIpAddress        InetAddress,
+            gsAnCmcCmConnectState         Integer32,
+            gsAnCmcCmOnlineTime           TimeTicks,
+            gsAnCmcCmDocsisVersion        Integer32,
+            gsAnCmcCmTimeOffSet           Integer32,
+            gsAnCmcCmMicroReflect         Integer32,
+            gsAnCmcCmPrimaryUsChannel     Integer32,
+            gsAnCmcCmPrimaryDsChannel     Integer32,
+            gsAnCmcCmUpstreamSNR          Integer32,
+            gsAnCmcCmUpstreamPower        Integer32,            
+            gsAnCmcCmDownstreamSNR        Integer32,
+            gsAnCmcCmDownstreamPower      Integer32,
+            gsAnCmcCmNumberOfCPEs         Integer32,
+            gsAnCmcCmConfigFile           OCTET STRING,
+            gsAnCmcCmResetNow             TruthValue,
+            gsAnCmcCmDeleteNow            TruthValue,
+            gsAnCmcCmUpstreamBandWidth    Integer32,
+            gsAnCmcCmDownstreamBandWidth  Integer32
+        }
+
+    gsAnCmcCmUserMacAddress  OBJECT-TYPE 
+        SYNTAX  MacAddress
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION     
+            "The MAC address of the user device."
+        ::=  {  gsAnCmcCmUniEntry  1  }
+
+    gsAnCmcCmUserIpAddressType  OBJECT-TYPE 
+        SYNTAX  InetAddressType
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The type of IP address used by this entry."
+        DEFVAL { ipv4 }
+        ::=  {  gsAnCmcCmUniEntry  2  }
+        
+    gsAnCmcCmUserIpAddress  OBJECT-TYPE 
+        SYNTAX  InetAddress
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The IP address of the user device."
+        ::=  {  gsAnCmcCmUniEntry  3  }
+
+    gsAnCmcCmConnectState  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+           "The CM connectivity state: 
+            Other =1
+            InitialRanging =2
+            RangingAutoAdjComplete = 4
+            startEae =10
+            startDhcpv4 = 11
+            startDhcpv6 =12
+            Dhcpv4Complete = 5
+            Dhcpv6Complete = 13
+            StartConfigFileDownload = 14
+            configFileDownloadComplete = 15
+            startRegistration = 16
+            registrationComplete =6
+            operational =8
+            BpiInit =9
+            forwardingDisabled = 17
+            rfMuteAll = 18"
+        ::=  {  gsAnCmcCmUniEntry  4  }
+
+    gsAnCmcCmOnlineTime  OBJECT-TYPE 
+        SYNTAX  TimeTicks
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+           "the cable modem online time"
+        ::=  {  gsAnCmcCmUniEntry  5  }
+
+    gsAnCmcCmDocsisVersion  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+           "the cable modem DOCSIS version:
+            1  Docsis10
+            2  Docsis11
+            3  Docsis20
+            4  Docsis30"
+        ::=  {  gsAnCmcCmUniEntry  6  }
+
+    gsAnCmcCmTimeOffSet  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+           "the cable modem timing offset. units : millisecond."
+        ::=  {  gsAnCmcCmUniEntry  7  }
+
+    gsAnCmcCmMicroReflect  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+           "Total Micro-reflections measured in dBc"
+        ::=  {  gsAnCmcCmUniEntry  8  }
+                        
+    gsAnCmcCmPrimaryUsChannel   OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "This attribute contains the primary upstream channel,which the cable modem belong to."
+        ::=  {  gsAnCmcCmUniEntry  9  }       
+
+    gsAnCmcCmPrimaryDsChannel   OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "This attribute contains the primary downstream channel,which the cable modem belong to."
+        ::=  {  gsAnCmcCmUniEntry  10  }   
+
+    gsAnCmcCmUpstreamSNR  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "the cable modem upstream SNR.unit:tenthdB"
+        ::=  {  gsAnCmcCmUniEntry  11  }
+        
+    gsAnCmcCmUpstreamPower  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "the cable modem upstream send power.unit:tenthdBmV"
+        ::=  {  gsAnCmcCmUniEntry  12  }
+        
+    gsAnCmcCmDownstreamSNR  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "the cable modem downstream SNR.unit:tenthdB"
+        ::=  {  gsAnCmcCmUniEntry  13  }
+        
+    gsAnCmcCmDownstreamPower  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "the cable modem downstream receive power.unit:tenthdBmV"
+        ::=  {  gsAnCmcCmUniEntry  14  }
+                
+    gsAnCmcCmNumberOfCPEs  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "the number of CPEs in the cable modem."
+        ::=  {  gsAnCmcCmUniEntry  15  }
+        
+      gsAnCmcCmConfigFile  OBJECT-TYPE 
+        SYNTAX  OCTET STRING (SIZE (128))
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The config file cable modem config file."
+        ::=  {  gsAnCmcCmUniEntry  16  }       
+                 
+      gsAnCmcCmResetNow OBJECT-TYPE
+        SYNTAX      TruthValue
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+            "Setting this object to true(1) causes the device to
+             reset.  Reading this object always returns false(2)."
+        ::=  {  gsAnCmcCmUniEntry  17  }
+        
+      gsAnCmcCmDeleteNow OBJECT-TYPE
+        SYNTAX      TruthValue
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+            "Setting this object to true(1) causes the device to
+             re-register.  Reading this object always returns false(2)."
+        ::=  {  gsAnCmcCmUniEntry  18  }
+        
+      gsAnCmcCmUpstreamBandWidth  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "the upstream bandwidth of one cm.unit:bps(bit per second)"
+        ::=  {  gsAnCmcCmUniEntry  19  }
+        
+      gsAnCmcCmDownstreamBandWidth  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "the downstream bandwidth of one cm.unit:bps(bit per second)"
+        ::=  {  gsAnCmcCmUniEntry  20  }
+  --------------------------------------------------------------------------------     
+  
+    gsAnCmcCmCpeTable  OBJECT-TYPE
+        SYNTAX  SEQUENCE  OF  gsAnCmcCmCpeEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION 
+            "This table show the cpe infomation of the CM UNI port."
+        ::=  { gsAnCmcCmObjects  3 }
+
+    gsAnCmcCmCpeEntry  OBJECT-TYPE
+        SYNTAX  gsAnCmcCmCpeEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION 
+            "An entry in gsAnCmcCmCpeTable."
+        INDEX  {  gsAnCmcCmIndex, gsAnCmcCmCpeIndex  }
+        ::=  { gsAnCmcCmCpeTable  1 }
+
+    gsAnCmcCmCpeEntry  ::=  SEQUENCE 
+        {
+            gsAnCmcCmIndex                Integer32,
+            gsAnCmcCmCpeIndex             Integer32,
+            gsAnCmcCmMacAddress           MacAddress,
+            gsAnCmcCmCpeMacAddress        MacAddress,
+            gsAnCmcCmCpeIpAddressType     InetAddressType,
+            gsAnCmcCmCpeIpAddress         InetAddress,
+            gsAnCmcCmCpeType              Integer32
+        }
+        
+    gsAnCmcCmIndex  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION     
+            "The cm id."
+        ::=  {  gsAnCmcCmCpeEntry  1  }
+        
+    gsAnCmcCmCpeIndex  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION     
+            "The cpe id of the CM UNI port."
+        ::=  {  gsAnCmcCmCpeEntry  2  }
+        
+    gsAnCmcCmMacAddress  OBJECT-TYPE 
+        SYNTAX  MacAddress
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The MAC address of the cm."
+        ::=  {  gsAnCmcCmCpeEntry  3  }
+        
+    gsAnCmcCmCpeMacAddress  OBJECT-TYPE 
+        SYNTAX  MacAddress
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The MAC address of the cpe."
+        ::=  {  gsAnCmcCmCpeEntry  4  }
+        
+    gsAnCmcCmCpeIpAddressType  OBJECT-TYPE 
+        SYNTAX  InetAddressType
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The IP address type of the cpe.
+             0: IPv4
+             1: IPv6"
+        ::=  {  gsAnCmcCmCpeEntry  5  }
+        
+    gsAnCmcCmCpeIpAddress  OBJECT-TYPE 
+        SYNTAX  InetAddress
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The IP address of the cpe."
+        ::=  {  gsAnCmcCmCpeEntry  6  }
+        
+    gsAnCmcCmCpeType  OBJECT-TYPE 
+        SYNTAX  Integer32 { MTA ( 1 ) , STB ( 2 ) , HOST ( 3 ) , WIFI ( 4 ) , ISTB ( 5 ) , OTHER ( 6 ) }
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The type of the cpe.
+             1: MTA
+             2: STB
+             3: HOST
+             4: WIFI
+             5: ISTB
+             6: OTHER"
+        ::=  {  gsAnCmcCmCpeEntry  7  }
+
+  --------------------------------------------------------------------------------     
+
+      gsAnCmcCmTrafficTable  OBJECT-TYPE
+        SYNTAX  SEQUENCE  OF  gsAnCmcCmTrafficEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION 
+            "This table show the traffic counters infomation of the CM port."
+        ::=  { gsAnCmcCmObjects  4 }
+
+    gsAnCmcCmTrafficEntry  OBJECT-TYPE
+        SYNTAX  gsAnCmcCmTrafficEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION 
+            "An entry in gsAnCmcCmTrafficTable."
+        INDEX  {  gsAnCmMacAddress, gsAnCmcCmIfIndex  }
+        ::=  { gsAnCmcCmTrafficTable  1 }
+
+    gsAnCmcCmTrafficEntry  ::=  SEQUENCE 
+        {
+            gsAnCmMacAddress              MacAddress,
+            gsAnCmcCmIfIndex              Integer32,
+            gsAnCmcCmIfInOctets           Counter,
+            gsAnCmcCmIfInUcastPkts        Counter,
+            gsAnCmcCmIfInNUcastPkts       Counter,
+            gsAnCmcCmIfInDiscards         Counter,
+            gsAnCmcCmIfInErrors           Counter,
+            gsAnCmcCmIfInUnknownProtos    Counter,
+            gsAnCmcCmIfOutOctets          Counter,
+            gsAnCmcCmIfOutUcastPkts       Counter,
+            gsAnCmcCmIfOutNUcastPkts      Counter,
+            gsAnCmcCmIfOutDiscards        Counter,
+            gsAnCmcCmIfOutErrors          Counter
+        }
+  
+   gsAnCmMacAddress  OBJECT-TYPE 
+        SYNTAX  MacAddress
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The MAC address of the cable modem."
+        ::=  {  gsAnCmcCmTrafficEntry  1  }
+
+   gsAnCmcCmIfIndex  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "A unique value for each cable modem interface."
+        ::=  {  gsAnCmcCmTrafficEntry  2  }
+
+   gsAnCmcCmIfInOctets  OBJECT-TYPE 
+        SYNTAX  Counter
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The total number of octets received on the cable modem
+            interface, including framing characters."
+        ::=  {  gsAnCmcCmTrafficEntry  3  }
+
+   gsAnCmcCmIfInUcastPkts  OBJECT-TYPE 
+        SYNTAX  Counter
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The number of subnetwork-unicast packets
+            delivered to a higher-layer protocol."
+        ::=  {  gsAnCmcCmTrafficEntry  4  }
+        
+   gsAnCmcCmIfInNUcastPkts  OBJECT-TYPE 
+        SYNTAX  Counter
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The number of non-unicast (i.e., subnetwork-
+            broadcast or subnetwork-multicast) packets
+            delivered to a higher-layer protocol."
+        ::=  {  gsAnCmcCmTrafficEntry  5  }   
+        
+   gsAnCmcCmIfInDiscards  OBJECT-TYPE 
+        SYNTAX  Counter
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The number of inbound packets which were chosen
+            to be discarded even though no errors had been
+            detected to prevent their being deliverable to a
+            higher-layer protocol.  One possible reason for
+            discarding such a packet could be to free up
+            buffer space."
+        ::=  {  gsAnCmcCmTrafficEntry  6  }   
+ 
+   gsAnCmcCmIfInErrors  OBJECT-TYPE 
+        SYNTAX  Counter
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+              "The number of inbound packets that contained
+              errors preventing them from being deliverable to a
+              higher-layer protocol."
+        ::=  {  gsAnCmcCmTrafficEntry  7  }   
+
+   gsAnCmcCmIfInUnknownProtos  OBJECT-TYPE 
+        SYNTAX  Counter
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The number of packets received via the interface
+            which were discarded because of an unknown or
+            unsupported protocol."
+        ::=  {  gsAnCmcCmTrafficEntry  8  } 
+
+   gsAnCmcCmIfOutOctets  OBJECT-TYPE 
+        SYNTAX  Counter
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The total number of octets transmitted out of the
+            interface, including framing characters."
+        ::=  {  gsAnCmcCmTrafficEntry  9  }   
+
+   gsAnCmcCmIfOutUcastPkts  OBJECT-TYPE 
+        SYNTAX  Counter
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The total number of packets that higher-level
+            protocols requested be transmitted to a
+            subnetwork-unicast address, including those that
+            were discarded or not sent."
+        ::=  {  gsAnCmcCmTrafficEntry  10  }   
+
+   gsAnCmcCmIfOutNUcastPkts  OBJECT-TYPE 
+        SYNTAX  Counter
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The total number of packets that higher-level
+            protocols requested be transmitted to a non-
+            unicast (i.e., a subnetwork-broadcast or
+            subnetwork-multicast) address, including those
+            that were discarded or not sent."
+        ::=  {  gsAnCmcCmTrafficEntry  11  }   
+
+   gsAnCmcCmIfOutDiscards  OBJECT-TYPE 
+        SYNTAX  Counter
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The number of outbound packets which were chosen
+            to be discarded even though no errors had been
+            detected to prevent their being transmitted.  One
+            possible reason for discarding such a packet could
+            be to free up buffer space."
+        ::=  {  gsAnCmcCmTrafficEntry  12  }   
+
+   gsAnCmcCmIfOutErrors  OBJECT-TYPE 
+        SYNTAX  Counter
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The number of outbound packets that could not be
+            transmitted because of errors."
+        ::=  {  gsAnCmcCmTrafficEntry  13  }   
+
+  --------------------------------------------------------------------------------     
+
+    gsAnCmcSystem       OBJECT IDENTIFIER ::= {gsAnCmcCmcObjects 1}
+
+    gsAnCmcChannelBinding      OBJECT-TYPE 
+        SYNTAX          Integer32 { Disabled ( 0 ) , Enable ( 1 ) } 
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "cmc upstream and downstream channel binding.
+                          0: Disabled
+                          1: Enable"
+        ::=  {  gsAnCmcSystem  1  }
+
+    gsAnCmcUpFrequencyStandard      OBJECT-TYPE 
+        SYNTAX          Integer32 { USA ( 1 ) , Euro ( 2 ) } 
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "the upstream channel frequency range.
+                          1: USA standard,5-42MHz 
+                          2: Euro standard,5-65MHz,"
+        ::=  {  gsAnCmcSystem  2  }
+        
+    gsAnCmcDownFrequencyStandard     OBJECT-TYPE 
+        SYNTAX          Integer32 { USA ( 1 ) , Euro ( 2 ) } 
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "the downstream channel frequency range.
+                          1: USA standard,88-860MHz
+                          2: Euro standard,108-862MHz"
+        ::=  {  gsAnCmcSystem  3  }
+                              
+--------------------------------------------------------------------------------     
+
+    gsAnCmcCdtTransSVidTable  OBJECT-TYPE
+        SYNTAX  SEQUENCE  OF  GsAnCmcCdtTransSVidEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION 
+            "This table indicates the mapping between the service VLAN and 
+            the CoS of the CM upstream packets.
+            When the CMC receives the packets from the CM, it will translate 
+            the CDT(C-DOCSIS Data Tag) information into the service VLAN 
+            according to the CoS."
+        ::=  { gsAnCmcCmcObjects  2 }
+
+    gsAnCmcCdtTransSVidEntry  OBJECT-TYPE
+        SYNTAX  GsAnCmcCdtTransSVidEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION 
+            "An entry in gsAnCmcCdtTransSVidTable."
+        INDEX  {  gsAnCmcCdtCos   }
+        ::=  { gsAnCmcCdtTransSVidTable 1 }
+
+     GsAnCmcCdtTransSVidEntry  ::=
+        SEQUENCE {
+            gsAnCmcCdtCos                   Integer32,
+            gsAnCmcCdtTransSVid             Integer32,
+            gsAnCmcCdtTransSVidRowStatus    RowStatus
+        }
+        
+     gsAnCmcCdtCos  OBJECT-TYPE 
+        SYNTAX  Integer32(0..8)
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION     
+            "The CoS value, which is included in the CDT of the CM upstream 
+            packets."
+        ::=  {  gsAnCmcCdtTransSVidEntry  1  }
+        
+     gsAnCmcCdtTransSVid  OBJECT-TYPE 
+        SYNTAX  Integer32(1..4094)
+        MAX-ACCESS  read-create
+        STATUS  current
+        DESCRIPTION     
+            "The service VLAN, which will be used to replace the CDT of the 
+            CM upstream packets according to the CoS value."
+        ::=  {  gsAnCmcCdtTransSVidEntry  2  }
+        
+     gsAnCmcCdtTransSVidRowStatus  OBJECT-TYPE 
+        SYNTAX  RowStatus
+        MAX-ACCESS  read-create
+        STATUS  current
+        DESCRIPTION     
+            "The status of this conceptual row.
+
+            The supported actions of this conceptual row only include:
+            'createAndGo' and 'destroy'.
+            
+            To create a row in this table, a manager must set this object to 
+            createAndGo(4).
+            
+            To delete a row in this table, a manager must set this object to 
+            destroy(6). 
+             
+            To get this object, the agent always returns active(1)."
+        ::=  {  gsAnCmcCdtTransSVidEntry  50 }
+ 
+
+--------------------------------------------------------------------------------     
+
+    gsAnCmcUpstreamChannelTable  OBJECT-TYPE
+        SYNTAX  SEQUENCE  OF  gsAnCmcUpstreamChannelEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION 
+            "This table indicates the upstream channel."
+        ::=  { gsAnCmcCmcObjects  3 }
+
+    gsAnCmcUpstreamChannelEntry OBJECT-TYPE
+        SYNTAX  gsAnCmcUpstreamChannelEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION 
+            "An entry in gsAnCmcUpstreamChannelTable."
+        INDEX  {  gsAnCmcUpChannelId   }
+        ::=  { gsAnCmcUpstreamChannelTable 1 }
+
+     gsAnCmcUpstreamChannelEntry  ::=
+        SEQUENCE {
+            gsAnCmcUpChannelId                   Integer32,
+            gsAnCmcUpChannelErrorRate            Integer32,
+            gsAnCmcUpChannelSnr                  Integer32,
+            gsAnCmcUpChannelName                 OCTET STRING,
+            gsAnCmcUpChannelEnable               Integer32,
+            gsAnCmcUpChannelActiveCmCount        Integer32,
+            gsAnCmcUpChannelRegisterCmCount      Integer32,
+            gsAnCmcUpChannelUnregisterCmCount    Integer32,
+            gsAnCmcUpChannelInputPower           Integer32
+        }
+        
+     gsAnCmcUpChannelId  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION     
+            "The upstream channel id."
+        ::=  {  gsAnCmcUpstreamChannelEntry  1  }
+        
+     gsAnCmcUpChannelErrorRate  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The current  error rate of the cmc  upstream channel."
+        ::=  {  gsAnCmcUpstreamChannelEntry  2  }
+
+     gsAnCmcUpChannelSnr  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The current SNR(dB) of the cmc upstream channel."
+        ::=  {  gsAnCmcUpstreamChannelEntry  3  }
+        
+     gsAnCmcUpChannelName  OBJECT-TYPE 
+        SYNTAX  OCTET STRING
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The name of the cmc upstream channel."
+        ::=  {  gsAnCmcUpstreamChannelEntry  4  }
+        
+     gsAnCmcUpChannelEnable  OBJECT-TYPE 
+        SYNTAX  Integer32 { Disabled ( 0 ) , Enable ( 1 ) }
+        MAX-ACCESS  read-write
+        STATUS  current
+        DESCRIPTION     
+            "The current Setting of the cmc upstream channel.
+             0: Disabled
+             1: Enable"
+        ::=  {  gsAnCmcUpstreamChannelEntry  5  }
+        
+     gsAnCmcUpChannelActiveCmCount  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The current Count of the Active Cm."
+        ::=  {  gsAnCmcUpstreamChannelEntry  6  }
+        
+     gsAnCmcUpChannelRegisterCmCount  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The current Count of the Register Cm."
+        ::=  {  gsAnCmcUpstreamChannelEntry  7  }
+        
+     gsAnCmcUpChannelUnregisterCmCount  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The current Count of the Unregister Cm."
+        ::=  {  gsAnCmcUpstreamChannelEntry  8  }
+     
+     gsAnCmcUpChannelInputPower  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  read-write
+        STATUS  current
+        DESCRIPTION     
+            "The InputPower(dB) of the UpChannel."
+        ::=  {  gsAnCmcUpstreamChannelEntry  9  }
+--------------------------------------------------------------------------------     
+        
+     gsAnCmcDownstreamChannelTable  OBJECT-TYPE
+        SYNTAX  SEQUENCE  OF  gsAnCmcDownstreamChannelEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION 
+            "This table indicates the Downstream channel."
+        ::=  { gsAnCmcCmcObjects  4 }
+
+    gsAnCmcDownstreamChannelEntry OBJECT-TYPE
+        SYNTAX  gsAnCmcDownstreamChannelEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION 
+            "An entry in gsAnCmcDownstreamChannelTable."
+        INDEX  {  gsAnCmcDownChannelId   }
+        ::=  { gsAnCmcDownstreamChannelTable 1 }
+
+     gsAnCmcDownstreamChannelEntry  ::=
+        SEQUENCE {
+            gsAnCmcDownChannelId                 Integer32,
+            gsAnCmcDownChannelName               OCTET STRING,
+            gsAnCmcDownChannelEnable             Integer32,
+            gsAnCmcDownChannelStatus             Integer32,
+            gsAnCmcDownChannelActiveCmCount      Integer32,
+            gsAnCmcDownChannelRegisterCmCount    Integer32,
+            gsAnCmcDownChannelUnregisterCmCount  Integer32,
+            gsAnCmcDownChannelMtu                Integer32
+        }
+        
+     gsAnCmcDownChannelId  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION     
+            "The downstream channel id."
+        ::=  {  gsAnCmcDownstreamChannelEntry  1  }
+     
+     gsAnCmcDownChannelName  OBJECT-TYPE 
+        SYNTAX  OCTET STRING
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The name of the cmc downstream channel."
+        ::=  {  gsAnCmcDownstreamChannelEntry  2  }
+      
+      gsAnCmcDownChannelEnable  OBJECT-TYPE 
+        SYNTAX  Integer32 { Disabled ( 0 ) , EnabledDOCSIS ( 1 ) , EnabledIPQAM ( 2 )}
+        MAX-ACCESS  read-write
+        STATUS  current
+        DESCRIPTION     
+            "The current Setting of the cmc downstream channel.
+             0: Disabled
+             1: Enabled DOCSIS             
+             2: Enabled IPQAM"
+        ::=  {  gsAnCmcDownstreamChannelEntry  3  }
+        
+     gsAnCmcDownChannelStatus  OBJECT-TYPE 
+        SYNTAX  Integer32 { Disabled ( 0 ) , EnabledDOCSIS ( 1 ) , EnabledIPQAM ( 2 )}
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The current Status of the cmc downstream channel.
+             0: Disabled
+             1: Enabled DOCSIS
+             2: Enabled IPQAM"
+        ::=  {  gsAnCmcDownstreamChannelEntry  4  }
+        
+     gsAnCmcDownChannelActiveCmCount  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The current Count of the Active Cm."
+        ::=  {  gsAnCmcDownstreamChannelEntry  5  }
+        
+     gsAnCmcDownChannelRegisterCmCount  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The current Count of the Register Cm."
+        ::=  {  gsAnCmcDownstreamChannelEntry  6  }
+        
+     gsAnCmcDownChannelUnregisterCmCount  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The current Count of the Unregister Cm."
+        ::=  {  gsAnCmcDownstreamChannelEntry  7  }
+        
+     gsAnCmcDownChannelMtu  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The Mtu value of the DownChannel."
+        ::=  {  gsAnCmcDownstreamChannelEntry  8  }
+
+--------------------------------------------------------------------------------     
+        
+     gsAnCmcChannelStatisticsTable  OBJECT-TYPE
+        SYNTAX  SEQUENCE  OF  gsAnCmcChannelStatisticsEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION 
+            "This table indicates the statistics of channels."
+        ::=  { gsAnCmcCmcObjects  5 }
+
+     gsAnCmcChannelStatisticsEntry OBJECT-TYPE
+        SYNTAX  gsAnCmcChannelStatisticsEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION 
+            "An entry in gsAnCmcChannelStatisticsTable."
+        INDEX  {  gsAnCmcChannelStatisticsIndex  }
+        ::=  { gsAnCmcChannelStatisticsTable 1 }
+
+     gsAnCmcChannelStatisticsEntry  ::=
+        SEQUENCE {
+            gsAnCmcChannelStatisticsIndex            Integer32,
+            gsAnCmcChannelStatisticsIFIndex          Integer32,
+            gsAnCmcChannelStatisticsDir              Integer32,
+            gsAnCmcChannelStatisticsId               Integer32,
+            gsAnCmcChannelStatisticsName             DisplayString,
+            gsAnCmcChannelStatisticsSpeed            Integer32,
+            gsAnCmcChannelStatisticsBandWidth        Integer32,
+            gsAnCmcChannelStatisticsUtilization      Integer32
+        }
+        
+     gsAnCmcChannelStatisticsIndex  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION     
+            "The index of the cmc channel."
+        ::=  {  gsAnCmcChannelStatisticsEntry  1  }
+        
+     gsAnCmcChannelStatisticsIFIndex  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The interface index of the cmc channel."
+        ::=  {  gsAnCmcChannelStatisticsEntry  2  }
+        
+     gsAnCmcChannelStatisticsDir  OBJECT-TYPE 
+        SYNTAX  Integer32 { DownStream ( 128 ) , UpStream ( 129 ) }
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The direction of the cmc channel."
+        ::=  {  gsAnCmcChannelStatisticsEntry  3  }
+        
+     gsAnCmcChannelStatisticsId  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The id of the cmc channel."
+        ::=  {  gsAnCmcChannelStatisticsEntry  4  }
+        
+     gsAnCmcChannelStatisticsName  OBJECT-TYPE 
+        SYNTAX  DisplayString
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The name of the cmc channel."
+        ::=  {  gsAnCmcChannelStatisticsEntry  5  }
+        
+     gsAnCmcChannelStatisticsSpeed  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The current speed(Bytes/s) of the cmc channel."
+        ::=  {  gsAnCmcChannelStatisticsEntry  6  }
+        
+     gsAnCmcChannelStatisticsBandWidth  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The bandwidth(Mbps) of the cmc channel."
+        ::=  {  gsAnCmcChannelStatisticsEntry  7  }
+        
+     gsAnCmcChannelStatisticsUtilization  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The current utilization of the cmc channel."
+        ::=  {  gsAnCmcChannelStatisticsEntry  8  }
+
+--------------------------------------------------------------------------------     
+     
+        gsAnCmcPortStatisticsTable  OBJECT-TYPE
+        SYNTAX  SEQUENCE  OF  gsAnCmcPortStatisticsEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION 
+            "This table indicates the statistics of channels."
+        ::=  { gsAnCmcCmcObjects  6 }
+
+     gsAnCmcPortStatisticsEntry OBJECT-TYPE
+        SYNTAX  gsAnCmcPortStatisticsEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION 
+            "An entry in gsAnCmcPortStatisticsTable."
+        INDEX  {  gsAnCmcPortStatisticsIndex  }
+        ::=  { gsAnCmcPortStatisticsTable 1 }
+
+     gsAnCmcPortStatisticsEntry  ::=
+        SEQUENCE {
+            gsAnCmcPortStatisticsIndex            Integer32,
+            gsAnCmcPortStatisticsRxSpeed          DisplayString,
+            gsAnCmcPortStatisticsTxSpeed          DisplayString
+        }
+        
+     gsAnCmcPortStatisticsIndex  OBJECT-TYPE 
+        SYNTAX  Integer32{ GE ( 2 ) , INNER ( 3 ) , PON ( 4 ) }
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION     
+            "The port num of the cmc statistics."
+        ::=  {  gsAnCmcPortStatisticsEntry  1  }
+        
+     gsAnCmcPortStatisticsRxSpeed  OBJECT-TYPE 
+        SYNTAX  DisplayString
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The current receive speed(Bytes/s) of the cmc port."
+        ::=  {  gsAnCmcPortStatisticsEntry  2  }
+        
+         
+     gsAnCmcPortStatisticsTxSpeed  OBJECT-TYPE 
+        SYNTAX  DisplayString
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The current send speed(Bytes/s) of the cmc port."
+        ::=  {  gsAnCmcPortStatisticsEntry  3  }
+
+
+--------------------------------------------------------------------------------     
+
+     gsAnCmcPonIfMgmtTable  OBJECT-TYPE
+        SYNTAX  SEQUENCE  OF  gsAnCmcPonIfMgmtEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION 
+            "This table manage CMC uplink PON interface."
+        ::=  { gsAnCmcCmcObjects  7 }
+
+     gsAnCmcPonIfMgmtEntry OBJECT-TYPE
+        SYNTAX  gsAnCmcPonIfMgmtEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION 
+            "An entry in gsAnCmcPonIfMgmtTable."
+        INDEX  {  gsAnCmcPonIndex  }
+        ::=  { gsAnCmcPonIfMgmtTable 1 }
+
+     gsAnCmcPonIfMgmtEntry  ::=
+        SEQUENCE {
+            gsAnCmcPonIndex                       Integer32,
+            gsAnCmcPonRxPower                     DisplayString,
+            gsAnCmcPonTxPower                     DisplayString,
+            gsAnCmcPonName                        DisplayString,
+            gsAnCmcPonType                        Integer32,
+            gsAnCmcPonWorkStatus                  Integer32,
+            gsAnCmcOpticalModuleVender            DisplayString,
+            gsAnCmcOpticalModuleType              DisplayString
+        }
+        
+     gsAnCmcPonIndex  OBJECT-TYPE 
+        SYNTAX  Integer32 
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION     
+            "The pon port num of the cmc statistics."
+        ::=  {  gsAnCmcPonIfMgmtEntry  1  }
+        
+     gsAnCmcPonRxPower  OBJECT-TYPE 
+        SYNTAX  DisplayString
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The receive power (dbm) of the pon interface."
+        ::=  {  gsAnCmcPonIfMgmtEntry  2  }
+            
+     gsAnCmcPonTxPower  OBJECT-TYPE 
+        SYNTAX  DisplayString
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The transmit power (dbm) of the pon interface."
+        ::=  {  gsAnCmcPonIfMgmtEntry  3  }
+
+     gsAnCmcPonName  OBJECT-TYPE 
+        SYNTAX  DisplayString
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The pon interface name."
+        ::=  {  gsAnCmcPonIfMgmtEntry  4  }
+        
+     gsAnCmcPonType  OBJECT-TYPE 
+        SYNTAX  Integer32 { UNKNOWN ( 0 ), EPON ( 1 ), GPON ( 2 ) }
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The pon type."
+        ::=  {  gsAnCmcPonIfMgmtEntry  5  }
+
+     gsAnCmcPonWorkStatus  OBJECT-TYPE 
+        SYNTAX  Integer32 { Online ( 1 ), Offline ( 2 ) }
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The pon interface working status."
+        ::=  {  gsAnCmcPonIfMgmtEntry  6  }        
+
+     gsAnCmcOpticalModuleVender  OBJECT-TYPE 
+        SYNTAX  DisplayString
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The optical module vender name."
+        ::=  {  gsAnCmcPonIfMgmtEntry  22  }    
+        
+     gsAnCmcOpticalModuleType  OBJECT-TYPE 
+        SYNTAX  DisplayString
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The optical module type."
+        ::=  {  gsAnCmcPonIfMgmtEntry  23  }    
+                                    
+--------------------------------------------------------------------------------     
+    gsAnCmcVendorToVlanObjects   OBJECT IDENTIFIER ::= {gsAnCmcCmcObjects 8}
+
+    gsAnCmcVendorToVlanStatus   OBJECT-TYPE 
+        SYNTAX          Unsigned32 { Disable ( 0 ) , Enable ( 1 ) } 
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "the status of Vendor To Vlan, the change will take effect after save and reboot"
+        ::=  {  gsAnCmcVendorToVlanObjects  1  }    
+          
+    gsAnCmcVendorToVlanTable  OBJECT-TYPE
+        SYNTAX      SEQUENCE  OF  gsAnCmcVendorToVlanEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION "Vendor To Vlan table"
+        ::=  { gsAnCmcVendorToVlanObjects  2 }
+   
+    gsAnCmcVendorToVlanEntry  OBJECT-TYPE
+        SYNTAX      gsAnCmcVendorToVlanEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION "An entry in gsAnCmcVendorToVlanTable."
+        INDEX {VendorItemIndex
+           }
+     ::= { gsAnCmcVendorToVlanTable 1 }    
+
+    gsAnCmcVendorToVlanEntry  ::=  SEQUENCE {
+        VendorItemIndex                     Unsigned32,
+        gsAnCmcVendorToVlanCmMac            MacAddress, 
+        gsAnCmcVendorToVlanCmState          Unsigned32,
+        gsAnCmcVendorToVlanVlanID           Unsigned32,
+        gsAnCmcVendorToVlanVendorID         OCTET STRING
+        }
+
+        VendorItemIndex   OBJECT-TYPE 
+        SYNTAX          Unsigned32
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION     "id index"
+        ::=  {  gsAnCmcVendorToVlanEntry  1  }   
+        
+        gsAnCmcVendorToVlanCmMac   OBJECT-TYPE 
+        SYNTAX          MacAddress
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "cm's mac address"
+        ::=  {  gsAnCmcVendorToVlanEntry  2  }       
+        
+        gsAnCmcVendorToVlanCmState   OBJECT-TYPE 
+        SYNTAX          Unsigned32{ InitRng ( 0 ) , InitRC ( 1 ) , InitReg ( 2 ), Online ( 3 ), other ( 4 ) }
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "cm' state"
+        ::=  {  gsAnCmcVendorToVlanEntry  3  }
+        
+        gsAnCmcVendorToVlanVlanID   OBJECT-TYPE 
+        SYNTAX          Unsigned32
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "the vlan ID"
+        ::=  {  gsAnCmcVendorToVlanEntry  4  }    
+        
+        gsAnCmcVendorToVlanVendorID   OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "the Vendor ID"
+        ::=  {  gsAnCmcVendorToVlanEntry  5  }               
+--------------------------------------------------------------------------------     
+           
+   gsCableDocsUsSpectrumSystem       OBJECT IDENTIFIER ::= {gsCableDocsSpectrumObjects 1}
+        
+        gsCableDocsUsSpectrumFFTAveraging      OBJECT-TYPE 
+        SYNTAX          Integer32 { Disable ( 0 ) , Enable ( 1 )} 
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "Dynamic load balancing method.
+                          0: Disable
+                          1: Enable"
+        ::=  {  gsCableDocsUsSpectrumSystem  1  }
+                                                                           
+--------------------------------------------------------------------------------        
+    
+    gsCableDocsUsSpectrumChartTable  OBJECT-TYPE
+        SYNTAX      SEQUENCE  OF  gsCableDocsUsSpectrumChartEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION "Spectrum analysis chart table."
+        ::=  { gsCableDocsSpectrumObjects  2 }
+   
+    gsCableDocsUsSpectrumChartEntry  OBJECT-TYPE
+        SYNTAX      gsCableDocsUsSpectrumChartEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION "An entry in gsCableDocsSpectrumChartTable."
+        INDEX       {  gsCableDocsUsSpectrumIndex  }
+        ::=  { gsCableDocsUsSpectrumChartTable 1 }       
+
+    gsCableDocsUsSpectrumChartEntry  ::=  SEQUENCE {
+        gsCableDocsUsSpectrumIndex                 Integer32,
+        gsCableDocsUsSpectrumNumOfSamples          Integer32,   
+        gsCableDocsUsSpectrumFrequencyList         OCTET STRING,
+        gsCableDocsUsSpectrumMagnitudeList         OCTET STRING
+        }  
+        
+        gsCableDocsUsSpectrumIndex   OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "the index of upstream spectrum chart.There are many samples of upstream spectrum chart,
+        can't be sent by one time,so need a index."
+        ::=  {  gsCableDocsUsSpectrumChartEntry  1  }  
+
+        gsCableDocsUsSpectrumNumOfSamples   OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "the total Sample numbers of upstream spectrum chart."
+        ::=  {  gsCableDocsUsSpectrumChartEntry  2  }       
+         
+        gsCableDocsUsSpectrumFrequencyList   OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "This attribute contains the list of frequency of upstream spectrum samples."
+        ::=  {  gsCableDocsUsSpectrumChartEntry  3  }       
+
+        gsCableDocsUsSpectrumMagnitudeList   OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "This attribute contains the list of Magnitude of upstream spectrum samples."
+        ::=  {  gsCableDocsUsSpectrumChartEntry  4  }    
+        
+--------------------------------------------------------------------------------        
+    gsCableDocsLoadBalSystem       OBJECT IDENTIFIER ::= {gsCableDocsLoadBalObjects 1}
+        
+        gsCableDocsLoadBalMethod      OBJECT-TYPE 
+        SYNTAX          Integer32 { Disabled ( 0 ) , Dynamic ( 1 ), Static ( 2 ) } 
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "Dynamic load balancing method.
+                          0: Disable
+                          1: Dynamic(run-time statistics)
+                          2: Static(minimum reserved rate)"
+        ::=  {  gsCableDocsLoadBalSystem  1  }
+    
+        gsCableDocsLoadBalPeriod   OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "Time in seconds between load balancing checks. Minimum time is 30 seconds. (0=no change)"
+        ::=  {  gsCableDocsLoadBalSystem  2  }   
+
+        gsCableDocsLoadBalNumPeriods   OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "Number of periods for calculating the weighted average load. 
+        Each period gets twice the weight of the previous period. 
+        Valid values are 1, 2, or 4. Applies to Balancing Method 1 only. (0=no change)"
+        ::=  {  gsCableDocsLoadBalSystem  3  }   
+
+        gsCableDocsLoadBalOverloadThreshold   OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "A channel is considered overloaded when the load is at least this percent of capacity. 
+        Below this, no attempt is made to balance its load. Applies to Balancing Method 1 only. (0=no change)"
+        ::=  {  gsCableDocsLoadBalSystem  4  }   
+
+        gsCableDocsLoadBalDifferenceThreshold   OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "For channels at or above the overload threshold, only consider less loaded alternate channels 
+        where the load difference is at least this percent. Applies to Balancing Method 1 only. (0=no change)"
+        ::=  {  gsCableDocsLoadBalSystem  5  }   
+
+        gsCableDocsLoadBalMaxMovesPerPeriod   OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "Maximum number of modems allowed to be moved per load balancer period. (0=no change)"
+        ::=  {  gsCableDocsLoadBalSystem  6  }   
+        
+        gsCableDocsLoadBalMinHoldTimePerModem   OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "Minimum number of seconds that must elapse before moving the same modem to a different channel. (0=no change)"
+        ::=  {  gsCableDocsLoadBalSystem  7  }   
+        
+        gsCableDocsLoadBalRangingOverrideMode   OBJECT-TYPE 
+        SYNTAX          Integer32 { Enabled ( 1 ) , Disabled ( 2 ) } 
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "When enabled, a modem can be directed to a different channel via RNG-RSP prior to registration (0=no change)"
+        DEFVAL { enable } 
+        ::=  {  gsCableDocsLoadBalSystem  8  }   
+        
+        gsCableDocsLoadBalDCCInitTechATDMA   OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "DCC initialization technique used for ATDMA mode (valid values are 1, 2, 3, and 4."
+        ::=  {  gsCableDocsLoadBalSystem  9  }   
+
+        gsCableDocsLoadBalDCCInitTechSCDMA   OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "DCC initialization technique used for SCDMA mode (valid values are 1, 2, and 3."
+        ::=  {  gsCableDocsLoadBalSystem  10  } 
+
+        gsCableDocsLoadBalDBCInitTechATDMA   OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "DBC initialization technique used for ATDMA mode (valid values are 1, 2, 3, and 4."
+        ::=  {  gsCableDocsLoadBalSystem  11  }   
+
+        gsCableDocsLoadBalDBCInitTechSCDMA   OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "DBC initialization technique used for SCDMA mode (valid values are 1, 2, and 3."
+        ::=  {  gsCableDocsLoadBalSystem  12  } 
+                                
+--------------------------------------------------------------------------------        
+    
+    gsCableDocsLoadBalGrpCfgTable  OBJECT-TYPE
+        SYNTAX      SEQUENCE  OF  gsCableDocsLoadBalGrpCfgEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION "load balance group configuration table"
+        ::=  { gsCableDocsLoadBalObjects  2 }
+   
+    gsCableDocsLoadBalGrpCfgEntry  OBJECT-TYPE
+        SYNTAX      gsCableDocsLoadBalGrpCfgEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION "An entry in gsCableDocsLoadBalGrpCfgTable."
+        INDEX       {  gsCableDocsLoadBalGrpCfgId  }
+        ::=  { gsCableDocsLoadBalGrpCfgTable 1 }       
+
+    gsCableDocsLoadBalGrpCfgEntry  ::=  SEQUENCE {
+        gsCableDocsLoadBalGrpCfgId             Integer32,
+        gsCableDocsLoadBalGrpCfgType           Integer32,   
+        gsCableDocsLoadBalGrpCfgDsChList       OCTET STRING,
+        gsCableDocsLoadBalGrpCfgUsChList       OCTET STRING, 
+        gsCableDocsLoadBalGrpCfgActiveMacAddr  OCTET STRING,
+        gsCableDocsLoadBalGrpCfgOption         Integer32
+        }  
+        
+        gsCableDocsLoadBalGrpCfgId   OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "Group ID number for the load balancing group"
+        ::=  {  gsCableDocsLoadBalGrpCfgEntry  1  }  
+
+        gsCableDocsLoadBalGrpCfgType   OBJECT-TYPE 
+        SYNTAX          Integer32 { Static ( 1 ) , Dynamic ( 2 ) } 
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "load balancing group type."
+        ::=  {  gsCableDocsLoadBalGrpCfgEntry  2  }       
+         
+        gsCableDocsLoadBalGrpCfgDsChList   OBJECT-TYPE 
+        SYNTAX          OCTET STRING (SIZE (64))
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "This attribute contains the list of downstream channels 
+        of the Load Balancing Group."
+        ::=  {  gsCableDocsLoadBalGrpCfgEntry  3  }       
+
+        gsCableDocsLoadBalGrpCfgUsChList   OBJECT-TYPE 
+        SYNTAX          OCTET STRING (SIZE (64))
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "This attribute contains the list of upstream channels 
+        of the Load Balancing Group."
+        ::=  {  gsCableDocsLoadBalGrpCfgEntry  4  }                     
+                      
+        gsCableDocsLoadBalGrpCfgActiveMacAddr   OBJECT-TYPE 
+        SYNTAX          OCTET STRING (SIZE (3316))
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "get current list of active CMs in the specified load balancing group."
+        ::=  {  gsCableDocsLoadBalGrpCfgEntry  5  }       
+        
+        gsCableDocsLoadBalGrpCfgOption   OBJECT-TYPE 
+        SYNTAX          Integer32 { add ( 1 ) , drop ( 2 ) } 
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "load balancing group Option."
+        ::=  {  gsCableDocsLoadBalGrpCfgEntry  6  }       
+ 
+-------------------------------------------------------------------------------- 
+
+    gsCableDocsLoadBalMacRangeCfgTable  OBJECT-TYPE
+        SYNTAX      SEQUENCE  OF  gsCableDocsLoadBalMacRangeCfgEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION "load balance  mac range configuration table"
+        
+        ::=  { gsCableDocsLoadBalObjects  3 }
+   
+    gsCableDocsLoadBalMacRangeCfgEntry  OBJECT-TYPE
+        SYNTAX      gsCableDocsLoadBalMacRangeCfgEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION "An entry in gsCableDocsLoadBalMacRangeCfgTable."
+        INDEX { 
+                gsCableDocsLoadBalMacRangeGrpCfgId,
+                gsCableDocsLoadBalMacRangeCfgIndex
+           }
+        ::=  { gsCableDocsLoadBalMacRangeCfgTable 1 }       
+
+    gsCableDocsLoadBalMacRangeCfgEntry  ::=  SEQUENCE {
+        gsCableDocsLoadBalMacRangeGrpCfgId                    Integer32,
+        gsCableDocsLoadBalMacRangeCfgIndex            Integer32,   
+        gsCableDocsLoadBalMacRangeCfgstartMac         MacAddress,
+        gsCableDocsLoadBalMacRangeCfgendMac           MacAddress, 
+        gsCableDocsLoadBalMacRangeCfgOption           Integer32
+        }  
+        
+        gsCableDocsLoadBalMacRangeGrpCfgId   OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "Group ID number for the load balancing group"
+        ::=  {  gsCableDocsLoadBalMacRangeCfgEntry  1  }  
+
+        gsCableDocsLoadBalMacRangeCfgIndex   OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "load balancing mac range configure index"
+        ::=  {  gsCableDocsLoadBalMacRangeCfgEntry  2  }       
+         
+        gsCableDocsLoadBalMacRangeCfgstartMac   OBJECT-TYPE 
+        SYNTAX          MacAddress
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "This attribute contains the start mac address."
+        ::=  {  gsCableDocsLoadBalMacRangeCfgEntry  3  }       
+
+        gsCableDocsLoadBalMacRangeCfgendMac   OBJECT-TYPE 
+        SYNTAX          MacAddress
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "This attribute contains the end mac address."
+        ::=  {  gsCableDocsLoadBalMacRangeCfgEntry  4 }  
+         
+        gsCableDocsLoadBalMacRangeCfgOption    OBJECT-TYPE 
+        SYNTAX          Integer32 { add ( 1 ) , drop ( 2 ) } 
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "load balancing group Option."
+        ::=  {  gsCableDocsLoadBalMacRangeCfgEntry  5  }                   
+
+-------------------------------------------------------------------------------- 
+
+        gsCableDocsLoadBalExcludeMacCfgTable  OBJECT-TYPE
+        SYNTAX      SEQUENCE  OF  gsCableDocsLoadBalExcludeMacCfgEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION "load balance  Exclude Mac configuration table"   
+        ::=  { gsCableDocsLoadBalObjects  4 }
+   
+        gsCableDocsLoadBalExcludeMacCfgEntry  OBJECT-TYPE
+        SYNTAX      gsCableDocsLoadBalExcludeMacCfgEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION "An entry in gsCableDocsLoadBalExcludeMacCfgTable."
+        INDEX { gsCableDocsLoadBalExcludeMacCfgIndex }
+        ::=  { gsCableDocsLoadBalExcludeMacCfgTable 1 }       
+
+        gsCableDocsLoadBalExcludeMacCfgEntry  ::=  SEQUENCE {
+        gsCableDocsLoadBalExcludeMacCfgIndex            Integer32,   
+        gsCableDocsLoadBalExcludeMacCfgstartMac         MacAddress,
+        gsCableDocsLoadBalExcludeMacCfgendMac           MacAddress, 
+        gsCableDocsLoadBalExcludeMacCfgOption           Integer32
+        }    
+
+        gsCableDocsLoadBalExcludeMacCfgIndex   OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "load balancing mac range configure index"
+        ::=  {  gsCableDocsLoadBalExcludeMacCfgEntry  1  }       
+         
+        gsCableDocsLoadBalExcludeMacCfgstartMac   OBJECT-TYPE 
+        SYNTAX          MacAddress
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "This attribute contains the start mac address."
+        ::=  {  gsCableDocsLoadBalExcludeMacCfgEntry  2  }       
+
+        gsCableDocsLoadBalExcludeMacCfgendMac   OBJECT-TYPE 
+        SYNTAX          MacAddress
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "This attribute contains the end mac address."
+        ::=  {  gsCableDocsLoadBalExcludeMacCfgEntry  3 }  
+         
+        gsCableDocsLoadBalExcludeMacCfgOption    OBJECT-TYPE 
+        SYNTAX          Integer32 { add ( 1 ) , drop ( 2 ) } 
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "load balancing group Option."
+        ::=  {  gsCableDocsLoadBalExcludeMacCfgEntry  4  }       
+
+-------------------------------------------------------------------------------- 
+    gsAnCmcGlobalObject   OBJECT IDENTIFIER ::= { gsAnCmcObjects 25 }
+     
+    gsAnExtCmcUpstreamErrorRateThreshold OBJECT-TYPE
+        SYNTAX      Integer32 
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+           "The error rate threshold of the cmc channel. when 
+           gsAnCmcUpstreamErrorCodeRate is higher than 
+           gsAnExtCmcUpstreamErrorRateThreshold gsAnExtCmcUpstreamErrorRateAlm
+           should be generated."
+      ::= { gsAnCmcGlobalObject 1 }
+
+    gsAnExtCmcCmMacAddress OBJECT-TYPE
+        SYNTAX      MacAddress
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+           "The cm mac address."
+      ::= { gsAnCmcGlobalObject 2 }
+
+    gsAnExtCmcUpstreamSnrThreshold OBJECT-TYPE
+        SYNTAX      Integer32
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+           "The upstream SNR threshold,Unit(db)."
+      ::= { gsAnCmcGlobalObject 3 }
+
+    gsAnExtCmcMaxCmThreshold OBJECT-TYPE
+        SYNTAX      Integer32
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+           "The maximun number of cable modem threshold."
+      ::= { gsAnCmcGlobalObject 4 }
+
+    gsAnExtCmcCmNumber OBJECT-TYPE
+        SYNTAX      Integer32
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+           "The number of cable modem in cmc"
+      ::= { gsAnCmcGlobalObject 5 }
+
+    gsAnExtCmcDdosAttackType OBJECT-TYPE
+        SYNTAX      Integer32 { ARP ( 0 ) , IGMP ( 1 ) , ICMP ( 2 ) , DHCP ( 3 ) }
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+           "The type of ddos attack on cmc.
+             0: ARP
+             1: IGMP
+             2: ICMP
+             3: DHCP"
+      ::= { gsAnCmcGlobalObject 6 }
+
+    gsAnCmcAllCmResetNow OBJECT-TYPE
+        SYNTAX      TruthValue
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+            "Setting this object to true(1) causes the device to
+             reset.  Reading this object always returns false(2)."
+        ::= { gsAnCmcGlobalObject 7 }
+    
+    gsAnCmcAllCmDeleteNow OBJECT-TYPE
+        SYNTAX      TruthValue
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+            "Setting this object to true(1) causes the device to
+             re-register.  Reading this object always returns false(2)."
+        ::= { gsAnCmcGlobalObject 8 }
+
+    gsAnExtCmcUpstreamChannelTable  OBJECT-TYPE
+        SYNTAX  SEQUENCE  OF  gsAnExtCmcUpstreamChannelEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION 
+            "This table indicates the upstream channel.
+             Usually used in sengding trap."
+        ::=  { gsAnCmcGlobalObject  9 }
+
+    gsAnExtCmcUpstreamChannelEntry OBJECT-TYPE
+        SYNTAX  gsAnExtCmcUpstreamChannelEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION 
+            "An entry in gsAnExtCmcUpstreamChannelTable."
+        INDEX  {  gsAnCmcUpChannelId   }
+        ::=  { gsAnExtCmcUpstreamChannelTable 1 }
+
+     gsAnExtCmcUpstreamChannelEntry  ::=
+        SEQUENCE {
+            gsAnExtCmcUpChannelId                   Integer32,
+            gsAnExtCmcUpChannelFormerProfile        Integer32,
+            gsAnExtCmcUpChannelCurrentProfile       Integer32
+        }
+        
+     gsAnExtCmcUpChannelId  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION     
+            "The upstream channel id."
+        ::=  {  gsAnExtCmcUpstreamChannelEntry  1  }
+        
+     gsAnExtCmcUpChannelFormerProfile  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The former profile of the cmc upstream channel."
+        ::=  {  gsAnExtCmcUpstreamChannelEntry  2  }
+
+     gsAnExtCmcUpChannelCurrentProfile  OBJECT-TYPE 
+        SYNTAX  Integer32
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION     
+            "The current profile of the cmc upstream channel."
+        ::=  {  gsAnExtCmcUpstreamChannelEntry  3  }
+
+--------------------------------------------------------------------------------        
+    
+    gsCableDocsServiceFlowCfgTable  OBJECT-TYPE
+        SYNTAX      SEQUENCE  OF  gsCableDocsServiceFlowCfgEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION "service flow configuration table"
+        ::=  { gsCableDocsServiceFlowObjects  1 }
+   
+    gsCableDocsServiceFlowCfgEntry  OBJECT-TYPE
+        SYNTAX      gsCableDocsServiceFlowCfgEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION "An entry in gsCableDocsServiceFlowCfgTable."
+        INDEX {idIndex,
+             gsCableDocsServiceFlowSfid
+           }
+     ::= { gsCableDocsServiceFlowCfgTable 1 }    
+
+    gsCableDocsServiceFlowCfgEntry  ::=  SEQUENCE {
+        idIndex                                Unsigned32,
+        gsCableDocsServiceFlowSfid             Unsigned32,   
+        gsCableDocsServiceFlowSid              Unsigned32,
+        gsCableDocsServiceFlowCmMac            MacAddress, 
+        gsCableDocsServiceFlowDirection        Unsigned32,
+        gsCableDocsServiceFlowPrimary          Unsigned32
+        }
+
+
+        idIndex   OBJECT-TYPE 
+        SYNTAX          Unsigned32
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION     "id index"
+        ::=  {  gsCableDocsServiceFlowCfgEntry  1  }   
+        
+        gsCableDocsServiceFlowSfid   OBJECT-TYPE 
+        SYNTAX          Unsigned32
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION     "service flow id"
+        ::=  {  gsCableDocsServiceFlowCfgEntry  2  }       
+        
+        gsCableDocsServiceFlowSid   OBJECT-TYPE 
+        SYNTAX          Unsigned32
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "service flow id"
+        ::=  {  gsCableDocsServiceFlowCfgEntry  3  }
+        
+        gsCableDocsServiceFlowCmMac   OBJECT-TYPE 
+        SYNTAX          MacAddress
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "cm's mac address"
+        ::=  {  gsCableDocsServiceFlowCfgEntry  4  }       
+
+        gsCableDocsServiceFlowDirection   OBJECT-TYPE 
+        SYNTAX          Unsigned32 { Downstream ( 1 ) , Upstream ( 2 ) } 
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "the direction of the Service Flow"
+        ::=  {  gsCableDocsServiceFlowCfgEntry  5  }                     
+                      
+        gsCableDocsServiceFlowPrimary   OBJECT-TYPE 
+        SYNTAX          Unsigned32 { Primary ( 1 ) , Secondary ( 2 ) } 
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "whether Service Flow is the primary
+                         or a secondary Service Flow"
+        ::=  {  gsCableDocsServiceFlowCfgEntry  6  }
+		
+---------------downstream qos table begin. added by liuhao--------------------------------
+
+    gsCableDocsDsQosCfgTable  OBJECT-TYPE
+        SYNTAX      SEQUENCE  OF  gsCableDocsDsQosCfgEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION "downstream qos configuration table"   
+        ::=  { gsCableDocsServiceFlowObjects  32 }
+
+    gsCableDocsDsQosCfgEntry  OBJECT-TYPE
+        SYNTAX      gsCableDocsDsQosCfgEntry
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION "An entry in gsCableDocsDsQosCfgTable."
+        INDEX { gsCableDocsDsQosCfgMac }
+        ::=  { gsCableDocsDsQosCfgTable 1 }
+
+    gsCableDocsDsQosCfgEntry  ::=  SEQUENCE {
+        gsCableDocsDsQosCfgMac         MacAddress,
+        gsCableDocsDsQosCfgBandwidth   Integer32,
+		gsCableDocsDsQosCfgOption      Integer32
+        }    
+
+        gsCableDocsDsQosCfgMac   OBJECT-TYPE 
+        SYNTAX          MacAddress
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "Cable modem mac address."
+        ::=  {  gsCableDocsDsQosCfgEntry  1  }       
+
+        gsCableDocsDsQosCfgBandwidth   OBJECT-TYPE 
+        SYNTAX          Integer32
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "Brandwidth configuration for specific modem and all CPE 
+		                 connected to this modem."
+        ::=  {  gsCableDocsDsQosCfgEntry  2  }
+
+		gsCableDocsDsQosCfgOption   OBJECT-TYPE 
+        SYNTAX          Integer32 { add ( 1 ) , drop ( 2 ) } 
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION     "downstream qos configuration Option."
+        ::=  {  gsCableDocsDsQosCfgEntry  32  }   		
+
+---------------downstream qos table end. added by liuhao--------------------------------
+        
+--------------------------------------------------------------------------------
+             -- The Cmc Alarms Group
+--------------------------------------------------------------------------------
+
+    gsAnCmcNotifications     OBJECT IDENTIFIER ::= { gsAnCmcMib 10 }
+ 
+    gsAnCmcExpandTrap     OBJECT IDENTIFIER ::= { gsAnCmcNotifications 1 }
+    
+    gsAnExtCmcUpstreamErrorRateAlm NOTIFICATION-TYPE
+        OBJECTS { gsAnCmcUpstreamErrorRate, gsAnExtCmcUpstreamErrorRateThreshold}
+        STATUS  current
+        DESCRIPTION
+           "It indicates that the agent has detected that the
+            gsAnCmcUpstreamErrorCodeRate object of the CMC has exceeded than the 
+            configured threshhold value of gsAnExtCmcUpstreamErrorRateThreshold."
+       ::= { gsAnCmcExpandTrap 1 }  
+
+    gsAnExtCmcUpstreamErrorRateClr NOTIFICATION-TYPE
+        OBJECTS { gsAnCmcUpstreamErrorRate, gsAnExtCmcUpstreamErrorRateThreshold }
+        STATUS  current
+        DESCRIPTION
+           "It indicates that the agent has detected that the
+            gsAnCmcUpstreamErrorCodeRate object of the CMC has less than the 
+            configured threshhold value of gsAnExtCmcUpstreamErrorRateThreshold."
+       ::= { gsAnCmcExpandTrap 2 }       
+ 
+    gsAnExtCmcCmOnlineNotification NOTIFICATION-TYPE
+        OBJECTS { gsAnExtCmcCmMacAddress}
+        STATUS  current
+        DESCRIPTION
+           "It indicates that the cm online."
+       ::= { gsAnCmcExpandTrap 3 }  
+
+    gsAnExtCmcCmOfflineNotification NOTIFICATION-TYPE
+        OBJECTS { gsAnExtCmcCmMacAddress}
+        STATUS  current
+        DESCRIPTION
+           "It indicates that the cm offline."
+       ::= { gsAnCmcExpandTrap 4 }
+       
+    gsAnExtCmcUpstreamLowSNRAlm NOTIFICATION-TYPE
+        OBJECTS { gsAnCmcUpstreamSnr, gsAnExtCmcUpstreamSnrThreshold}
+        STATUS  current
+        DESCRIPTION
+           "It indicates that the agent has detected that the
+            gsAnCmcUpstreamSnr object of the CMC has less than the 
+            configured threshhold value of gsAnExtCmcUpstreamSnrThreshold."
+       ::= { gsAnCmcExpandTrap 5 }  
+
+    gsAnExtCmcUpstreamLowSNRClr NOTIFICATION-TYPE
+        OBJECTS { gsAnCmcUpstreamSnr, gsAnExtCmcUpstreamSnrThreshold }
+        STATUS  current
+        DESCRIPTION
+           "It indicates that the agent has detected that the
+            gsAnCmcUpstreamSnr object of the CMC has exceeded than the 
+            configured threshhold value of gsAnExtCmcUpstreamSnrThreshold."
+       ::= { gsAnCmcExpandTrap 6 }           
+   
+    gsAnExtCmcCmExceedAlm NOTIFICATION-TYPE
+        OBJECTS { gsAnExtCmcCmNumber, gsAnExtCmcMaxCmThreshold}
+        STATUS  current
+        DESCRIPTION
+           "It indicates that the agent has detected that the
+            gsAnExtCmcCmNumber object of the CMC has exceeded than the 
+            configured threshhold value of gsAnExtCmcMaxCmThreshold."
+       ::= { gsAnCmcExpandTrap 7 }  
+
+    gsAnExtCmcCmExceedClr NOTIFICATION-TYPE
+        OBJECTS { gsAnExtCmcCmNumber, gsAnExtCmcMaxCmThreshold }
+        STATUS  current
+        DESCRIPTION
+           "It indicates that the agent has detected that the
+            gsAnExtCmcCmNumber object of the CMC has less than the 
+            configured threshhold value of gsAnExtCmcMaxCmThreshold."
+       ::= { gsAnCmcExpandTrap 8 } 
+   
+    gsAnExtCmcDdosAttackAlm NOTIFICATION-TYPE
+        OBJECTS { gsAnExtCmcDdosAttackType }
+        STATUS  current
+        DESCRIPTION
+           "It indicates that the agent has detected that 
+            the CMC is under DDoS attack.
+            The gsAnExtCmcDdosAttackType object of the CMC 
+            has indicated the type of the attack."
+       ::= { gsAnCmcExpandTrap 9 }  
+
+    gsAnExtCmcDdosAttackClr NOTIFICATION-TYPE
+        OBJECTS { gsAnExtCmcDdosAttackType }
+        STATUS  current
+        DESCRIPTION
+           "It indicates that the agent has detected that 
+            the CMC is not under DDoS attack any more.
+            The gsAnExtCmcDdosAttackType object of the CMC 
+            has indicated the type of the attack."
+       ::= { gsAnCmcExpandTrap 10 } 
+                                     
+    gsAnExtCmcUpstreamProfileChgAlm NOTIFICATION-TYPE
+        OBJECTS { gsAnExtCmcUpChannelFormerProfile, gsAnExtCmcUpChannelCurrentProfile}
+        STATUS  current
+        DESCRIPTION
+           "It indicates that the agent detected that the
+            upstream profile CMC has been automatically changed."
+       ::= { gsAnCmcExpandTrap 11 }  
+
+    gsAnExtCmcUpstreamProfileChgClr NOTIFICATION-TYPE
+        OBJECTS { gsAnExtCmcUpChannelFormerProfile, gsAnExtCmcUpChannelCurrentProfile }
+        STATUS  current
+        DESCRIPTION
+           "It indicates that the agent detected that the
+            upstream profile CMC has been manually changed."
+       ::= { gsAnCmcExpandTrap 12 } 
+    gsAnExtCmcCardOfflineAlm NOTIFICATION-TYPE
+        OBJECTS { gsAnExtCmcCardOfflineType }
+        STATUS  current
+        DESCRIPTION
+           "It indicates that the agent has detected that 
+            the DM card if offline."
+       ::= { gsAnCmcExpandTrap 15 }  
+
+    gsAnExtCmcCardOfflineClr NOTIFICATION-TYPE
+        OBJECTS { gsAnExtCmcCardOfflineType }
+        STATUS  current
+        DESCRIPTION
+           "It indicates that the agent has detected that 
+            the DM card if online."
+       ::= { gsAnCmcExpandTrap 16 } 
+                                     
+END

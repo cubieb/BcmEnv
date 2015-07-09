@@ -1,0 +1,14 @@
+--- sdk-all-6.2.2/src/customer/xmem.c	2013-12-31 16:27:54.494853000 +0800
++++ sdk-all-6.2.2/src/customer/xmem.new.c	2014-05-06 13:23:51.014090000 +0800
+@@ -91,5 +91,9 @@
+ {
+     cmd_t cmd = { "xmem", cmd_xmem, cmd_xmem_usage, cmd_xmem_usage };
+ 
++    /* Create a file to indicate diag_shell() finished its initialization.
++       refer to bool DriverInit::InitStep1() for details.
++     */
++    FILE *file = fopen("/var/tmp.txt", "wb");
++    fclose(file);
++
+     return cmdlist_add(&cmd);
+ }

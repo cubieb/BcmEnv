@@ -1,0 +1,17 @@
+gsAnCmcCmUserIpAddressType  --- mib's ipv4 value is differ with CmcOamCm.h of ControllerSource.
+gsAnCmcCmUserIpAddress --- RunDong's cm do not hold this word,but Thomson's cm. 
+gsAnCmcCmOnlineTime ---- CMInfoEntryP->lr_timestamp * 100 converts to minutes looks like all right,but it will be 0 mostly.
+gsAnCmcCmTimeOffSet
+gsAnCmcCmUpstreamSNR
+gsAnCmcCmUpstreamPower
+gsAnCmcCmDownstreamSNR
+gsAnCmcCmDownstreamPower
+gsAnCmcCmNumberOfCPEs
+gsAnCmcCmUpstreamBandWidth
+gsAnCmcCmDownstreamBandWidth
+
+
+
+gsAnCmcCmResetNow and gsAnCmcCmDeleteNow : 
+1.using the same function(CMCOAM_Cm_ClearCableModem())
+2.we need MgtClearCableModem().

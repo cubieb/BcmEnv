@@ -1,0 +1,8 @@
+1) "cable load-balance group <UINT:id> <LIST:static,dynamic:type>" 
+和 "cable load-balance group full <UINT:id>"  配置group type为dynamic后, 再通过Cli命令显示之, 
+group type变成了static.    跟踪代码后估计bug来自于cmc板的代码,  此bug需要修改...
+
+2) "cable downstream <UINT:channel> interleaver <LIST:128_1,128_2,64_2,128_3,32_4,128_4,16_8,128_5,8_16,128_6,4_32,128_7,2_64,128_8,1_128:interleaver>"
+在配置下行通道参数interleaver是会出现配置成功但是显示结果和上一次配置不符合的结果，可能是CMC端代码有限定条件，需修改此BUG。
+
+3) no cable load-balance group 后 save configure 在配置文件中并没有将group配置命令删除，需修改此BUG。

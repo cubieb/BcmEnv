@@ -1,0 +1,4 @@
+在controller,cmc重启后(润东的cm不重启，cpe保持的是之前分配好的ip)，润东的cm不会再次为cpe分配ip,
+	==>> utest channel creat 不能看见cpe
+在controller,cmc重启后(thomson的cm不重启，cpe保持的是之前分配好的ip)，thomson的cm会再次为cpe分配ip，
+	==>> utest channel creat 看见cpe

@@ -1,0 +1,3 @@
+gsAnCmcChannelBinding --- Only  file cm_config can config this node.
+gsAnCmcUpFrequencyStandard --- Only  file cm_config can config this node.
+gsAnCmcDownFrequencyStandard --- Only  file cm_config can config this node.

@@ -1,0 +1,38 @@
+--- sdk-all-6.2.2/src/soc/common/etcgmac.c	2013-07-30 18:31:18.000000000 -0700
++++ sdk-all-6.2.2/src/soc/common/etcgmac.new.c	2013-12-22 19:46:15.511631000 -0800
+@@ -246,6 +246,7 @@
+ };
+ #endif /* GMAC_PROMISC_BY_CFP */
+ 
++sal_mutex_t spiMutex = NULL;   /* SPI mutual exclusion */
+ 
+ static bool
+ chipid(uint vendor, uint device)
+@@ -394,6 +395,14 @@
+     if (etc->mdcport == etc->coreunit)
+         chipphyreset(ch, etc->phyaddr);
+ 
++    if (spiMutex == NULL)
++    {
++       if ((spiMutex = sal_mutex_create("SPI")) == NULL)
++       {
++           goto fail;
++       }
++    }
++
+     return ((void*) ch);
+ 
+ fail:
+@@ -447,6 +456,12 @@
+     if (ch->vars)
+         ET_MFREE(ch->vars, ch->vars_size);
+ 
++    if (spiMutex)
++    {
++       sal_mutex_destroy(spiMutex);
++       spiMutex = NULL;
++    }
++
+     /* free chip private state */
+     ET_MFREE(ch, sizeof(ch_t));
+ }
