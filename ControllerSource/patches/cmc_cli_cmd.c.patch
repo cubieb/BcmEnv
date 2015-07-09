@@ -1,0 +1,13 @@
+--- CmcController/CmcCli/cmc_cli_cmd.c	2013-10-11 15:36:12.000000000 +0800
++++ CmcController/CmcCli/cmc_cli_cmd.new.c	2014-05-09 16:24:38.492601000 +0800
+@@ -327,7 +327,9 @@
+ 	char path[128],cmdBuf[512],fullCmd[512];
+ 
+ 	if(BASE_OK != cliDoesCmcSelected())
+-		return;
++	{
++		return CPARSER_NOT_OK;
++	}
+ 	
+ 	memset(path, 0, sizeof(path));
+ 	remoteCLIHelp();

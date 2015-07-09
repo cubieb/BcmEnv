@@ -1,0 +1,12 @@
+--- CmcController/build/makefile_linux_lib	2013-12-04 17:55:14.000000000 +0800
++++ CmcController/build/makefile_linux_lib.new	2014-03-17 11:20:18.572846000 +0800
+@@ -156,7 +156,8 @@
+ CFLAGS += -DPIC -fpic
+ endif
+ 
+-CFLAGS += -fstack-protector-all
++#modfied by liuhao, eldk gcc do not support -fstack-protector-all option.
++#CFLAGS += -fstack-protector-all
+ 
+ ###############################################################################
+ # Libs and Objects

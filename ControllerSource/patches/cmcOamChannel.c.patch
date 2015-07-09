@@ -1,0 +1,136 @@
+--- ./CmcController/OamApi/cmcOamChannel.c	2014-07-08 14:13:08.346478000 +0800
++++ ./CmcController/OamApi/cmcOamChannel.c.new	2014-07-08 11:04:03.209214000 +0800
+@@ -33,8 +33,8 @@
+ char *DsMode[] = 
+ { 
+     "Disabled",
+-    "Enabled-DOCSIS",
+-    "Enabled-IPQAM",
++    "DOCSIS",
++    "IPQAM",
+     NULL 
+ };
+ 
+@@ -202,38 +202,38 @@
+ 	if(NULL == ds)
+ 		return BASE_ERROR_PARAM;
+ 
+-	CMCOAM_PRINT("Downstream settings\n");
++       CMCOAM_PRINT("Ds-ID		Status		Center-Freq(Hz)		Modulation(QAM)		Annex		Symbol Rate		Power level\n"); 
++	CMCOAM_PRINT("-----------------------------------------------------------------------------------------------------------------------------------\n");	
+ 	for(i=0; i<ds->num_of_channels; i++)
+ 	{
+-		CMCOAM_PRINT("Downstream Channel ID: %u\n", ds->dscfg[i].ds_ch_id);
+-		CMCOAM_PRINT("               Status: %s\n", DsMode[ds->dscfg[i].enabled]);
+-		CMCOAM_PRINT("     Center Frequency: %u Hz\n", ntohl(ds->dscfg[i].freq));
+-		CMCOAM_PRINT("           Modulation: %s QAM\n", ModulationType[ds->dscfg[i].modulatoin]);
+-		CMCOAM_PRINT("                Annex: %s\n", (ds->dscfg[i].annex == ANNEX_B)? "AnnexB" : "AnnexA");
+-		//symbol rate, which use the annex field, annex a mode only.
+-		switch(ds->dscfg[i].annex)
+-		{
+-			case ANNEX_A:
+-				CMCOAM_PRINT("          Symbol Rate: 6952000 sym/sec\n");
+-				break;
+-			case ANNEX_B:
+-				CMCOAM_PRINT("          Symbol Rate: 5360537 sym/sec\n");
+-				break;
+-			case ANNEX_A_6875:
+-				CMCOAM_PRINT("          Symbol Rate: 6875000 sym/sec\n");
+-				break;
+-			case ANNEX_A_6900:
+-				CMCOAM_PRINT("          Symbol Rate: 6900000 sym/sec\n");
+-				break;
+-			default:
+-				break;
+-		}
+-		if(ds->dscfg[i].annex != ANNEX_A)//ingmore for Annex A;
+-		{
+-			CMCOAM_PRINT("          Interleaver: %s\n", Interleaver[ds->dscfg[i].interleaver]);
+-		}
+-		CMCOAM_PRINT("          Power level: %.1f dBmv\n", ds->dscfg[i].power_level/10.0);
+-		CMCOAM_PRINT("      Interface index: %u\n\n", ds->dscfg[i].ifindex);
++            CMCOAM_PRINT("%u		", ds->dscfg[i].ds_ch_id);
++            CMCOAM_PRINT("%s		", DsMode[ds->dscfg[i].enabled]);
++            CMCOAM_PRINT("%u		", ntohl(ds->dscfg[i].freq));
++            CMCOAM_PRINT("%s		", ModulationType[ds->dscfg[i].modulatoin]);
++            CMCOAM_PRINT("	%s		", (ds->dscfg[i].annex == ANNEX_B)? "AnnexB" : "AnnexA");
++            //symbol rate, which use the annex field, annex a mode only.
++            switch(ds->dscfg[i].annex)
++            {
++                case ANNEX_A:
++                    CMCOAM_PRINT("6952000		");
++                    break;
++                case ANNEX_B:
++                    CMCOAM_PRINT("5360537		");
++                    break;
++                case ANNEX_A_6875:
++                    CMCOAM_PRINT("6875000		");
++                    break;
++                case ANNEX_A_6900:
++                    CMCOAM_PRINT("6900000		");
++                    break;
++                default:
++                    break;
++            }
++            //if(ds->dscfg[i].annex != ANNEX_A)//ingmore for Annex A;
++            //{
++                //CMCOAM_PRINT("Interleaver: %s  ", Interleaver[ds->dscfg[i].interleaver]);
++            //}
++            CMCOAM_PRINT("	%.1f dBmv\n\n", ds->dscfg[i].power_level/10.0);
+ 	}
+ 
+ 	return BASE_OK;
+@@ -294,29 +294,32 @@
+ 	
+ 	if(NULL == us)
+ 		return BASE_ERROR_PARAM;
+-
+-	CMCOAM_PRINT("Upstream settings\n");
+ 	for(i=0; i<us->num_of_channels; i++)
+ 	{
+-		CMCOAM_PRINT("           Upstream Channel ID: %u\n", us->uscfg[i].us_ch_id);
+-		CMCOAM_PRINT("                Enable/Disable: %s\n", us->uscfg[i].enabled ? "Enabled" : "Disabled");
+-		CMCOAM_PRINT("              Center Frequency: %u Hz\n", us->uscfg[i].freq);
+-		CMCOAM_PRINT("                 Channel Width: %u Hz\n", us->uscfg[i].width);
+-		CMCOAM_PRINT("          Channel Profile Type: %s\n", uschannelProfileType[us->uscfg[i].profile_type]);
+-		CMCOAM_PRINT("        Docsis3.0 Channel Mode: %s\n", us->uscfg[i].d30_mode ? "Enabled" : "Disabled");
+-		CMCOAM_PRINT("         Channel Minislot size: %u ticks\n", us->uscfg[i].minislot_size);
+-		CMCOAM_PRINT("Channel Transmit Timing Offset: %u\n", us->uscfg[i].trsmit_time_offset);
+-		CMCOAM_PRINT("Initial Ranging Backoff Window: %u\n", us->uscfg[i].initRNG_win);
+-		CMCOAM_PRINT("  Final Ranging Backoff Window: %u\n", us->uscfg[i].finRNG_win);
+-		CMCOAM_PRINT("   Initial Data Backoff Window: %u\n", us->uscfg[i].initData_win);
+-		CMCOAM_PRINT("     Final Data Backoff Window: %u\n", us->uscfg[i].finData_win);
+-		CMCOAM_PRINT("            Active SCDMA Codes: %u\n", us->uscfg[i].scdma_code);
+-		CMCOAM_PRINT("     SCDMA Codes per mini-slot: %u\n", us->uscfg[i].scdma_code_per_minislot);
+-		CMCOAM_PRINT("              SCDMA Frame size: %u\n", us->uscfg[i].scdma_frm_size);
+-		CMCOAM_PRINT("            SCDMA Hopping Seed: %u\n", us->uscfg[i].scdma_hopping_seed);
+-		CMCOAM_PRINT("                 Upstream Mode: %s\n", usMode[us->uscfg[i].mode]);
+-		CMCOAM_PRINT("     Pre-Equalization Settings: %s\n", us->uscfg[i].pre_equalization ? "True" : "False");
+-		CMCOAM_PRINT("               Interface index: %u\n\n", us->uscfg[i].ifindex);
++		
++		CMCOAM_PRINT("-----------------------------------------------------------------------------------------------------------------------------------\n");	
++		CMCOAM_PRINT("Us-ID		Status		Freq			Width		Doc3.0Mode		ProfileType\n"); 
++		CMCOAM_PRINT("%u		", us->uscfg[i].us_ch_id);
++		CMCOAM_PRINT("%s		", us->uscfg[i].enabled ? "Enabled" : "Disabled");
++		CMCOAM_PRINT("%u 		", us->uscfg[i].freq);
++		CMCOAM_PRINT("%u		", us->uscfg[i].width);
++		CMCOAM_PRINT("%s		", us->uscfg[i].d30_mode ? "Enabled" : "Disabled");
++		CMCOAM_PRINT("%s\n\n", uschannelProfileType[us->uscfg[i].profile_type]);
++		CMCOAM_PRINT("Minislot	TimeOffset	InitRangWin		FinRangWin		InitDataWin		FinDataWin\n"); 
++		CMCOAM_PRINT("%u		", us->uscfg[i].minislot_size);
++		CMCOAM_PRINT("%u		", us->uscfg[i].trsmit_time_offset);
++		CMCOAM_PRINT("%u			", us->uscfg[i].initRNG_win);
++		CMCOAM_PRINT("%u			", us->uscfg[i].finRNG_win);
++		CMCOAM_PRINT("%u			", us->uscfg[i].initData_win);
++		CMCOAM_PRINT("%u\n\n", us->uscfg[i].finData_win);
++		CMCOAM_PRINT("S-Codes		S-Codemini-slot		S-Framesize		S-HopSeed		UsMode		Pre-EqualizationSettings\n"); 
++		CMCOAM_PRINT("%u		", us->uscfg[i].scdma_code);
++		CMCOAM_PRINT("%u			", us->uscfg[i].scdma_code_per_minislot);
++		CMCOAM_PRINT("%u			", us->uscfg[i].scdma_frm_size);
++		CMCOAM_PRINT("%u			", us->uscfg[i].scdma_hopping_seed);
++		CMCOAM_PRINT("%s		", usMode[us->uscfg[i].mode]);
++		CMCOAM_PRINT("%s\n", us->uscfg[i].pre_equalization ? "True" : "False");
++		CMCOAM_PRINT("-----------------------------------------------------------------------------------------------------------------------------------\n\n");	
+ 	}
+ 
+ 	return BASE_OK;

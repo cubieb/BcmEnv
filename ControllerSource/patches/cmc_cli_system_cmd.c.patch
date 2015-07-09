@@ -1,0 +1,10 @@
+--- CmcController/CmcCli/cmc_cli_system_cmd.c	2013-11-19 16:51:23.000000000 +0800
++++ CmcController/CmcCli/cmc_cli_system_cmd.new.c	2014-05-09 16:25:56.432873000 +0800
+@@ -392,6 +392,7 @@
+ cparser_result_t
+ cparser_cmd_config_cmc_clock_time_year_week(cparser_context_t *context,char **time_ptr, char **year_ptr, char **week_ptr)
+ {
++    return CPARSER_OK;
+ }
+ 
+ cparser_result_t

@@ -1,0 +1,36 @@
+#If you want sync codes from windows system to linux before compiling, 
+#please define $(WinSwSoftProjectRoot) in Make.Configuration. 
+
+WorkspaceRoot=$(shell FindRootPath.sh $(CURDIR))
+include $(WorkspaceRoot)/Make/Make.Configuration
+
+SourceFiles = $(wildcard *.c) $(wildcard *.cpp) $(wildcard *.h) $(wildcard Makefile)
+SourceFiles += $(wildcard *.cli) $(wildcard *.sh) $(wildcard *.cfg) 
+WindowsCodesDir=$(WinProjectRoot)$(subst $(WorkspaceRoot),,$(CURDIR))
+
+#$(warning $(CURDIR), $(WindowsCodesDir))
+all: $(SourceFiles)
+	@
+
+ifneq ($(strip $(WinProjectRoot)),)
+Makefile: $(WindowsCodesDir)/Makefile
+	$(CP) $^ $@
+
+%.cpp: $(WindowsCodesDir)/%.cpp
+	$(CP) $^ $@
+	
+%.c: $(WindowsCodesDir)/%.c
+	$(CP) $^ $@
+
+%.h: $(WindowsCodesDir)/%.h
+	$(CP) $^ $@
+
+%.cli: $(WindowsCodesDir)/%.cli
+	$(CP) $^ $@
+
+%.sh: $(WindowsCodesDir)/%.sh
+	$(CP) $^ $@
+	
+%.cfg: $(WindowsCodesDir)/%.cfg
+	$(CP) $^ $@	
+endif

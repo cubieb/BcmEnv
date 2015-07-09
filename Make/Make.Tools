@@ -1,0 +1,9 @@
+C++     = g++
+CC      = gcc
+LD      = ld
+AR      = ar
+AS      = as
+Strip   = strip
+Ranlib  = ranlib
+ObjCopy = objcopy
+ObjDump = objdump

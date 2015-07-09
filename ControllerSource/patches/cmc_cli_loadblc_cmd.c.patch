@@ -1,0 +1,11 @@
+--- CmcController/CmcCli/cmc_cli_loadblc_cmd.c	2012-06-14 10:57:00.000000000 +0800
++++ CmcController/CmcCli/cmc_cli_loadblc_cmd.new.c	2014-05-09 16:30:51.835922000 +0800
+@@ -40,7 +40,7 @@
+ 	U8 					type, grp_id, num_of_ds, num_of_us, num_of_mac_range;
+ 	U8 					ds_ch_lst[BRCM_CMC_MAX_DS_CH],us_ch_lst[BRCM_CMC_MAX_US_CH];
+ 	CMCOAM_CnuMacRangeT	mac_range[BRCM_CMC_MAX_MAC_RANG];
+-	U8					sc_input_buf[32];
++	char				sc_input_buf[32];
+ 	int					i, temp = 0;
+ 	MacAddressT			mac;
+ 	

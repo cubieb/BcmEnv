@@ -1,0 +1,21 @@
+ifeq ($(strip $(CrossPrefix)),)
+    $(error CrossPrefix environment variable can't be empty!)
+endif
+
+#add cross tools path for bcm sdk.
+PATH:=/opt/eldk/usr/bin:$(PATH)
+
+#add cross tools path for cmts compiler.
+PATH:=/opt/toolchains/uclibc-crosstools-gcc-4.2.3-4/usr/bin:$(PATH)
+
+C++     = $(CrossPrefix)g++
+CC      = $(CrossPrefix)gcc
+LD      = $(CrossPrefix)ld
+AR      = $(CrossPrefix)ar
+AS      = $(CrossPrefix)as
+Strip   = $(CrossPrefix)strip
+Ranlib  = $(CrossPrefix)ranlib
+ObjCopy = $(CrossPrefix)objcopy
+ObjDump = $(CrossPrefix)objdump
+
+

@@ -1,0 +1,31 @@
+ifeq ($(strip $(WorkspaceRoot)),)
+    $(error WorkspaceRoot environment variable can't be empty!)
+endif
+
+ifeq ($(strip $(TftpRoot)),)
+    #you could create a bcmenv.sh at /etc/profile.d to create a TftpRoot env.
+    $(error TftpRoot environment variable can't be empty!)
+endif
+
+WinProjectRoot=/mnt/hgfs/Project
+
+#Please set CrossCompile, CrossPrefix, and CommlibDir befor compiling
+#for PC or embedded software/hardware plartform.
+CrossCompile=yes
+CrossPrefix=mips_4KC-
+CommlibDir=$(WorkspaceRoot)/CommLibs/Eldk
+#CrossCompile=no
+#CommlibDir=$(WorkspaceRoot)/CommLibs/LocalGcc
+
+ifeq ($(strip $(CrossCompile)),yes)
+    include $(WorkspaceRoot)/Make/Make.CrossTools
+else
+    include $(WorkspaceRoot)/Make/Make.Tools
+endif 
+
+CD = cd
+RM = rm -f
+MV = mv -f
+Mkdir = mkdir -p
+CP = /bin/cp -f
+

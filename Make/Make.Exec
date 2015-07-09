@@ -1,0 +1,53 @@
+CPPFLAGS += $(CppFlags) $(IncludePath)
+LDFLAGS  += $(LdFlags) $(LibPath)
+
+ifeq ($(CXX),)
+    CXX     = $(C++)
+    Postfix = cpp
+else
+    ifeq ($(CXX), $(CC))
+        Postfix = c
+    else
+        Postfix = cpp
+    endif
+endif
+
+SourceFiles = $(wildcard *.$(Postfix))
+ObjFiles    = $(patsubst %.$(Postfix), %.o, $(SourceFiles))
+
+ObjFilesBuild = $(addprefix $(BuildDir)/, $(ObjFiles))
+ExeFileBuild  = $(addprefix $(BuildDir)/, $(ExeFile))
+
+.PHONY: all clean Force
+
+all: $(ExeFileBuild)
+$(ObjFilesBuild): $(CustomizeTarget)
+
+#CustomizeTarget, CustomizeSource used to compile C and C++ in the same folder.
+ifneq ($(CustomizeTarget),)
+$(CustomizeTarget): $(CustomizeSource)
+	$(CustomizeCmd)
+endif
+
+$(ExeFileBuild): Force
+Force:
+
+$(ExeFileBuild): $(ObjFilesBuild) 
+	$(CXX) -o $@ $(ObjFilesBuild) $(CPPFLAGS) $(LDFLAGS)
+
+$(BuildDir)/%.o: %.$(Postfix)
+	$(CXX) -c $< -o $@ $(CPPFLAGS)
+
+%.d: %.$(Postfix)
+	$(CXX) -MM $(CPPFLAGS) $< > $@.$$$$; \
+	sed 's,\($*\)\.o[ :]*,$(BuildDir)/\1.o $@ : ,g' < $@.$$$$ > $@; \
+	rm -f $@.$$$$
+
+sinclude $(SourceFiles:.$(Postfix)=.d)
+
+clean:
+	$(RM) $(BuildDir)/*.o
+	$(RM) $(ExeFileBuild)
+
+distclean: clean
+	$(RM) *.d
