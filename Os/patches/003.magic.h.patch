@@ -1,0 +1,10 @@
+--- linux-2.6.27.18/include/linux/magic.h	2009-02-17 09:47:50.000000000 -0800
++++ linux-2.6.27.18/include/linux/magic.h.new	2013-10-05 05:05:55.010565000 -0700
+@@ -1,6 +1,7 @@
+ #ifndef __LINUX_MAGIC_H__
+ #define __LINUX_MAGIC_H__
+ 
++#define SQUASHFS_MAGIC		0x73717368
+ #define ADFS_SUPER_MAGIC	0xadf5
+ #define AFFS_SUPER_MAGIC	0xadff
+ #define AFS_SUPER_MAGIC                0x5346414F

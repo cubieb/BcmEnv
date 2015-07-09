@@ -1,0 +1,11 @@
+--- linux-2.6.27.18/drivers/net/gmac/etc.c	2013-05-13 23:22:44.564255000 -0700
++++ linux-2.6.27.18/drivers/net/gmac/etc.c.new	2013-05-13 23:22:57.929823336 -0700
+@@ -97,7 +97,7 @@
+     etc->osh = osh;
+     etc->vendorid = (uint16) vendor;
+     etc->deviceid = (uint16) device;
+-    etc->forcespeed = ET_AUTO;
++    etc->forcespeed = ET_100FULL;/*lv-edit ET_AUTO*/
+     etc->linkstate = FALSE;
+     /* Set Promisc mode as deafult for testing */
+     etc->promisc = 1;

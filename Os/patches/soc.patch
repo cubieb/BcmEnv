@@ -1,0 +1,18 @@
+--- soc-0.9.0/make/Makefile.linux-keystone-kernel	2011-10-27 14:18:02.000000000 +0800
++++ soc-0.9.0/make/Makefile.linux-keystone-kernel.new	2014-03-11 12:43:55.212000000 +0800
+@@ -38,11 +38,11 @@
+ #  WHICHEVER IS GREATER. THESE LIMITATIONS SHALL APPLY NOTWITHSTANDING ANY
+ #  FAILURE OF ESSENTIAL PURPOSE OF ANY LIMITED REMEDY.
+ #
+-export PATH := /tools/eldk/4.1/usr/bin:$(PATH)
+-export CROSS_COMPILE ?= /tools/eldk/4.1/usr/bin/mips_4KC-
++#export PATH := /tools/eldk/4.1/usr/bin:$(PATH)
++export CROSS_COMPILE ?= mips_4KC-
+ export ARCH = mips
+-export LINUX_INSTALL_DIR ?= /projects/ntsw-tools/linux/eldk/linux_source
+-export LINUX_CHECKOUT_TARGET ?= $(SOC)/systems/linux/keystone/eldk_glibc
++export LINUX_INSTALL_DIR ?= /home/liuhao/BcmEnv/Os
++export LINUX_CHECKOUT_TARGET ?= /home/liuhao/BcmEnv/Os/soclinux
+ export LINUX_MAKE_BUILD ?= make bcm5300x_defconfig
+ export LINUX_MAKE_REBUILD ?= make all
+ export LINUX_MAKE_MENUCONFIG ?= make ARCH=mips menuconfig

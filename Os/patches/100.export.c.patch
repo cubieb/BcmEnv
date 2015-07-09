@@ -1,0 +1,11 @@
+--- linux-2.6.27.18/fs/squashfs/export.c	2013-10-05 04:51:14.807202878 -0700
++++ linux-2.6.27.18/fs/squashfs/export.c.new	2013-10-05 04:56:52.865920000 -0700
+@@ -82,7 +82,7 @@
+ 
+ 	ino = squashfs_inode_lookup(sb, ino_num);
+ 	if (ino >= 0)
+-		dentry = d_obtain_alias(squashfs_iget(sb, ino, ino_num));
++		dentry = d_alloc_anon(squashfs_iget(sb, ino, ino_num));
+ 
+ 	return dentry;
+ }

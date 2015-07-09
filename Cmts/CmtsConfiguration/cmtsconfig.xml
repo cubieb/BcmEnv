@@ -1,0 +1,424 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<CmtsConfig>
+
+    <!-- configdir path="/data/cmts" / -->
+    
+    <OamMode enabled="1" silent="0" >
+        <HeadEndMgrSettings dm_ieee_oam_discover_enable="0"/>
+        <HeadEndMgrSettings dm_tcp_discover_enable="1"/>
+        <HeadEndMgrSettings dm_tcp_listen_enable="0"/>
+        <HeadEndMgrSettings dmm_controller_enabled="1"/>
+        <HeadEndMgrSettings controller_ip_address="192.168.2.254" />
+    </OamMode>
+    
+    <!-- NETWORK ENTRIES -->
+
+    <LocalDhcp enabled="0" silent="0" >
+        <HeadEndMgrSettings use_local_servers="1"/>
+    </LocalDhcp>
+
+    <AnnexA enabled="0" description="autoload for AnnexA Operation">
+        <MacSettings.AnnexMode value="0x0a" description="// Annex = 0x0a or 0x0b" />
+    </AnnexA>
+
+    <AnnexB enabled="0" description="autoload for AnnexA Operation">
+        <MacSettings.AnnexMode value="0x0b" description="// Annex = 0x0a or 0x0b" />
+    </AnnexB>
+
+</CmtsConfig>
+
+
+
+
+<DsConfig>
+    <RcpControl CenterFrequencySpacing="1" VerboseReporting="0" />
+    <DsGlobal ConfigFile="DsChanSettingsA_qam256.xml" />
+    <DsChannel Channel="1" IfFreq="60000000" ConfigFile="DsChanSettingsA_qam256.xml"
+               DepiHeaderFile="DepiHeader.xml" MaxMTU="1518" UpconverterFreq="440000000"
+               LowPriorityLowThreshold="1700" LowPriorityHighThreshold="5000"
+               MedPriorityLowThreshold="3000" MedPriorityHighThreshold="10000"
+               HighPriorityLowThreshold="20000" HighPriorityHighThreshold="20000"
+               MaxBitRateMbitsPerSec="50"
+               PspModeEnabled="0" UdpHeaderPresent="1" IPv6Enabled="0"
+               VlanTaggingEnabled="0"
+               FlowControl="0" />
+	       
+    <DsChannel Channel="2" IfFreq="52000000" ConfigFile="DsChanSettingsA_qam256.xml"
+               DepiHeaderFile="DepiHeader.xml" MaxMTU="1518" UpconverterFreq="448000000"
+               LowPriorityLowThreshold="1700" LowPriorityHighThreshold="5000"
+               MedPriorityLowThreshold="3000" MedPriorityHighThreshold="10000"
+               HighPriorityLowThreshold="20000" HighPriorityHighThreshold="20000"
+               MaxBitRateMbitsPerSec="50"
+               PspModeEnabled="0" UdpHeaderPresent="1" IPv6Enabled="0"
+               VlanTaggingEnabled="0"
+               FlowControl="0" />
+
+    <DsChannel Channel="3" IfFreq="44000000" ConfigFile="DsChanSettingsA_qam256.xml"
+               DepiHeaderFile="DepiHeader.xml" MaxMTU="1518" UpconverterFreq="456000000"
+               LowPriorityLowThreshold="1700" LowPriorityHighThreshold="5000"
+               MedPriorityLowThreshold="3000" MedPriorityHighThreshold="10000"
+               HighPriorityLowThreshold="20000" HighPriorityHighThreshold="20000"
+               MaxBitRateMbitsPerSec="50"
+               PspModeEnabled="0" UdpHeaderPresent="1" IPv6Enabled="0"
+               VlanTaggingEnabled="0"
+               FlowControl="0" />
+
+    <DsChannel Channel="4" IfFreq="36000000" ConfigFile="DsChanSettingsA_qam256.xml"
+               DepiHeaderFile="DepiHeader.xml" MaxMTU="1518" UpconverterFreq="464000000"
+               LowPriorityLowThreshold="1700" LowPriorityHighThreshold="5000"
+               MedPriorityLowThreshold="3000" MedPriorityHighThreshold="10000"
+               HighPriorityLowThreshold="20000" HighPriorityHighThreshold="20000"
+               MaxBitRateMbitsPerSec="50"
+               PspModeEnabled="0" UdpHeaderPresent="1" IPv6Enabled="0"
+               VlanTaggingEnabled="0"
+               FlowControl="0" />
+
+    <DsChannel Channel="5" IfFreq="28000000" ConfigFile="DsChanSettingsA_qam256.xml"
+               DepiHeaderFile="DepiHeader.xml" MaxMTU="1518" UpconverterFreq="472000000"
+               LowPriorityLowThreshold="1700" LowPriorityHighThreshold="5000"
+               MedPriorityLowThreshold="3000" MedPriorityHighThreshold="10000"
+               HighPriorityLowThreshold="20000" HighPriorityHighThreshold="20000"
+               MaxBitRateMbitsPerSec="50"
+               PspModeEnabled="0" UdpHeaderPresent="1" IPv6Enabled="0"
+               VlanTaggingEnabled="0"
+               FlowControl="0" />
+
+    <DsChannel Channel="6" IfFreq="20000000" ConfigFile="DsChanSettingsA_qam256.xml"
+               DepiHeaderFile="DepiHeader.xml" MaxMTU="1518" UpconverterFreq="480000000"
+               LowPriorityLowThreshold="1700" LowPriorityHighThreshold="5000"
+               MedPriorityLowThreshold="3000" MedPriorityHighThreshold="10000"
+               HighPriorityLowThreshold="20000" HighPriorityHighThreshold="20000"
+               MaxBitRateMbitsPerSec="50"
+               PspModeEnabled="0" UdpHeaderPresent="1" IPv6Enabled="0"
+               VlanTaggingEnabled="0"
+               FlowControl="0" />
+
+    <DsChannel Channel="7" IfFreq="12000000" ConfigFile="DsChanSettingsA_qam256.xml"
+               DepiHeaderFile="DepiHeader.xml" MaxMTU="1518" UpconverterFreq="488000000"
+               LowPriorityLowThreshold="1700" LowPriorityHighThreshold="5000"
+               MedPriorityLowThreshold="3000" MedPriorityHighThreshold="10000"
+               HighPriorityLowThreshold="20000" HighPriorityHighThreshold="20000"
+               MaxBitRateMbitsPerSec="50"
+               PspModeEnabled="0" UdpHeaderPresent="1" IPv6Enabled="0"
+               VlanTaggingEnabled="0"
+               FlowControl="0" />
+
+    <DsChannel Channel="8" IfFreq="4000000" ConfigFile="DsChanSettingsA_qam256.xml"
+               DepiHeaderFile="DepiHeader.xml" MaxMTU="1518" UpconverterFreq="496000000"
+               LowPriorityLowThreshold="1700" LowPriorityHighThreshold="5000"
+               MedPriorityLowThreshold="3000" MedPriorityHighThreshold="10000"
+               HighPriorityLowThreshold="20000" HighPriorityHighThreshold="20000"
+               MaxBitRateMbitsPerSec="50"
+               PspModeEnabled="0" UdpHeaderPresent="1" IPv6Enabled="0"
+               VlanTaggingEnabled="0"
+               FlowControl="0" />
+
+    <DsChannel Channel="9" IfFreq="-4000000" ConfigFile="DsChanSettingsA_qam256.xml"
+               DepiHeaderFile="DepiHeader.xml" MaxMTU="1518" UpconverterFreq="504000000"
+               LowPriorityLowThreshold="1700" LowPriorityHighThreshold="5000"
+               MedPriorityLowThreshold="3000" MedPriorityHighThreshold="10000"
+               HighPriorityLowThreshold="20000" HighPriorityHighThreshold="20000"
+               MaxBitRateMbitsPerSec="50"
+               PspModeEnabled="0" UdpHeaderPresent="1" IPv6Enabled="0"
+               VlanTaggingEnabled="0"
+               FlowControl="0" />
+
+    <DsChannel Channel="10" IfFreq="-12000000" ConfigFile="DsChanSettingsA_qam256.xml"
+               DepiHeaderFile="DepiHeader.xml" MaxMTU="1518" UpconverterFreq="512000000"
+               LowPriorityLowThreshold="1700" LowPriorityHighThreshold="5000"
+               MedPriorityLowThreshold="3000" MedPriorityHighThreshold="10000"
+               HighPriorityLowThreshold="20000" HighPriorityHighThreshold="20000"
+               MaxBitRateMbitsPerSec="50"
+               PspModeEnabled="0" UdpHeaderPresent="1" IPv6Enabled="0"
+               VlanTaggingEnabled="0"
+               FlowControl="0" />
+
+    <DsChannel Channel="11" IfFreq="-20000000" ConfigFile="DsChanSettingsA_qam256.xml"
+               DepiHeaderFile="DepiHeader.xml" MaxMTU="1518" UpconverterFreq="520000000"
+               LowPriorityLowThreshold="1700" LowPriorityHighThreshold="5000"
+               MedPriorityLowThreshold="3000" MedPriorityHighThreshold="10000"
+               HighPriorityLowThreshold="20000" HighPriorityHighThreshold="20000"
+               MaxBitRateMbitsPerSec="50"
+               PspModeEnabled="0" UdpHeaderPresent="1" IPv6Enabled="0"
+               VlanTaggingEnabled="0"
+               FlowControl="0" />
+
+    <DsChannel Channel="12" IfFreq="-28000000" ConfigFile="DsChanSettingsA_qam256.xml"
+               DepiHeaderFile="DepiHeader.xml" MaxMTU="1518" UpconverterFreq="528000000"
+               LowPriorityLowThreshold="1700" LowPriorityHighThreshold="5000"
+               MedPriorityLowThreshold="3000" MedPriorityHighThreshold="10000"
+               HighPriorityLowThreshold="20000" HighPriorityHighThreshold="20000"
+               MaxBitRateMbitsPerSec="50"
+               PspModeEnabled="0" UdpHeaderPresent="1" IPv6Enabled="0"
+               VlanTaggingEnabled="0"
+               FlowControl="0" />
+
+    <DsChannel Channel="13" IfFreq="-36000000" ConfigFile="DsChanSettingsA_qam256.xml"
+               DepiHeaderFile="DepiHeader.xml" MaxMTU="1518" UpconverterFreq="536000000"
+               LowPriorityLowThreshold="1700" LowPriorityHighThreshold="5000"
+               MedPriorityLowThreshold="3000" MedPriorityHighThreshold="10000"
+               HighPriorityLowThreshold="20000" HighPriorityHighThreshold="20000"
+               MaxBitRateMbitsPerSec="50"
+               PspModeEnabled="0" UdpHeaderPresent="1" IPv6Enabled="0"
+               VlanTaggingEnabled="0"
+               FlowControl="0" />
+
+    <DsChannel Channel="14" IfFreq="-44000000" ConfigFile="DsChanSettingsA_qam256.xml"
+               DepiHeaderFile="DepiHeader.xml" MaxMTU="1518" UpconverterFreq="544000000"
+               LowPriorityLowThreshold="1700" LowPriorityHighThreshold="5000"
+               MedPriorityLowThreshold="3000" MedPriorityHighThreshold="10000"
+               HighPriorityLowThreshold="20000" HighPriorityHighThreshold="20000"
+               MaxBitRateMbitsPerSec="50"
+               PspModeEnabled="0" UdpHeaderPresent="1" IPv6Enabled="0"
+               VlanTaggingEnabled="0"
+               FlowControl="0" />
+
+    <DsChannel Channel="15" IfFreq="-52000000" ConfigFile="DsChanSettingsA_qam256.xml"
+               DepiHeaderFile="DepiHeader.xml" MaxMTU="1518" UpconverterFreq="552000000"
+               LowPriorityLowThreshold="1700" LowPriorityHighThreshold="5000"
+               MedPriorityLowThreshold="3000" MedPriorityHighThreshold="10000"
+               HighPriorityLowThreshold="20000" HighPriorityHighThreshold="20000"
+               MaxBitRateMbitsPerSec="50"
+               PspModeEnabled="0" UdpHeaderPresent="1" IPv6Enabled="0"
+               VlanTaggingEnabled="0"
+               FlowControl="0" />
+
+    <DsChannel Channel="16" IfFreq="-60000000" ConfigFile="DsChanSettingsA_qam256.xml"
+               DepiHeaderFile="DepiHeader.xml" MaxMTU="1518" UpconverterFreq="560000000"
+               LowPriorityLowThreshold="1700" LowPriorityHighThreshold="5000"
+               MedPriorityLowThreshold="3000" MedPriorityHighThreshold="10000"
+               HighPriorityLowThreshold="20000" HighPriorityHighThreshold="20000"
+               MaxBitRateMbitsPerSec="50"
+               PspModeEnabled="0" UdpHeaderPresent="1" IPv6Enabled="0"
+               VlanTaggingEnabled="0"
+               FlowControl="0" />
+    <RawRegister
+         Addr="0x28000018"
+         Value="0x1000180" />
+
+</DsConfig>
+<DsChanSettingsA_qam256.xml>
+
+    <Bcm3041GlobalDescriptor
+            OutputCenterFrequency0="500000000"
+            OutputCenterFrequency1="150000000"
+            KValue="14"
+            MibEntriesPerChannel="1" 
+            MaxDesKeySid="0"
+            MaxPhsRules="0"
+            QueueSizeLow="0"
+            QueueSizeMedium="0"
+            QueueSizeHigh="0"
+            DacDelay="0" 
+            />
+
+    <Bcm3041GlbDS_unused
+        OutputCenterFrequency0="100000000"
+        OutputCenterFrequency1="150000000"
+        KValue="14" 
+        MaxDesKeySid="0"
+        MaxPhsRules="0"
+        QueueSizeLow="0"
+        QueueSizeMedium="0"
+        QueueSizeHigh="0"
+        DacDelay="0" />
+
+    <DownstreamDescriptor
+            ModulationType="05"
+            AnnexType="01"
+            Bcm3023Mode="00"
+            GrayEncodingSelect="01"
+            ErrorInjectionMode="00"
+            InterleaverDepth="05"
+            SymVal="24"
+            SymD="00"
+            Cnst="00"
+            PrbsEn="00"
+            PrbsSel="01"
+            PrbsMpeg="01"
+            StIntCtl="00000000"
+            ModIFFrequency="00000000"
+            StDtNum="00000000"
+            StDtDel="00000000"
+            StClkFo="00000000"
+            StaNum="00000000"
+            StaDel="00000000"
+            ScdmaUsRatioM="00000000"
+            ScdmaUsRatioN="00000000" 
+            NyqCoefData="00000000"
+            NyqCoefFile="nyq_coef_113_a.dat"
+            NyqFiltControl="00000000"
+            NyqFiltControlOutShift="04"
+            NyqFiltControlOutAtten="01"
+            NyqFiltControlDoubleRate="00"
+            NyqFiltControlNumCoeffs="00"
+            NyqFiltControlCenterTap="00"
+            NyqFiltControlCoeffAddr="00"
+            NyqFiltControlExtendPipeline="01"
+            NyqInit="00000000"
+            NyqInitFilterFecInit="00"
+            NyqStatus="00000000"
+            NyqDiagControl="00000000"
+            BaudStateInL="00000000"
+            BaudStateInH="00000000"
+            EqCoefData="00000000"
+            EqCoefFile="eqcoef8.dat"
+            EqFilterControl="00000000"
+            EqFilterControlSumModulator="01"
+            EqFilterControlModOutShift="00"
+            EqFilterControlModOutScale="128"
+            EqFilterControlFiltOutAtten="00"
+            EqFilterControlFiltOutShift="03"
+            EqFilterControlDoubleRate="00"
+            EqFilterControlNumCoeffs="00"
+            EqFilterControlCoeffLoadAddr="00"
+            EqDiagControl="00000000"
+            DiagControlDiagSelOut="07"
+            DiagControlDiagSelIn="00"
+            ModulatorOutputScale="18000"
+            BaudInit="00000000"
+            BaudInitEqBaudloopImmediate="00"
+            BaudInitArmIntLoadPulseGenerate="00"
+            BaudInitArmIntLoadPulseCapture="00"
+            BaudStateOutL="00000000"
+            BaudStateOutH="00000000"
+            EqStatus="00000000"
+            Hb1Status="00000000"
+            VidStatus="00000000"
+            Hb2Status="00000000"
+            ModStatus="00000000" 
+        />
+
+    <MacDescriptor
+            BpiRuleBaseAddress="00000000"
+            PhsRuleBaseAddress="00000000" 
+            MaxDesKeySid="0"
+            MaxPhsRules="0"
+            QueueSizeLow="0"
+            QueueSizeMedium="0"
+            QueueSizeHigh="0"
+            DacDelay="0" 
+         />
+
+</DsChanSettingsA_qam256.xml>
+
+<DsChanSettings>
+    <DownstreamDescriptor>
+        <Settings>
+            <DownDS
+                ModulationType="03"
+                AnnexType="00"
+                Bcm3023Mode="00"
+                GrayEncodingSelect="00"
+                ErrorInjectionMode="00"
+                InterleaverDepth="09"
+                SymVal="24"
+                SymD="00"
+                Cnst="00"
+                PrbsEn="00"
+                PrbsSel="01"
+                PrbsMpeg="01"
+                StIntCtl="00000000"
+                ModIFFrequency="00000000"
+                StDtNum="00000000"
+                StDtDel="00000000"
+                StClkFo="00000000"
+                StaNum="00000000"
+                StaDel="00000000"
+                ScdmaUsRatioM="00000000"
+                ScdmaUsRatioN="00000000" />
+        </Settings>
+    </DownstreamDescriptor>
+
+    <Bcm3041Descriptor>
+        <Settings>
+            <Bcm3041DS
+                NyqCoefData="00000000"
+                NyqCoefFile="nyq_coef_129_b_64.dat"
+                NyqFiltControl="00000000"
+                NyqFiltControlOutShift="04"
+                NyqFiltControlOutAtten="00"
+                NyqFiltControlDoubleRate="00"
+                NyqFiltControlNumCoeffs="00"
+                NyqFiltControlCenterTap="00"
+                NyqFiltControlCoeffAddr="00"
+                NyqInit="00000000"
+                NyqInitFilterFecInit="00"
+                NyqStatus="00000000"
+                NyqDiagControl="00000000"
+                BaudStateInL="00000000"
+                BaudStateInH="00000000"
+                EqCoefData="00000000"
+                EqCoefFile="eqcoef24.dat"
+                EqFilterControl="00000000"
+                EqFilterControlSumModulator="01"
+                EqFilterControlModOutShift="00"
+                EqFilterControlModOutScale="255"
+                EqFilterControlFiltOutAtten="01"
+                EqFilterControlFiltOutShift="03"
+                EqFilterControlDoubleRate="00"
+                EqFilterControlNumCoeffs="00"
+                EqFilterControlCoeffLoadAddr="00"
+                EqDiagControl="00000000"
+                DiagControlDiagSelOut="07"
+                DiagControlDiagSelIn="00"
+                ModulatorOutputScale="106700"
+                BaudInit="00000000"
+                BaudInitEqBaudloopImmediate="00"
+                BaudInitArmIntLoadPulseGenerate="00"
+                BaudInitArmIntLoadPulseCapture="00"
+                BaudStateOutL="00000000"
+                BaudStateOutH="00000000"
+                EqStatus="00000000"
+                Hb1Status="00000000"
+                VidStatus="00000000"
+                Hb2Status="00000000"
+                ModStatus="00000000" />
+        </Settings>
+    </Bcm3041Descriptor>
+
+    <MacDescriptor>
+        <Settings>
+        </Settings>
+    </MacDescriptor>
+
+    <ScramblerKey
+         EvenOdd="Even"
+         Type="AES"
+         Mode="ECB"
+         TerminationMode="ResidualBlock"
+         Key0="0x01020304"
+         Key1="0x05060708"
+         Key2="0x090a0b0c"
+         Key3="0x0d0e0f10"
+         IV0="0x11121314"
+         IV1="0x15161718"
+         IV2="0x191a1b1c"
+         IV3="0x1d1e1f20" />
+    <ScramblerKey
+         EvenOdd="Odd"
+         Type="3DES"
+         Mode="CBC"
+         TerminationMode="Clear"
+         Key0="0x21222324"
+         Key1="0x25262728"
+         Key2="0x292a2b2c"
+         Key3="0x2d2e2f30"
+         Key4="0x31323334"
+         Key5="0x35000000"
+         IV0="0x36373839"
+         IV1="0x3a3b3c3d" />
+    <ScramblerKey
+         EvenOdd="NoScramble"
+         Type="DVBCommon"
+         Mode="ECB"
+         TerminationMode="ResidualBlock"
+         Key0="0x3e3f4041"
+         Key1="0x42434445"
+         Key2="0x46474849"
+         Key3="0x4a4b4c4d"
+         IV0="0x4e4f5051"
+         IV1="0x52535455"
+         IV2="0x56575859"
+         IV3="0x5a5b5c5d" />
+</DsChanSettings>

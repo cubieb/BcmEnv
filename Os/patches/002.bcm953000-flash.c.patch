@@ -1,0 +1,27 @@
+--- linux-2.6.27.18/drivers/mtd/maps/bcm953000-flash.c	2011-10-26 23:18:05.000000000 -0700
++++ linux-2.6.27.18/drivers/mtd/maps/bcm953000-flash.new.c	2013-10-08 00:58:19.864086000 -0700
+@@ -131,9 +131,22 @@
+         .offset = 0x100000, 
+         .size = 0x20000 
+     },{ 
+-        .name = "os",    
++        .name = "env", 
+         .offset = 0x120000, 
+-        .size = 0x03AE0000 
++        .size =     0x20000 
++    },{ 
++        .name = "os",    
++        .offset = 0x140000, 
++        .size =    0xa00000 
++    },{ 
++        .name = "rootfs",    
++        .offset = 0xb40000, 
++        .size =  0x1000000 
++    },{ 
++        .name = "app",    
++        .offset = 0x1b40000, 
++        /*for 64MB flash  .size = 0x2ac0000*/
++        .size = 0 /*0x6ac0000*/
+     }
+ };
+ 

@@ -1,0 +1,11 @@
+--- linux-2.6.27.18/fs/Kconfig	2009-02-17 09:47:50.000000000 -0800
++++ linux-2.6.27.18/fs/Kconfig.new	2013-05-08 00:31:26.000000000 -0700
+@@ -1348,6 +1348,8 @@
+ 
+ 	  If unsure, say N.
+ 
++source "fs/squashfs/Kconfig"
++
+ config VXFS_FS
+ 	tristate "FreeVxFS file system support (VERITAS VxFS(TM) compatible)"
+ 	depends on BLOCK
