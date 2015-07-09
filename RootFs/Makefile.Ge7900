@@ -1,0 +1,61 @@
+include $(CURDIR)/../Make/Make.Configuration
+
+#LibList  = ld.so.1 libcrypt.so.1 libdl.so.2 libm.so libresolv.so libstdc++.so libthread_db.so
+#LibList += libcrypto.so.0.9.7f libc.so.6 libgcc_s.so.1 libm.so.6 librt.so libstdc++.so.6 
+#LibList += libutil.so libdl.so libm-2.3.5.so libpthread.so.0 librt.so.1 
+#LibList += libstdc++.so.6.0.4
+#LibListBuild = $(addprefix /opt/eldk/mips_4KC/lib/,$(LibList))
+
+#LibExt  = libcrypto.so.5 libz.so.1
+#LibExtBuild = $(addprefix /opt/eldk/mips_4KC/usr/lib/,$(LibExt))
+
+.PHONY: all clean dos2unix
+all: dos2unix
+	#Create File System root folder
+	mkdir FsRoot/{,bin,dev/{,pts},etc,home,lib,mnt,opt,proc,sys,tmp,var/{,log},root}
+	mkdir FsRoot/lib/modules
+	mkdir FsRoot/data/{,switch/{,config}}
+	
+	#Copy mips-4KC/lib or ulibc/lib to FsRoot/lib.
+	#$(CP) -p $(LibListBuild) FsRoot/lib
+	#$(CP) -p $(LibExtBuild) FsRoot/lib
+	$(CP) -R -p InitFile/lib/* FsRoot/lib
+	
+	#Copy Busybox to File System Root.
+	$(CP) -r $(BusyboxDir)/Install/* FsRoot
+	#To clear the warning:"Using fallback suid method"
+	sudo touch FsRoot/etc/busybox.conf
+
+	#Create devices
+	sudo ./MakeDevices.sh
+
+	#Create configiuration file: /etc/*, /rc.soc
+	$(CP) -r InitFile/etc/* FsRoot/etc
+	$(MV) FsRoot/etc/cmts FsRoot/var/config 
+
+	#Copy broadcom SDK modules.
+	$(CP) $(TOP)/Sdk/Sdk.Install/*.ko FsRoot/lib/modules
+	
+	#$(CP) $(TftpRoot)/cmcCli_linuxuser FsRoot/sbin
+
+    #Create folder and copy file for test Ge7900
+    mkdir FsRoot/data/{,switch/{,config,etc}}
+    mkdir FsRoot/var/etc
+    $(CP) -r InitFile.Ge7900/data FsRoot
+    $(CP) -r InitFile.Ge7900/switch FsRoot
+    $(CP) -r InitFile.Ge7900/var FsRoot
+    $(CP) -r InitFile.Ge7900/etc/umconfig.txt FsRoot/etc
+    $(CP) -r InitFile.Ge7900/etc/umconfig.txt FsRoot/data/switch
+    $(CP) InitFile.Ge7900/sbin/ge7900.sh FsRoot/sbin
+
+	#Create image
+	mkfs.jffs2 -b --pad=0x500000 -n -e 0x20000 -r FsRoot -o $(TftpRoot)/RootFs.img
+	#mksquashfs FsRoot $(TftpRoot)/RootFs.img -noappend -all-root -b 65536
+
+clean:
+	$(RM) -r FsRoot 
+	$(RM) $(TftpRoot)/RootFs.img
+
+Scripts=InitFile/etc/init.d/*  InitFile/etc/cmts/*
+dos2unix:
+	dos2unix $(Scripts)

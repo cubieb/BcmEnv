@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="gb2312" ?>
+<root>
+    <DsConfig>
+        <DsChannel Channel="1" Freq="440000000" AnnexType="0" ModulationType="1" InterleaverDepth="0" Powerlevel="450" />
+        <DsChannel Channel="2" Freq="448000000" AnnexType="0" ModulationType="1" InterleaverDepth="1" Powerlevel="450" />
+        <DsChannel Channel="3" Freq="456000000" AnnexType="0" ModulationType="1" InterleaverDepth="0" Powerlevel="450" />
+        <DsChannel Channel="4" Freq="464000000" AnnexType="0" ModulationType="1" InterleaverDepth="2" Powerlevel="450" />
+        <DsChannel Channel="5" Freq="472000000" AnnexType="0" ModulationType="1" InterleaverDepth="0" Powerlevel="450" />
+        <DsChannel Channel="6" Freq="480000000" AnnexType="0" ModulationType="1" InterleaverDepth="3" Powerlevel="450" />
+        <DsChannel Channel="7" Freq="488000000" AnnexType="0" ModulationType="1" InterleaverDepth="0" Powerlevel="450" />
+        <DsChannel Channel="8" Freq="496000000" AnnexType="0" ModulationType="1" InterleaverDepth="4" Powerlevel="450" />
+        <DsChannel Channel="9" Freq="504000000" AnnexType="0" ModulationType="1" InterleaverDepth="0" Powerlevel="450" />
+        <DsChannel Channel="10" Freq="512000000" AnnexType="0" ModulationType="1" InterleaverDepth="1" Powerlevel="450" />
+        <DsChannel Channel="11" Freq="520000000" AnnexType="0" ModulationType="1" InterleaverDepth="1" Powerlevel="450" />
+        <DsChannel Channel="12" Freq="528000000" AnnexType="0" ModulationType="1" InterleaverDepth="1" Powerlevel="450" />
+        <DsChannel Channel="13" Freq="536000000" AnnexType="0" ModulationType="1" InterleaverDepth="1" Powerlevel="450" />
+        <DsChannel Channel="14" Freq="544000000" AnnexType="0" ModulationType="1" InterleaverDepth="1" Powerlevel="450" />
+        <DsChannel Channel="15" Freq="552000000" AnnexType="0" ModulationType="1" InterleaverDepth="1" Powerlevel="450" />
+        <DsChannel Channel="16" Freq="560000000" AnnexType="0" ModulationType="1" InterleaverDepth="1" Powerlevel="450" />
+    </DsConfig>
+    <UsConfig>
+        <UsChannel Channel="1" Freq="9500000" MWidth="6400000" ProfileType="6" Powerlevel="80" />
+        <UsChannel Channel="2" Freq="16800000" MWidth="6400000" ProfileType="6" Powerlevel="80" />
+        <UsChannel Channel="3" Freq="24800000" MWidth="6400000" ProfileType="6" Powerlevel="80" />
+        <UsChannel Channel="4" Freq="39200000" MWidth="6400000" ProfileType="6" Powerlevel="80" />
+    </UsConfig>
+    <LoadBalance>
+        <Dynconfig LdMethod="1" Period="60" Periods="2" Overload="60" Differrnce="10" Moves="30" HoldTime="100" Override="1" ATDMADCC="1" SCDMADCC="1" ATDMADBC="1" SCDMADBC="1" />
+        <LdGrps LdGrp_numbers="2" />
+        <LdGrp_table Ldgid="2" Ldmethod="1" Dsch="1000000000000000" Usch="1000" Ldgrp_mac_start="002f.0e01.0001" Ldgrp_mac_stop="002f.0e01.ffff" />
+        <LdGrp_table Ldgid="3" Ldmethod="1" Dsch="1100000000000000" Usch="1001" Ldgrp_mac_start="002f.0e02.0001" Ldgrp_mac_stop="002f.0e02.ffff" />
+        <ExcludeCnus ecnu_numbers="1" />
+        <ExcludeCnu_table ex_mac_start="001f.1e22.2201" ex_mac_stop="001f.1e22.2301" />
+    </LoadBalance>
+    <AclEN>
+        <AclEN_numbers acl_table_numbers="1" />
+        <AclEN_table acl_start_ip="120.120.120.11" acl_end_ip="120.120.120.11" />
+    </AclEN>
+    <AclDIS>
+        <AclDIS_numbers acl_table_numbers="1" />
+        <AclDIS_table acl_start_ip="120.120.120.11" acl_end_ip="120.120.120.11" />
+    </AclDIS>
+    <StaticIp>
+        <StaticIp_numbers StaticIp_table_numbers="1" />
+        <StaticIp_table ip="192.168.8.68" mac="08:00:27:FA:6B:09" />
+    </StaticIp>
+</root>

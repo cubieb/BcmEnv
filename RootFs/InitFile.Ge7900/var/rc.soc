@@ -1,0 +1,12 @@
+phy ge2 0x1c 0xfc0b
+mod port 4 1 cml_flags_new=10
+mod port 0 5 outer_tpid_enable=5
+m egr_vlan_control_1.ge2 outer_tpid_index=2
+s frm_length 0x5f2
+
+#lnxsh ifconfig knetcmc 192.168.2.254
+#lnxsh ifconfig knetwan 192.168.4.201
+#lnxsh ifconfig knetcm  172.168.1.1 netmask 255.255.255.0
+#lnxsh ifconfig knetcpe 172.169.1.1 netmask 255.255.255.0
+
+#lnxsh /switch/cmcCli_linuxuser knetcmc

@@ -1,0 +1,51 @@
+configure terminal
+dhcp-relay 20.0.0.3
+
+reboot_level 1
+
+cable load-balance dynamic method dynamic 
+cable load-balance dynamic ranging-override-mode enable 
+
+no cable downstream 1 shutdown
+no cable downstream 2 shutdown
+no cable downstream 3 shutdown
+no cable downstream 4 shutdown
+no cable downstream 5 shutdown
+no cable downstream 6 shutdown
+no cable downstream 7 shutdown
+no cable downstream 8 shutdown
+no cable downstream 9 shutdown
+no cable downstream 10 shutdown
+no cable downstream 11 shutdown
+no cable downstream 12 shutdown
+no cable downstream 13 shutdown
+no cable downstream 14 shutdown
+no cable downstream 15 shutdown
+no cable downstream 16 shutdown 
+
+cable downstream freq auto-assign 440000000 8000000 increase
+
+cable downstream 1 power 450
+cable downstream 2 power 450
+cable downstream 3 power 450
+cable downstream 4 power 450
+cable downstream 5 power 450
+cable downstream 6 power 450
+cable downstream 7 power 450
+cable downstream 8 power 450
+cable downstream 9 power 450
+cable downstream 10 power 450
+cable downstream 11 power 450
+cable downstream 12 power 450
+cable downstream 13 power 450
+cable downstream 14 power 450
+cable downstream 15 power 450
+cable downstream 16 power 450
+
+set max cm online number 240
+set max cpu using 5
+set max ram using 5
+set max us channel 1 snr_db 35
+set max us channel 2 snr_db 35
+set max us channel 3 snr_db 35
+set max us channel 4 snr_db 35

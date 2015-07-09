@@ -1,0 +1,75 @@
+#! /bin/ash
+
+pidnum=$( ps | grep -v grep | grep -v rc.telnetd | grep telnetd | awk '{ printf("%s\n",$1) }' | sort | head -1 )
+
+# Start telnetd:
+telnetd_start() {
+    /sbin/telnetd 
+    echo "Server telnetd started"
+}
+
+# Stop telnetd:
+telnetd_stop() {
+    kill $pidnum  
+    while [ true ]
+    do
+        pidnum=$( ps -eaf | grep -v grep | grep -v rc.telnetd | grep telnetd | awk '{ print $1 }' | head -1 )
+        if [ -z "$pidnum" ]
+        then
+            break
+        fi
+        sleep 1
+    done
+    echo "Server telnetd stopped"
+}
+
+case "$1" in
+'start')
+    if [ -z "$pidnum" ]
+    then
+        telnetd_start
+        RETVAL=0
+    else
+        echo "Server telnetd is already running - Try restart"
+        RETVAL=1
+    fi
+    ;;
+'stop')
+    if [ -z "$pidnum" ]
+    then
+        echo "Server telnetd is not running"
+        RETVAL=1
+    else
+        telnetd_stop
+        RETVAL=0
+    fi
+    ;;
+'restart')
+if [ -z "$pidnum" ]
+    then
+        echo "Server telnetd is not running"
+        telnetd_start
+    else
+        telnetd_stop
+        telnetd_start
+    fi
+    RETVAL=0
+    ;;
+'status')
+    if [ -z "$pidnum" ]
+    then
+        echo "Server telnetd is not running"
+        RETVAL=1
+    else
+        echo "Server telnetd is running - Pid : $pidnum"
+        RETVAL=0
+    fi
+    ;;
+*)
+    echo "Usage $0 { start | stop | restart | status }"
+    RETVAL=1
+    ;;
+esac
+
+exit $RETVAL
+

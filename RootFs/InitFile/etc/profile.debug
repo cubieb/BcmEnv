@@ -1,0 +1,14 @@
+#! /bin/ash
+# /etc/profile: system-wide .profile file for the Bourne shells
+PATH=/sbin:/bin:/usr/bin:/usr/sbin:/mnt
+export PATH
+
+for  index in $(seq 1 10)
+do
+    if [ -z "$(mount | grep '10.0.0.3')" ];
+    then
+        mount -t nfs -o nolock 10.0.0.3:/var/lib/tftpboot /mnt
+        sleep 1
+    fi
+done
+

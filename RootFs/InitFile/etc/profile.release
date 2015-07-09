@@ -1,0 +1,11 @@
+#! /bin/ash
+# /etc/profile: system-wide .profile file for the Bourne shells
+PATH=/sbin:/bin:/usr/bin:/usr/sbin:/mnt
+export PATH
+
+pidNum=$( ps | grep -v grep | grep daemon.exe | awk '{ printf("%s\n",$1) }' | sort | head -1 )
+if [ -z "$pidnum" -a "$USER" = "root" -a $(tty) = "/dev/console" ]
+then
+    daemon.exe
+fi
+

@@ -1,0 +1,29 @@
+#! /bin/ash
+echo "====Running ver.1===="
+
+#echo "Start to mount file system."
+/bin/mount -a
+
+#echo "Start to insert mod"
+/sbin/insmod /lib/modules/linux-kernel-bde.ko
+/sbin/insmod /lib/modules/linux-user-bde.ko
+/sbin/insmod /lib/modules/linux-uk-proxy.ko
+/sbin/insmod /lib/modules/linux-bcm-knet.ko mac_addr="02:10:18:ff:00:00"
+
+/sbin/insmod /lib/modules/gpio.ko
+
+#echo "Start to config network"
+/sbin/ifconfig lo 127.0.0.1 netmask 255.0.0.0 broadcast 127.255.255.255 up
+/sbin/ifconfig eth0 10.0.0.3 netmask 255.255.255.0 up
+
+#Start services.
+#for s in /etc/init.d/S*
+#do
+#  if [ -x $s ]; then
+#    $s start
+#  fi
+#done
+
+if [ -x /etc/init.d/rc.telnetd ]; then
+    /etc/init.d/rc.telnetd start
+fi
