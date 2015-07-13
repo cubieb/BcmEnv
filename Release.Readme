@@ -4,3 +4,7 @@ eldk.4.1
 broadcom_2006a_410.i686-pc-linux-gnu.sb1-elf.tar
 cfe-ntsw-5.1.4
 busybox.1.0
+
+
+Svn Repository: http://code.taobao.org/svn/BcmEnv/trunk
+Git Repository: https://github.com/cd01220/BcmEnv.git
